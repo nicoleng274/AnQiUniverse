@@ -213,7 +213,9 @@ a.ico:hover,a.ico:focus-visible{color:var(--ice);border-color:var(--ice);box-sha
 .np img.spin{animation:spin 24s linear infinite}
 .np h3{margin:0;font:700 22px/1.3 var(--f-cjk);overflow-wrap:anywhere}
 .np .sub{margin:4px 0 0;font:400 12px/1.5 var(--f-mono);color:var(--dust)}
-.pill-st{display:inline-block;margin-top:10px;padding:5px 11px;border:1px solid var(--line-2);border-radius:999px;color:var(--mist);font-size:12px}
+.np-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:10px}
+.np-row .chip{padding:5px 11px;font:500 12px/1.2 var(--f-body)}
+.pill-st{display:inline-block;padding:5px 11px;border:1px solid var(--line-2);border-radius:999px;color:var(--mist);font-size:12px}
 .pill-st.ok{border-color:rgba(166,220,255,.5);color:var(--ice)}
 .pill-st.warn{border-color:rgba(255,197,138,.55);color:var(--flare)}
 .embed-sp{min-height:80px}
@@ -263,6 +265,23 @@ a.ico:hover,a.ico:focus-visible{color:var(--ice);border-color:var(--ice);box-sha
 .send:disabled{opacity:.6;cursor:default}
 #chat-status{min-height:1.2em;margin:0;color:var(--flare);font-size:12px}
 .chat-note{margin:0;color:var(--dust);font-size:11.5px}
+
+/* ---------- links between pages ---------- */
+.act{display:inline-flex;align-items:center;gap:6px;padding:10px 16px;border:1px solid var(--flare);border-radius:999px;background:rgba(255,197,138,.1);color:var(--flare);font:600 13.5px/1 var(--f-body);cursor:pointer;white-space:nowrap}
+.act:hover,.act:focus-visible{background:rgba(255,197,138,.2);outline:none}
+.act.ghost{border-color:var(--line-2);background:none;color:var(--mist);font-weight:500}
+.act.ghost:hover,.act.ghost:focus-visible{border-color:var(--ice);color:var(--star)}
+.head-tools{display:flex;flex-wrap:wrap;align-items:center;gap:10px;min-width:0}
+.head-tools .search{flex:0 1 300px}
+@media (max-width:620px){.head-tools{width:100%}.head-tools .search{flex:1 1 100%}}
+.show-head .act{margin-left:auto;padding:7px 12px;font-size:12.5px}
+.sh-actions{display:flex;flex-wrap:wrap;gap:8px}
+.more-head{margin:0 0 14px;color:var(--star);font:600 18px/1.3 var(--f-display)}
+.more{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;margin-bottom:32px}
+.more a{display:flex;flex-direction:column;gap:4px;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.02);color:var(--star);font-family:var(--f-body);text-decoration:none;transition:border-color .2s}
+.more a b{font:600 15px/1.3 var(--f-display)}
+.more a span{color:var(--dust);font-size:12.5px;line-height:1.5}
+.more a:hover,.more a:focus-visible{border-color:var(--ice);outline:none}
 
 footer{padding-block:40px 48px;color:var(--dust);font:400 12px/1.7 var(--f-mono)}
 footer p{margin:0}
@@ -358,7 +377,7 @@ footer a{color:var(--mist);text-underline-offset:3px}
             <div>
               <h3 id="np-title"></h3>
               <p class="sub" id="np-sub"></p>
-              <span class="pill-st" id="np-st"></span>
+              <div class="np-row"><span class="pill-st" id="np-st"></span><button type="button" class="chip" id="np-info" data-i="np.info"></button></div>
             </div>
           </div>
           <div class="embed-sp" id="sp-box"><div id="sp-embed"></div></div>
@@ -420,10 +439,13 @@ footer a{color:var(--mist);text-underline-offset:3px}
     <section class="wrap view v-songs" data-view="songs" hidden>
       <div class="page-head">
         <div><p class="eyebrow" id="songs-sub"></p><h2 data-i="songs.title"></h2></div>
-        <label class="search">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
-          <input id="q-songs" type="search" autocomplete="off" data-ph="songs.ph" data-al="songs.ph">
-        </label>
+        <div class="head-tools">
+          <button type="button" class="act" data-play="s-ice" data-i="play.songs"></button>
+          <label class="search">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+            <input id="q-songs" type="search" autocomplete="off" data-ph="songs.ph" data-al="songs.ph">
+          </label>
+        </div>
       </div>
       <div class="grid" id="g-songs"></div>
       <p class="empty" hidden></p>
@@ -458,6 +480,8 @@ footer a{color:var(--mist);text-underline-offset:3px}
   </main>
 
   <footer class="wrap" id="footer" hidden>
+    <h2 class="more-head" data-i="more.title"></h2>
+    <nav class="more" id="more" data-al="more.title"></nav>
     <p id="foot-1"></p>
     <p data-i="foot.2"></p>
   </footer>
@@ -476,6 +500,10 @@ footer a{color:var(--mist);text-underline-offset:3px}
         <p class="sh-text" id="sh-note"></p>
         <div class="chips" id="sh-chips"></div>
       </div>
+    </div>
+    <div class="sh-actions">
+      <button type="button" class="act" id="sh-play"></button>
+      <button type="button" class="act ghost" id="sh-copy"></button>
     </div>
     <div class="links" id="sh-links"></div>
     <p class="sh-tip" data-i="sh.tip"></p>
@@ -843,6 +871,29 @@ Object.assign(T.vi, {
   'chat.empty':'Chưa có tin nhắn nào. Chào mọi người đi!','chat.note':'Tin nhắn công khai. Hãy thân thiện với các fan khác.',
 });
 
+/* words for links between pages */
+Object.assign(T.en, {
+  'sh.play':'▶ Play in the listening room','sh.copy':'Copy link','sh.copied':'Link copied',
+  'sh.liveOf':s=>`Live: ${s}`,'sh.orig':s=>`Original song: ${s}`,'sh.show':s=>`All stages of ${s}`,
+  'np.info':'Details','play.songs':'▶ Play all in the listening room','play.show':'▶ Play this show','play.mv':'▶ Play all MVs',
+  'more.title':'Explore',
+  'more.d':{home:'Songs orbiting by release year',listen:'Stream on Spotify and YouTube, chat with fans',artist:'Profile, timeline and official channels',songs:'Every song from 2020 to 2026',stages:'Live stages, grouped by show',mv:'Music videos from YouTube'},
+});
+Object.assign(T.zh, {
+  'sh.play':'▶ 在收听室播放','sh.copy':'复制链接','sh.copied':'已复制链接',
+  'sh.liveOf':s=>`现场：${s}`,'sh.orig':s=>`原曲：${s}`,'sh.show':s=>`${s} 全部舞台`,
+  'np.info':'详情','play.songs':'▶ 在收听室全部播放','play.show':'▶ 播放本节目舞台','play.mv':'▶ 播放全部 MV',
+  'more.title':'继续探索',
+  'more.d':{home:'按发行年份环绕的歌曲',listen:'在线收听 Spotify 与 YouTube，和粉丝聊天',artist:'资料、时间轴与官方频道',songs:'2020 至 2026 年的全部歌曲',stages:'按节目分类的现场舞台',mv:'YouTube 上的 MV'},
+});
+Object.assign(T.vi, {
+  'sh.play':'▶ Phát trong phòng nghe nhạc','sh.copy':'Sao chép link','sh.copied':'Đã sao chép link',
+  'sh.liveOf':s=>`Live: ${s}`,'sh.orig':s=>`Bản gốc: ${s}`,'sh.show':s=>`Tất cả sân khấu ${s}`,
+  'np.info':'Chi tiết','play.songs':'▶ Phát tất cả trong phòng nghe','play.show':'▶ Phát chương trình này','play.mv':'▶ Phát tất cả MV',
+  'more.title':'Khám phá thêm',
+  'more.d':{home:'Các bài hát xoay quanh theo năm phát hành',listen:'Nghe Spotify, YouTube ngay trên web và chat cùng fan',artist:'Hồ sơ, dòng thời gian và kênh chính thức',songs:'Tất cả bài hát từ 2020 đến 2026',stages:'Sân khấu live theo từng chương trình',mv:'MV trên YouTube'},
+});
+
 /* ---------- icons ---------- */
 const ICON = {
   spotify:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="M6.8 9.4c3.6-1.1 7.6-.8 10.6 1M7.4 12.6c3-.8 6.1-.5 8.7 1M8 15.6c2.4-.6 4.8-.4 6.8.8" fill="none" stroke="var(--void)" stroke-width="1.7" stroke-linecap="round"/></svg>',
@@ -898,12 +949,26 @@ function go(v, push = true){
   document.querySelectorAll('[data-view]').forEach(s => s.hidden = s.dataset.view !== v);
   document.querySelectorAll('#nav a').forEach(a => a.dataset.go === v ? a.setAttribute('aria-current','page') : a.removeAttribute('aria-current'));
   $('footer').hidden = v === 'home';
+  drawMore();
   window.scrollTo(0, 0);
   if (v === 'listen') initListen();
-  if (push) { try { history.pushState(null, '', v === 'home' ? location.pathname + location.search : '#' + v); } catch(_) {} }
+  if (push) { try { history.pushState(null, '', viewUrl(v)); } catch(_) {} }
 }
-addEventListener('popstate', () => go(location.hash.slice(1), false));
-addEventListener('hashchange', () => go(location.hash.slice(1), false));
+const viewUrl = v => v === 'home' ? location.pathname + location.search : '#' + v;
+const homeOf = it => it.type === 'song' ? 'songs' : it.type === 'live' ? 'stages' : 'mv';
+// a hash is either a page (#songs) or one song, stage or video (#s-ice, #l-<spotify id>, #m-<youtube id>)
+function route(hash){
+  if (ITEMS[hash]) { go(homeOf(ITEMS[hash]), false); openItem(hash); return; }
+  if (sheet.open) sheet.close();
+  go(hash, false);
+}
+addEventListener('popstate', () => route(location.hash.slice(1)));
+addEventListener('hashchange', () => route(location.hash.slice(1)));
+
+function drawMore(){
+  $('more').innerHTML = VIEWS.filter(v => v !== view).map(v =>
+    `<a href="#${v === 'home' ? '' : v}" data-go="${v}"><b>${t('nav.' + v)}</b><span>${t('more.d')[v]}</span></a>`).join('');
+}
 
 /* ---------- orbit system: one ring per year, inner = 2020 (built once) ---------- */
 (function(){
@@ -993,7 +1058,7 @@ function render(){
   $('show-index').innerHTML = SHOWS.map(sh => `<button type="button" class="show-card" data-show="${sh.k}">
     <b>${sh.name}</b>${lang === 'zh' ? '' : `<span>${sh[lang]}</span>`}<em>${sh.y} · ${t('stages.n', sh.lives.length)}${sh.champ ? ' · ' + t('champ') : ''}</em></button>`).join('');
   $('g-stages').innerHTML = SHOWS.map(sh => `<div class="show" id="show-${sh.k}">
-    <div class="show-head"><h3>${sh.name}</h3>${lang === 'zh' ? '' : `<span class="sub">${sh[lang]}</span>`}<span class="tag">${sh.y} · ${t('stages.n', sh.lives.length)}${sh.champ ? ' · ' + t('champ') : ''}</span></div>
+    <div class="show-head"><h3>${sh.name}</h3>${lang === 'zh' ? '' : `<span class="sub">${sh[lang]}</span>`}<span class="tag">${sh.y} · ${t('stages.n', sh.lives.length)}${sh.champ ? ' · ' + t('champ') : ''}</span><button type="button" class="act" data-play="l-${sh.lives[0][5]}">${t('play.show')}</button></div>
     <div class="grid">${sh.lives.map(l => card('l-'+l[5])).join('')}</div>
   </div>`).join('');
   $('alist').innerHTML = APPEARANCES.map(([d,n,ty,p]) => {
@@ -1002,12 +1067,14 @@ function render(){
   }).join('');
 
   $('mv-sub').textContent = t('mv.sub', MVS.length);
-  $('mv-links').innerHTML = CHANNELS.filter(c => c.k === 'youtube' || c.k === 'bilibili').map(c =>
+  $('mv-links').innerHTML = `<button type="button" class="act" data-play="m-${MVS[0].yt}">${t('play.mv')}</button>` +
+    CHANNELS.filter(c => c.k === 'youtube' || c.k === 'bilibili').map(c =>
     `<a class="pill" href="${c.u}" target="_blank" rel="noopener">${ICON[c.k]}${c.n} ↗</a>`).join('');
   $('g-mv').innerHTML = MVS.map(m => card('m-'+m.yt)).join('');
 
   filter('songs'); filter('stages');
   if (L.init) drawListen();
+  drawMore();
   drawChat();
   if (sheet.open && current) openItem(current);
 }
@@ -1064,18 +1131,27 @@ function openItem(key){
     if (it.w) withTxt = t('sh.with') + tx(it.w);
     note = esc(tx(it.note));
     if (it.inst) note += (note ? ' ' : '') + `<a href="https://open.spotify.com/track/${it.inst}" target="_blank" rel="noopener">${t('sh.inst')}</a>`;
-    chips = MVS.filter(m => m.song === it.k).map(m => `<button type="button" class="chip" data-open="m-${m.yt}">${esc(t('sh.watch', t('mvtype')[m.type]))}</button>`).join('');
+    chips = MVS.filter(m => m.song === it.k).map(m => chip('m-' + m.yt, t('sh.watch', t('mvtype')[m.type]))).join('')
+      + livesOf(it.t).map(([k, x]) => chip(k, t('sh.liveOf', showName(x.show) + ' ' + t('ep', x.ep)))).join('');
   } else if (it.type === 'live') {
     kind = t('sh.stage') + ' · ' + it.show.name + ' ' + t('ep', it.ep);
     meta = [it.show.y, dur(it.s), it.p ? t('sh.plays', num(it.p)) : t('sh.under')].join(' · ');
     if (it.w) withTxt = t('sh.costar') + it.w;
     note = lang === 'zh' ? '' : esc(it.show[lang]);
+    const orig = SONGS.find(s => sameSong(s.t, it.t));
+    chips = (orig ? chip('s-' + orig.k, t('sh.orig', orig.t)) : '')
+      + livesOf(it.t).filter(([k]) => k !== key).map(([k, x]) => chip(k, t('sh.liveOf', showName(x.show) + ' ' + t('ep', x.ep)))).join('')
+      + `<button type="button" class="chip show-chip" data-show="${it.show.k}">${esc(t('sh.show', showName(it.show)))}</button>`;
   } else {
     kind = t('sh.mv') + ' · ' + t('mvtype')[it.type];
     meta = [day(it.d), t('sh.views', num(it.v))].join(' · ');
     const s = SONGS.find(x => x.k === it.song);
-    chips = `<button type="button" class="chip" data-open="s-${s.k}">${esc(t('sh.listen', s.t))}</button>`;
+    chips = chip('s-' + s.k, t('sh.listen', s.t))
+      + MVS.filter(m => m.song === it.song && m.yt !== it.yt).map(m => chip('m-' + m.yt, t('sh.watch', t('mvtype')[m.type]))).join('');
   }
+  $('sh-play').textContent = t('sh.play'); $('sh-play').dataset.play = key;
+  $('sh-copy').textContent = t('sh.copy');
+  try { history.replaceState(null, '', '#' + key); } catch(_) {}
   $('sh-kind').textContent = kind;
   $('sh-meta').textContent = meta;
   $('sh-with').textContent = withTxt; $('sh-with').hidden = !withTxt;
@@ -1087,12 +1163,27 @@ function openItem(key){
 }
 $('sh-x').addEventListener('click', () => sheet.close());
 sheet.addEventListener('click', e => { if (e.target === sheet) sheet.close(); });
-sheet.addEventListener('close', () => current = null);
+sheet.addEventListener('close', () => {
+  // closing by hand puts the page address back; navigating away already replaced it
+  if (current && location.hash === '#' + current) { try { history.replaceState(null, '', viewUrl(view)); } catch(_) {} }
+  current = null;
+});
+const chip = (key, label) => `<button type="button" class="chip" data-open="${key}">${esc(label)}</button>`;
+const sameSong = (a, b) => fold(base(a)) === fold(base(b));
+const livesOf = title => Object.entries(ITEMS).filter(([, x]) => x.type === 'live' && sameSong(x.t, title));
+$('sh-copy').addEventListener('click', async () => {
+  const b = $('sh-copy'), url = location.href.split('#')[0] + '#' + current;
+  try { await navigator.clipboard.writeText(url); b.textContent = t('sh.copied'); }
+  catch(_) { b.textContent = url; }
+  setTimeout(() => { b.textContent = t('sh.copy'); }, 2500);
+});
 
 /* ---------- one click handler for the whole page ---------- */
 document.addEventListener('click', e => {
   const g = e.target.closest('[data-go]');
   if (g) { e.preventDefault(); if (sheet.open) sheet.close(); go(g.dataset.go); return; }
+  const p = e.target.closest('[data-play]');
+  if (p) { playInRoom(p.dataset.play); return; }
   const o = e.target.closest('[data-open]');
   if (o) { openItem(o.dataset.open); return; }
   const s = e.target.closest('[data-show]');
@@ -1113,11 +1204,11 @@ document.addEventListener('click', e => {
 
 /* ---------- listening room: Spotify iFrame API + YouTube IFrame API ---------- */
 const SP_LISTS = {
-  songs: SONGS.map(s => ({sp:s.sp, t:s.t, s:s.s, img:'covers/'+s.c+'.jpg', d:s.d})),
-  live: SHOWS.flatMap(sh => sh.lives.map(([ep,ti,s,p,c,sp]) => ({sp, t:base(ti) || ti, s, img:'covers/'+c+'.jpg', show:sh, ep}))),
+  songs: SONGS.map(s => ({key:'s-'+s.k, sp:s.sp, t:s.t, s:s.s, img:'covers/'+s.c+'.jpg', d:s.d})),
+  live: SHOWS.flatMap(sh => sh.lives.map(([ep,ti,s,p,c,sp]) => ({key:'l-'+sp, sp, t:base(ti) || ti, s, img:'covers/'+c+'.jpg', show:sh, ep}))),
 };
-const YT_LIST = MVS.map(m => ({yt:m.yt, t:m.t, type:m.type, img:'yt/'+m.yt+'.jpg', d:m.d}));
-const L = {init:false, src:'sp', list:'songs', sp:0, yt:0, loop:true, started:false, playing:false, mode:'idle', spState:'', ytState:'', loadedAt:0, ended:''};
+const YT_LIST = MVS.map(m => ({key:'m-'+m.yt, yt:m.yt, t:m.t, type:m.type, img:'yt/'+m.yt+'.jpg', d:m.d}));
+const L = {init:false, src:'sp', list:'songs', sp:0, yt:0, loop:true, started:false, playing:false, mode:'idle', spState:'', ytState:'', loadedAt:0, ended:'', want:false};
 let spCtl = null, ytPlayer = null, ytReady = false;
 
 const items = () => L.src === 'yt' ? YT_LIST : SP_LISTS[L.list];
@@ -1138,6 +1229,7 @@ function ensureSpotify(){
     api.createController($('sp-embed'), {uri:'spotify:track:' + SP_LISTS[L.list][L.sp].sp, width:'100%', height:80}, ctl => {
       spCtl = ctl; L.spState = 'ready';
       ctl.addListener('playback_update', onSpUpdate);
+      if (L.want) { L.want = false; setTimeout(() => ctl.play(), 500); }
     });
   };
   loadScript('https://open.spotify.com/embed/iframe-api/v1');
@@ -1188,6 +1280,21 @@ function playAt(i){
   }
   drawNow(); drawQueue();
 }
+// "Play in the listening room" from any page: switch source and list, then start that item
+function playInRoom(key){
+  const it = ITEMS[key]; if (!it) return;
+  if (sheet.open) sheet.close();
+  if (view !== 'listen') go('listen');
+  if (it.type === 'mv') {
+    setSrc('yt');
+    playAt(Math.max(0, YT_LIST.findIndex(x => x.yt === it.yt)));
+  } else {
+    setSrc('sp');
+    setList(it.type === 'live' ? 'live' : 'songs');
+    if (!spCtl) L.want = true;
+    playAt(Math.max(0, SP_LISTS[L.list].findIndex(x => x.sp === it.sp)));
+  }
+}
 function next(auto){
   let i = curIdx() + 1;
   if (i >= items().length) {
@@ -1221,6 +1328,7 @@ function drawNow(){
   img.classList.toggle('wide', !!it.yt);
   img.classList.toggle('spin', L.playing && !it.yt);
   $('np-title').textContent = it.t;
+  $('np-info').dataset.open = it.key;
   $('np-sub').textContent = subOf(it) + (it.s ? ' · ' + dur(it.s) : '');
   let k = 'st.idle', cls = '';
   if (L.src === 'yt') { k = 'st.yt'; cls = 'ok'; }
@@ -1306,7 +1414,7 @@ $('chat-form').addEventListener('submit', async e => {
 });
 
 render();
-go(location.hash.slice(1), false);
+route(location.hash.slice(1));
 
 /* ---------- starfield ---------- */
 (function(){
