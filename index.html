@@ -1,0 +1,979 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="安崎 (An Qi) fan universe: songs, live stages and MVs, linking to Spotify, YouTube, Bilibili and Chinese music apps.">
+<link rel="icon" href="artist/avatar.jpg">
+<title>安崎 Universe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Noto+Serif+SC:wght@400;600;700;900&family=Unbounded:wght@300;500;600&display=swap">
+<style>
+[hidden]{display:none!important}
+body{margin:0}
+img{max-width:100%}
+:root{
+  /* Layout: the home view is a star system (安崎 at the core, one orbit per year, one planet per song); every other view is a page of the star chart reached from the top bar */
+  --void:#05060c;
+  --panel:#0d1022;
+  --line:rgba(190,204,255,.13);
+  --line-2:rgba(190,204,255,.3);
+  --star:#eceefa;
+  --mist:#c4c9e0;
+  --dust:#9399b9;
+  --ice:#a6dcff;
+  --flare:#ffc58a;
+  --ink-on-ice:#05101c;
+  --f-display:"Unbounded","Be Vietnam Pro",system-ui,sans-serif;
+  --f-cjk:"Noto Serif SC","Songti SC","STSong","SimSun",serif;
+  --f-body:"Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  color-scheme:dark;
+}
+html{background:var(--void)}
+body{background:var(--void);color:var(--star);font:400 15px/1.6 var(--f-body);overflow-x:clip}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--ice);outline-offset:3px}
+
+.sky{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(55vmax 40vmax at 88% 4%,rgba(166,220,255,.08),transparent 65%),
+    radial-gradient(45vmax 35vmax at 2% 72%,rgba(255,197,138,.05),transparent 65%)}
+.sky canvas{display:block;width:100%;height:100%}
+.page{position:relative;z-index:1}
+.wrap{max-width:1180px;margin-inline:auto;padding-inline:clamp(16px,4vw,40px)}
+.eyebrow{margin:0;font:500 11px/1.5 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--dust);overflow-wrap:anywhere}
+.cjk{font-family:var(--f-cjk)}
+
+/* ---------- top bar ---------- */
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:rgba(5,6,12,.8);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.topbar-in{display:flex;flex-wrap:wrap;align-items:center;gap:10px 20px;padding-block:12px}
+.brand{display:flex;align-items:baseline;gap:10px;color:var(--star);text-decoration:none}
+.brand .cjk{font-weight:900;font-size:22px;line-height:1}
+.brand .latin{font:300 10.5px/1 var(--f-display);letter-spacing:.32em;color:var(--ice)}
+.nav{display:flex;gap:4px;min-width:0;margin-inline:auto;overflow-x:auto;scrollbar-width:none}
+.nav a{white-space:nowrap;padding:9px 13px;border-radius:999px;color:var(--dust);font:500 13.5px/1 var(--f-body);text-decoration:none}
+.nav a:hover{color:var(--star)}
+.nav a[aria-current="page"]{color:var(--star);background:rgba(166,220,255,.1);box-shadow:inset 0 0 0 1px rgba(166,220,255,.35)}
+.lang{display:flex;padding:2px;border:1px solid var(--line-2);border-radius:999px}
+.lang button{padding:7px 10px;border:0;border-radius:999px;background:none;color:var(--dust);font:500 12px/1 var(--f-body);cursor:pointer}
+.lang button:hover{color:var(--star)}
+.lang button[aria-pressed="true"]{background:var(--star);color:var(--void)}
+@media (max-width:760px){
+  .nav{order:3;flex:1 0 100%;margin-inline:0}
+  .lang{margin-left:auto}
+}
+
+/* ---------- channel icons ---------- */
+.icons{display:flex;flex-wrap:wrap;gap:10px}
+.ico{flex:none;display:grid;place-items:center;width:42px;height:42px;border:1px solid var(--line-2);border-radius:50%;background:rgba(255,255,255,.03);color:var(--star);transition:color .2s,border-color .2s,box-shadow .2s}
+.ico svg{width:19px;height:19px}
+a.ico:hover,a.ico:focus-visible{color:var(--ice);border-color:var(--ice);box-shadow:0 0 18px -4px var(--ice);outline:none}
+
+/* ---------- home: the universe ---------- */
+.home{display:grid;grid-template-columns:minmax(0,.72fr) minmax(0,1.28fr);gap:clamp(24px,4vw,56px);align-items:center;min-height:calc(100vh - 72px);min-height:calc(100svh - 72px);padding-block:clamp(16px,3vw,32px)}
+@media (max-width:880px){.home{grid-template-columns:minmax(0,1fr);min-height:0;padding-block:28px 48px}}
+.home h1{display:flex;flex-direction:column;gap:14px;margin:0}
+.home h1 .cjk{font-weight:900;font-size:clamp(84px,12.5vw,164px);line-height:.92;letter-spacing:.03em;text-shadow:0 0 42px rgba(166,220,255,.35)}
+.home h1 .latin{font:300 clamp(13px,1.5vw,15px)/1 var(--f-display);letter-spacing:.42em;color:var(--ice)}
+.home .icons{margin-top:30px;max-width:380px}
+
+.system-wrap{display:flex;flex-direction:column;align-items:center;gap:12px;min-width:0}
+.system{position:relative;width:min(100%,680px);aspect-ratio:1;container-type:inline-size}
+@media (min-width:881px){.system{width:min(100%,680px,calc(100vh - 150px));width:min(100%,680px,calc(100svh - 150px))}}
+.system::before{content:"";position:absolute;inset:16%;border-radius:50%;background:radial-gradient(circle,rgba(166,220,255,.13),transparent 70%)}
+.ring{position:absolute;left:50%;top:50%;z-index:2;width:calc(var(--r) * 2%);aspect-ratio:1;translate:-50% -50%;border:1px solid var(--line);border-radius:50%;animation:spin var(--T) linear infinite;transition:border-color .3s;pointer-events:none}
+.ring:has(.planet:hover),.ring:has(.planet:focus-visible){border-color:var(--line-2)}
+.yr{position:absolute;left:50%;top:calc(50% - var(--r) * 1%);z-index:1;translate:-50% -50%;font:500 clamp(8px,1.6cqw,11px)/1 var(--f-mono);letter-spacing:.06em;color:var(--dust);pointer-events:none}
+.planet{position:absolute;width:6.8cqw;aspect-ratio:1;translate:-50% -50%;padding:0;border:0;border-radius:50%;background:var(--panel);cursor:pointer;pointer-events:auto;animation:unspin var(--T) linear infinite;box-shadow:0 0 0 1px rgba(255,255,255,.2),0 0 1.8cqw rgba(166,220,255,.28);transition:scale .25s,box-shadow .25s}
+.planet img{display:block;width:100%;height:100%;border-radius:50%;object-fit:cover}
+.planet:hover,.planet:focus-visible{scale:1.5;outline:none;box-shadow:0 0 0 2px var(--ice),0 0 3cqw rgba(166,220,255,.6)}
+.system:hover .ring,.system:hover .planet,.system:focus-within .ring,.system:focus-within .planet{animation-play-state:paused}
+.core{position:absolute;left:50%;top:50%;z-index:3;width:18cqw;aspect-ratio:1;translate:-50% -50%;border-radius:50%;overflow:hidden;box-shadow:0 0 0 1px var(--line-2),0 0 0 1.4cqw rgba(166,220,255,.06),0 0 9cqw rgba(166,220,255,.38);transition:box-shadow .3s}
+.core:hover,.core:focus-visible{outline:none;box-shadow:0 0 0 2px var(--ice),0 0 0 1.4cqw rgba(166,220,255,.1),0 0 11cqw rgba(166,220,255,.55)}
+.core img{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 22%}
+@keyframes spin{to{rotate:360deg}}
+@keyframes unspin{to{rotate:-360deg}}
+.readout{margin:0;min-height:1.7em;max-width:100%;text-align:center;font:400 12.5px/1.7 var(--f-mono);color:var(--dust);overflow-wrap:anywhere}
+.readout b{font:600 15px var(--f-cjk);color:var(--star)}
+
+/* ---------- inner pages ---------- */
+.page-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px 24px;margin-bottom:30px;padding-block:clamp(32px,6vw,64px) 22px;border-bottom:1px solid var(--line)}
+.page-head h2{margin:8px 0 0;font:600 clamp(30px,5vw,52px)/1.05 var(--f-display)}
+.view{padding-bottom:24px}
+.search{position:relative;flex:0 1 320px;min-width:0}
+.search input{width:100%;box-sizing:border-box;padding:10px 14px 10px 36px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.04);color:var(--star);font:400 14px var(--f-body)}
+.search input::placeholder{color:var(--dust)}
+.search input:focus{outline:none;border-color:var(--ice)}
+.search svg{position:absolute;left:13px;top:50%;translate:0 -50%;width:14px;height:14px;fill:none;stroke:var(--dust);stroke-width:2}
+@media (max-width:620px){.search{flex-basis:100%}}
+.empty{padding-block:48px;text-align:center;color:var(--dust)}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:30px 20px}
+@media (max-width:480px){.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:24px 14px}}
+.grid-mv{grid-template-columns:repeat(auto-fill,minmax(270px,1fr))}
+@media (max-width:480px){.grid-mv{grid-template-columns:minmax(0,1fr)}}
+.card{display:flex;flex-direction:column;gap:5px;min-width:0;padding:0;border:0;background:none;color:inherit;font:inherit;text-align:left;cursor:pointer}
+.card:focus-visible{outline:none}
+.art{position:relative;display:block;aspect-ratio:1;max-width:100%;overflow:hidden;border-radius:8px;background:var(--panel);box-shadow:0 0 0 1px var(--line);transition:translate .25s,box-shadow .25s}
+.art img{display:block;width:100%;height:100%;object-fit:cover}
+.card:hover .art,.card:focus-visible .art{translate:0 -4px;box-shadow:0 0 0 1px var(--ice),0 16px 30px -12px rgba(166,220,255,.45)}
+.v-stages .card:hover .art,.v-stages .card:focus-visible .art{box-shadow:0 0 0 1px var(--flare),0 16px 30px -12px rgba(255,197,138,.4)}
+.ttl{margin-top:8px;font:600 15px/1.35 var(--f-cjk);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.meta{font:400 11.5px/1.5 var(--f-mono);color:var(--dust);font-variant-numeric:tabular-nums}
+.with{overflow:hidden;font-size:12px;color:var(--dust);white-space:nowrap;text-overflow:ellipsis}
+.badge{position:absolute;left:8px;top:8px;z-index:2;padding:3px 8px;border-radius:4px;background:rgba(5,6,12,.8);font:500 11px/1.25 var(--f-body);color:var(--mist)}
+.badge.ep,.badge.dance,.badge.perf{color:var(--flare)}
+.badge.mv{color:var(--ice)}
+.mvc .art{aspect-ratio:16/9}
+.mvc .art::after{content:"";position:absolute;left:50%;top:50%;width:46px;height:46px;translate:-50% -50%;border-radius:50%;background:rgba(5,6,12,.55);box-shadow:0 0 0 1px rgba(255,255,255,.45)}
+.mvc .art::before{content:"";position:absolute;z-index:1;left:50%;top:50%;width:14px;height:16px;translate:-35% -50%;background:var(--star);clip-path:polygon(0 0,100% 50%,0 100%)}
+
+.show-index{display:grid;grid-template-columns:repeat(auto-fill,minmax(178px,1fr));gap:12px;margin-bottom:48px}
+.show-card{display:flex;flex-direction:column;gap:3px;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.025);color:var(--star);font:inherit;text-align:left;cursor:pointer;transition:border-color .2s}
+.show-card:hover,.show-card:focus-visible{border-color:var(--flare);outline:none}
+.show-card b{font:700 17px/1.3 var(--f-cjk)}
+.show-card span{font-size:12.5px;color:var(--dust)}
+.show-card em{font:500 11.5px/1.6 var(--f-mono);font-style:normal;color:var(--flare)}
+.show{margin-top:44px;scroll-margin-top:96px}
+.show:first-child{margin-top:0}
+.show-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px;margin-bottom:18px}
+.show-head h3{margin:0;font:700 22px/1.25 var(--f-cjk)}
+.show-head .sub{font-size:13px;color:var(--dust)}
+.show-head .tag{padding:5px 10px;border:1px solid rgba(255,197,138,.35);border-radius:999px;font:500 11.5px/1 var(--f-mono);color:var(--flare)}
+
+.appear{margin-top:64px}
+.alist{display:flex;flex-direction:column;margin:0;padding:0;list-style:none}
+.alist li{display:grid;grid-template-columns:7em minmax(0,1fr) auto;gap:2px 18px;align-items:baseline;padding-block:13px;border-bottom:1px solid var(--line)}
+.alist time{font:400 12px/1.6 var(--f-mono);color:var(--dust);font-variant-numeric:tabular-nums}
+.alist b{font:600 15px/1.45 var(--f-cjk);overflow-wrap:anywhere}
+.alist .perf{display:block;margin-top:2px;font-size:13px;color:var(--dust)}
+.alist .type{padding:4px 9px;border:1px solid var(--line-2);border-radius:999px;font:500 11px/1 var(--f-body);color:var(--mist);white-space:nowrap}
+@media (max-width:560px){.alist li{grid-template-columns:minmax(0,1fr) auto}.alist time{grid-column:1 / -1}}
+
+.pill-links{display:flex;flex-wrap:wrap;gap:8px}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:8px 14px 8px 10px;border:1px solid var(--line-2);border-radius:999px;color:var(--star);font:500 13px/1 var(--f-body);text-decoration:none}
+.pill svg{width:16px;height:16px}
+.pill:hover,.pill:focus-visible{border-color:var(--ice);color:var(--ice);outline:none}
+
+/* ---------- artist ---------- */
+.artist{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);gap:clamp(28px,5vw,64px);align-items:start;padding-block:clamp(36px,6vw,72px) 8px}
+@media (max-width:760px){.artist{grid-template-columns:minmax(0,1fr)}}
+.portrait{display:block;width:100%;max-width:300px;aspect-ratio:1;object-fit:cover;object-position:50% 20%;border-radius:50%;box-shadow:0 0 0 1px var(--line-2),0 0 0 14px rgba(166,220,255,.04),0 0 80px rgba(166,220,255,.25)}
+.artist-name{display:flex;flex-direction:column;gap:12px;margin:12px 0 0}
+.artist-name .cjk{font-weight:900;font-size:clamp(56px,8vw,96px);line-height:.95}
+.artist-name .latin{font:300 13px/1 var(--f-display);letter-spacing:.3em;color:var(--ice)}
+.bio{max-width:62ch;margin:22px 0 0;color:var(--mist);font-size:16px;line-height:1.75}
+.facts{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:0 28px;margin:26px 0 0}
+.facts div{padding-block:10px;border-top:1px solid var(--line)}
+.facts dt{font:500 11px/1.5 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--dust)}
+.facts dd{margin:3px 0 0;font-size:14.5px}
+.mini{margin:32px 0 0;font:500 11px/1.5 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--dust)}
+.channels{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;margin-top:14px}
+.chan{display:flex;align-items:center;gap:12px;min-width:0;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.02);color:var(--star);text-decoration:none;transition:border-color .2s}
+.chan:hover,.chan:focus-visible{border-color:var(--ice);outline:none}
+.chan:hover .ico{color:var(--ice);border-color:var(--ice)}
+.chan > span:last-child{min-width:0}
+.chan b{display:block;font-size:14px;font-weight:600}
+.chan small{display:block;font:400 11.5px/1.4 var(--f-mono);color:var(--dust);overflow-wrap:anywhere}
+.block{padding-top:clamp(48px,7vw,80px)}
+.block-head{margin:0 0 4px;padding-bottom:14px;border-bottom:1px solid var(--line);font:600 clamp(20px,2.6vw,26px)/1.25 var(--f-display);text-wrap:balance}
+.timeline{display:flex;flex-direction:column;margin:0;padding:0;list-style:none}
+.timeline li{display:grid;grid-template-columns:5em minmax(0,1fr);gap:20px;padding-block:18px;border-bottom:1px solid var(--line)}
+.timeline .y{font:500 15px/1.7 var(--f-mono);color:var(--ice)}
+.timeline p{max-width:66ch;margin:0;color:var(--mist)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.chips:empty{display:none}
+.chip{padding:7px 12px;border:1px solid var(--line-2);border-radius:999px;background:transparent;color:var(--star);font:500 13px/1.1 var(--f-cjk);cursor:pointer}
+.chip:hover,.chip:focus-visible{border-color:var(--ice);outline:none}
+.chip.show-chip{border-color:rgba(255,197,138,.4);color:var(--flare)}
+.chip.show-chip:hover{border-color:var(--flare)}
+.streams > p{max-width:60ch;margin:18px 0 6px;color:var(--mist)}
+.streams dl{display:flex;flex-direction:column;margin:0}
+.streams dl div{display:grid;grid-template-columns:12em minmax(0,1fr);gap:4px 20px;padding-block:14px;border-bottom:1px solid var(--line)}
+@media (max-width:560px){.streams dl div{grid-template-columns:minmax(0,1fr)}}
+.streams dt{font-weight:600}
+.streams dd{margin:0;color:var(--dust);font-size:14px}
+
+footer{padding-block:40px 48px;color:var(--dust);font:400 12px/1.7 var(--f-mono)}
+footer p{margin:0}
+footer a{color:var(--mist);text-underline-offset:3px}
+
+/* ---------- detail sheet ---------- */
+#sheet{width:min(560px,calc(100% - 32px));max-height:calc(100% - 48px);overflow:auto;padding:0;border:1px solid var(--line-2);border-radius:16px;background:var(--panel);color:var(--star);box-shadow:0 30px 90px -20px rgba(0,0,0,.85)}
+#sheet::backdrop{background:rgba(3,4,10,.72);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
+.sh{position:relative;display:flex;flex-direction:column;gap:20px;padding:24px}
+.sh-top{display:grid;grid-template-columns:132px minmax(0,1fr);gap:18px;align-items:start;padding-right:30px}
+.sh-top.wide{grid-template-columns:minmax(0,1fr);padding-right:0}
+@media (max-width:460px){.sh-top{grid-template-columns:96px minmax(0,1fr)}}
+.sh-top img{display:block;width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;box-shadow:0 0 0 1px var(--line-2)}
+.sh-top.wide img{aspect-ratio:16/9}
+#sh-title{margin:8px 0 0;font:700 22px/1.3 var(--f-cjk);text-wrap:balance;overflow-wrap:anywhere}
+.sh-meta{margin:8px 0 0;font:400 12px/1.6 var(--f-mono);color:var(--dust);font-variant-numeric:tabular-nums}
+.sh-text{margin:8px 0 0;font-size:13.5px;color:var(--dust)}
+.sh-text a{color:var(--ice);text-underline-offset:3px}
+.sh-x{position:absolute;right:14px;top:14px;z-index:2;display:grid;place-items:center;width:34px;height:34px;padding:0;border:1px solid var(--line-2);border-radius:50%;background:var(--panel);color:var(--star);font:400 18px/1 var(--f-body);cursor:pointer}
+.sh-x:hover{border-color:var(--ice)}
+.links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+@media (min-width:520px){.links{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.pf{display:flex;flex-direction:column;gap:2px;padding:10px 12px;border:1px solid var(--line-2);border-radius:10px;background:rgba(255,255,255,.03);color:var(--star);text-decoration:none;transition:border-color .2s,background .2s}
+.pf b{font:600 14px/1.3 var(--f-body)}
+.pf span{font-size:11.5px;color:var(--dust)}
+.pf:hover,.pf:focus-visible{outline:none;border-color:var(--ice);background:rgba(166,220,255,.08)}
+.pf.find{border-style:dashed;background:transparent}
+.pf.main{background:var(--ice);border-color:var(--ice);color:var(--ink-on-ice)}
+.pf.main span{color:var(--ink-on-ice);opacity:.72}
+.pf.main:hover,.pf.main:focus-visible{background:var(--star);border-color:var(--star)}
+.sh-tip{margin:0;padding-top:14px;border-top:1px solid var(--line);font-size:12.5px;color:var(--dust)}
+
+@media (prefers-reduced-motion:reduce){
+  .ring,.planet{animation:none}
+  .art,.planet,.ring,.core{transition:none}
+}
+</style>
+
+</head>
+<body>
+
+<div class="sky" aria-hidden="true"><canvas id="stars"></canvas></div>
+
+<div class="page">
+  <header class="topbar">
+    <div class="wrap topbar-in">
+      <a class="brand" href="#" data-go="home"><span class="cjk">安崎</span><span class="latin">AN QI</span></a>
+      <nav class="nav" id="nav" data-al="nav.label">
+        <a href="#" data-go="home" data-i="nav.home"></a>
+        <a href="#artist" data-go="artist" data-i="nav.artist"></a>
+        <a href="#songs" data-go="songs" data-i="nav.songs"></a>
+        <a href="#stages" data-go="stages" data-i="nav.stages"></a>
+        <a href="#mv" data-go="mv" data-i="nav.mv"></a>
+      </nav>
+      <div class="lang" role="group" aria-label="Language · 语言 · Ngôn ngữ">
+        <button type="button" data-lang="en" aria-pressed="true">EN</button>
+        <button type="button" data-lang="zh" aria-pressed="false">中文</button>
+        <button type="button" data-lang="vi" aria-pressed="false">VI</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- HOME: only the universe -->
+    <section class="wrap home" data-view="home">
+      <div>
+        <h1><span class="cjk">安崎</span><span class="latin">AN QI</span></h1>
+        <div class="icons" id="home-icons"></div>
+      </div>
+      <div class="system-wrap">
+        <div class="system" id="system" role="group" data-al="home.system">
+          <a class="core" href="#artist" data-go="artist" data-al="home.core"><img src="artist/avatar.jpg" alt=""></a>
+        </div>
+        <p class="readout" id="readout" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <!-- ARTIST -->
+    <section class="wrap view v-artist" data-view="artist" hidden>
+      <div class="artist">
+        <img class="portrait" src="artist/avatar.jpg" alt="安崎">
+        <div>
+          <p class="eyebrow" data-i="artist.eyebrow"></p>
+          <h2 class="artist-name"><span class="cjk">安崎</span><span class="latin">AN QI · BABYMONSTER</span></h2>
+          <p class="bio" data-i="artist.bio"></p>
+          <dl class="facts" id="facts"></dl>
+          <h3 class="mini" data-i="artist.channels"></h3>
+          <div class="channels" id="channels"></div>
+        </div>
+      </div>
+      <div class="block">
+        <h2 class="block-head" data-i="artist.timeline"></h2>
+        <ol class="timeline" id="timeline"></ol>
+      </div>
+      <div class="block streams">
+        <h2 class="block-head" data-i="stream.title"></h2>
+        <p data-i="stream.intro"></p>
+        <dl id="streams"></dl>
+      </div>
+    </section>
+
+    <!-- SONGS -->
+    <section class="wrap view v-songs" data-view="songs" hidden>
+      <div class="page-head">
+        <div><p class="eyebrow" id="songs-sub"></p><h2 data-i="songs.title"></h2></div>
+        <label class="search">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+          <input id="q-songs" type="search" autocomplete="off" data-ph="songs.ph" data-al="songs.ph">
+        </label>
+      </div>
+      <div class="grid" id="g-songs"></div>
+      <p class="empty" hidden></p>
+    </section>
+
+    <!-- STAGES -->
+    <section class="wrap view v-stages" data-view="stages" hidden>
+      <div class="page-head">
+        <div><p class="eyebrow" id="stages-sub"></p><h2 data-i="stages.title"></h2></div>
+        <label class="search">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+          <input id="q-stages" type="search" autocomplete="off" data-ph="stages.ph" data-al="stages.ph">
+        </label>
+      </div>
+      <div class="show-index" id="show-index"></div>
+      <div id="g-stages"></div>
+      <div class="appear" id="appear">
+        <h2 class="block-head" data-i="appear.title"></h2>
+        <ol class="alist" id="alist"></ol>
+      </div>
+      <p class="empty" hidden></p>
+    </section>
+
+    <!-- MV -->
+    <section class="wrap view v-mv" data-view="mv" hidden>
+      <div class="page-head">
+        <div><p class="eyebrow" id="mv-sub"></p><h2 data-i="mv.title"></h2></div>
+        <div class="pill-links" id="mv-links"></div>
+      </div>
+      <div class="grid grid-mv" id="g-mv"></div>
+    </section>
+  </main>
+
+  <footer class="wrap" id="footer" hidden>
+    <p id="foot-1"></p>
+    <p data-i="foot.2"></p>
+  </footer>
+</div>
+
+<dialog id="sheet" aria-labelledby="sh-title">
+  <div class="sh">
+    <button class="sh-x" type="button" id="sh-x" data-al="sh.close">×</button>
+    <div class="sh-top" id="sh-top">
+      <img id="sh-art" alt="">
+      <div>
+        <p class="eyebrow" id="sh-kind"></p>
+        <h3 id="sh-title"></h3>
+        <p class="sh-meta" id="sh-meta"></p>
+        <p class="sh-text" id="sh-with"></p>
+        <p class="sh-text" id="sh-note"></p>
+        <div class="chips" id="sh-chips"></div>
+      </div>
+    </div>
+    <div class="links" id="sh-links"></div>
+    <p class="sh-tip" data-i="sh.tip"></p>
+  </div>
+</dialog>
+
+<script>
+/* =====================================================================
+   DATA
+   Profile and timeline: Baidu Baike (baike.baidu.com/item/安崎/22831154).
+   Songs, plays, covers: Spotify. Videos: YouTube @babymonsteranqi.
+   To link a song straight to a video or a Chinese platform, add any of
+   yt / bili / qq / ncm / kg (full URL) to that song or stage.
+   Empty fields fall back to a search page on that platform.
+   ===================================================================== */
+const ARTIST = '安崎';
+const BAIKE = 'https://baike.baidu.com/item/%E5%AE%89%E5%B4%8E/22831154';
+
+const CHANNELS = [
+  {k:'spotify',   n:'Spotify',       h:'安崎',              u:'https://open.spotify.com/artist/3lkWf9z5ce3DZCUY5U8zSS'},
+  {k:'youtube',   n:'YouTube',       h:'@babymonsteranqi',  u:'https://www.youtube.com/channel/UCEjFkvV5lTsZVPzGdDj8JDw'},
+  {k:'bilibili',  n:'Bilibili',      h:'UID 626201934',     u:'https://space.bilibili.com/626201934'},
+  {k:'weibo',     n:'Weibo',         h:'UID 5718737640',    u:'https://weibo.com/u/5718737640'},
+  {k:'instagram', n:'Instagram',     h:'@babymonsterrrrr',  u:'https://www.instagram.com/babymonsterrrrr/'},
+  {k:'apple',     n:'Apple Music',   h:'music.apple.com',   u:'https://music.apple.com/th/artist/babymonster-an/1552659993'},
+  {k:'ytmusic',   n:'YouTube Music', h:'music.youtube.com', u:'https://music.youtube.com/channel/UCHvoIeCVQoRuVlDJmNUDH6w'},
+];
+
+const FACTS = [
+  {k:{en:'Real name', zh:'本名', vi:'Tên thật'},
+   v:{en:'Chen Yaxin (陈雅馨)', zh:'陈雅馨', vi:'Trần Nhã Hinh (陈雅馨)'}},
+  {k:{en:'Born', zh:'出生', vi:'Ngày sinh'},
+   v:{en:'13 May 1996 · Chongqing', zh:'1996年5月13日 · 重庆市', vi:'13/05/1996 · Trùng Khánh'}},
+  {k:{en:'Education', zh:'毕业院校', vi:'Học vấn'},
+   v:{en:'Guangxi Arts University, ethnic and folk dance', zh:'广西艺术学院 民族民间舞专业', vi:'Học viện Nghệ thuật Quảng Tây, múa dân tộc – dân gian'}},
+  {k:{en:'Groups', zh:'所属组合', vi:'Nhóm nhạc'},
+   v:{en:'Hickey 喜祺 (2018–) · THE9 (2020–2021, captain)', zh:'Hickey喜祺（2018–）· THE9（2020–2021，队长）', vi:'Hickey 喜祺 (2018–) · THE9 (2020–2021, trưởng nhóm)'}},
+  {k:{en:'Agency', zh:'经纪公司', vi:'Công ty quản lý'},
+   v:{en:'EE-Media 天娱传媒 (since Dec 2025)', zh:'天娱传媒（2025年12月起）', vi:'天娱传媒 · EE-Media (từ 12/2025)'}},
+  {k:{en:'Height', zh:'身高', vi:'Chiều cao'},
+   v:{en:'158 cm', zh:'158 cm', vi:'158 cm'}},
+];
+
+const SONGS = [
+  {k:'ice',  t:'Ice In My Walk', d:'2026-09-29', s:182, p:2255,   c:'637b2fa3dcbe032a19a3c84e', sp:'6ythEzBdfLgdzIL5G5ZbnX', inst:'3Z6hAuezhky5Iye0TdxM8D', kind:'single'},
+  {k:'nyg',  t:'你有鬼',          d:'2026-09-22', s:162, p:4388,   c:'197c99a70db058a85508ffa0', sp:'43dQd3NAqdywMGanu90I3M', inst:'5CQyLkTPcOdC7hqSKLh7pX', kind:'single'},
+  {k:'nzp',  t:'女字旁',          d:'2026-09-15', s:150, p:9144,   c:'ccc74ef91de0d8a4d53a296b', sp:'10Bx8mUuU3FntACi7esC21', inst:'5eXJtRZqlrYDNvtfc2R6zX', kind:'single'},
+  {k:'yyw',  t:'月牙湾',          d:'2026-07-24', s:278, p:37164,  c:'4e8792dd3e079e19a4ca0293', sp:'1olKCZMOwXUa5T8ow1U0d0', kind:'single'},
+  {k:'zcfl', t:'自乘风浪',        d:'2026',       s:249, p:148021, c:'9583205a8591ae366ef44ea5', sp:'62I2nU8njevjX1RkVehITp', kind:'theme',
+    w:{en:'the Ride the Wind 2026 cast', zh:'乘风2026 全体姐姐', vi:'dàn chị đẹp Đạp Gió 2026'},
+    note:{en:'Theme song of Ride the Wind 2026 (乘风2026).', zh:'《乘风2026》主题曲。', vi:'Ca khúc chủ đề của Đạp Gió 2026 (乘风2026).'}},
+  {k:'sbk2', t:'SHE’S BACK (跨年版)', d:'2026-01-09', s:196, p:5779, c:'963581638868b1bc031096b6', sp:'4Kf33CnQkUcLq4x2VpalPH', inst:'6TetK5QpVeeausxvZyYTYD', kind:'single', w:'李斯丹妮, 袁一琦',
+    note:{en:'New Year’s Eve version, first performed at the Hunan TV and Mango TV New Year’s Eve concert.', zh:'跨年版，首演于 2025-2026 湖南卫视芒果TV跨年演唱会。', vi:'Phiên bản giao thừa, trình diễn lần đầu tại concert đêm giao thừa 2025–2026 của Hồ Nam TV và Mango TV.'}},
+  {k:'sbk',  t:'SHE’S BACK',      d:'2025-12-29', s:217, p:25180,  c:'84c6840671072060702517e3', sp:'7uiO511SEWDl7w7DubUv76', inst:'5AdCveMOwCUxgrfaksNL3i', kind:'single', w:'李斯丹妮, 袁一琦'},
+  {k:'mma',  t:'慢慢愛',          d:'2025-06-09', s:224, p:34111,  c:'81960759475a7416db865d20', sp:'3UdNmeMYQvyaivr5aYJIRH', inst:'6RQKWAcwvJrI3FRctruHHS', kind:'ost',
+    note:{en:'Insert song from the web series 七根心简.', zh:'网剧《七根心简》插曲。', vi:'Nhạc chèn phim bộ 七根心简.'}},
+  {k:'bwm',  t:'不完美女生',      d:'2024-10-29', s:190, p:10485,  c:'131dff5d13eff31f828ae3a9', sp:'1UbD9oXrlCfXpjlGd5Ykkr', kind:'single',
+    note:{en:'She also sang it on 百分百歌手对战季 in February 2025.', zh:'2025年2月曾在《百分百歌手对战季》演唱。', vi:'Cô từng hát bài này tại 百分百歌手对战季 tháng 2/2025.'}},
+  {k:'fbxa', t:'飞奔向爱',        d:'2024',       s:220, p:2901,   c:'15e3a56b2533975f8f91311c', sp:'4nE4B7aFKiPtL1F6tkhjoA', inst:'0jC3DIF6h4cW4uGsZcRIoO', kind:'group', w:'刘宇, 王濛, 张豆豆, 管晨辰',
+    note:{en:'Cheer song for Team China at the Paris 2024 Olympics.', zh:'出征巴黎奥运会“为中国奥运健儿加油”推广曲。', vi:'Bài hát cổ vũ đoàn thể thao Trung Quốc tại Olympic Paris 2024.'}},
+  {k:'lyy',  t:'冷雨夜',          d:'2023-11-07', s:264, p:12519,  c:'f0cb7e6ad54516d39ec26438', sp:'4qdL6igdRV4Ot6M67LfZaE', inst:'52NVbkpOYEWCxC3Q9DRGPA', kind:'single'},
+  {k:'lic',  t:'Licorice',        d:'2023-05-13', s:179, p:26752,  c:'86740dbdff3ea7dce97db7b8', sp:'25JgIRwWJaJPofIBtAFUy9', kind:'ep',
+    note:{en:'From her solo EP Becoming Pt.1, with Fire and Now or Forever.', zh:'收录于个人 EP《Becoming Pt.1》，同辑还有 Fire、Now or Forever。', vi:'Nằm trong EP solo Becoming Pt.1, cùng Fire và Now or Forever.'}},
+  {k:'nof',  t:'Now or Forever',  d:'2023-02-22', s:210, p:21850,  c:'bf18684c4138b710c6b0329e', sp:'7uES6Ddo3dQCc4nafEJvyW', kind:'single',
+    note:{en:'Also on the EP Becoming Pt.1 (2023).', zh:'亦收录于 EP《Becoming Pt.1》(2023)。', vi:'Cũng có trong EP Becoming Pt.1 (2023).'}},
+  {k:'fire', t:'Fire',            d:'2022-12-23', s:202, p:38240,  c:'96e985104782e6d8e46141d2', sp:'6yN0QuEj4QWnEmn9mXqEyE', kind:'single',
+    note:{en:'Also on the EP Becoming Pt.1 (2023). She performed it at the 2024 Sichuan–Chongqing Spring Festival Gala.', zh:'亦收录于 EP《Becoming Pt.1》(2023)；曾在《2024川渝春节联欢晚会》演唱。', vi:'Cũng có trong EP Becoming Pt.1 (2023); từng biểu diễn tại Gala Xuân Tứ Xuyên – Trùng Khánh 2024.'}},
+  {k:'xdaq', t:'现代爱情故事',    d:'2022-12-09', s:279, p:18187,  c:'1e2a99573c2c0b4d06f2ff56', sp:'2Vky0H2UnHz5NiS23qEFhW', inst:'1B68hQbMHEthNiTEJ3O5ar', kind:'single', w:'梁靖康',
+    note:{en:'Special episode of 粤好听•青春重置计划.', zh:'粤好听•青春重置计划 特别篇。', vi:'Tập đặc biệt của 粤好听•青春重置计划.'}},
+  {k:'girl', t:'The Girls',       d:'2022',       s:181, p:101143, c:'925fa7b0997af635efb5a0ff', sp:'6EUX5SSKPaPp4mtXvifQK6', kind:'feat', w:'VAVA',
+    note:{en:'VAVA feat. 安崎, from the album V解之謎.', zh:'VAVA feat. 安崎，收录于专辑《V解之謎》。', vi:'VAVA feat. 安崎, trong album V解之謎.'}},
+  {k:'rgzj', t:'如果再見',        d:'2021-03-14', s:298, p:10732,  c:'3bb47b5fbfaabc530782370c', sp:'67JlGQmOT6fUt9iPnmPEbr', kind:'single',
+    note:{en:'Spotify also lists a Simplified-title release, 如果再见.', zh:'Spotify 另有简体标题版本《如果再见》。', vi:'Spotify có thêm một bản tựa giản thể 如果再见.'}},
+  {k:'miss', t:'Missing you',     d:'2021-02-04', s:277, p:451849, c:'b6cb12acf096772a66f35e6c', sp:'50346QH5Hz0bOOSDhC2OMI', kind:'ost',
+    note:{en:'Insert song from the TV drama 我的时代，你的时代.', zh:'电视剧《我的时代，你的时代》插曲。', vi:'Nhạc chèn phim truyền hình 我的时代，你的时代.'}},
+  {k:'yea',  t:'Yea',             d:'2020-12-25', s:205, p:509796, c:'331b2eee5ad178fd46ba8759', sp:'15EHqDTVPzPAmXLGlBuCSV', kind:'comp',
+    note:{en:'Her solo track on THE9’s album 虚实X境.', zh:'THE9 专辑《虚实X境》中的个人单曲。', vi:'Ca khúc solo của cô trong album 虚实X境 của THE9.'}},
+];
+
+// lives: [episode, title, seconds, Spotify plays, cover, Spotify id, co-stars]
+const SHOWS = [
+  {k:'cf26', name:'乘风2026', en:'Ride the Wind 2026', vi:'Đạp Gió 2026', y:2026, lives:[
+    ['第1期','花儿为什么这样红 - Live',95,4556,'b1f5381f996ac108a2e19781','1apGDysIQyF1lA4n2tTFs4',''],
+    ['第2期','彩虹的微笑 - Live',181,15367,'db534ad23f06f0bf4c6f776e','6ZHYy890C3Y5c3GxzoslNJ','萧蔷, 陶昕然'],
+    ['第7期','逆战 - Live',247,25678,'4903df37ecd9aed0560cdb09','2aGCYWpT0mGvVdH6GZgVmd','Sinje Lee, 乌兰图雅, 叶一茜, Trang Pháp'],
+    ['第7期','月牙湾 - Live',276,57204,'4903df37ecd9aed0560cdb09','3OdXJDB8OFTnfUTi2IPHzp',''],
+    ['第7期','青春修炼手册 - Live',252,35136,'4903df37ecd9aed0560cdb09','5t8EPXRHl6eF3S6tBvYHo6','张小婉, 管乐, Trang Pháp'],
+    ['第9期','潇洒小姐 - Live',197,14940,'50696c3a517053d48ad26da6','5ItNhKzEwQxpQxId4n2X1W','萧蔷, 温峥嵘, 阚清子'],
+    ['第9期','泪桥 - Live',238,39815,'50696c3a517053d48ad26da6','5KOACzCFsgwFiyEqakq3OP','张月'],
+    ['第9期','少一点天份 - Live',290,12336,'50696c3a517053d48ad26da6','5UvI0aEeNQgdICjoazutPG','阚清子'],
+    ['第11期','讨厌 - Live',231,9018,'0e72928a0ab42075e6182768','40m2ZSl6EnMPzzvbPPBDZd','李小冉, Sinje Lee, 江語晨, 阚清子'],
+    ['第12期','KNOCKOUT - Live',217,38040,'bd9e9f9367c0e6da443bec30','5vveuKJKnPqHY9RvdIZexX','Pets Tseng, Trang Pháp, 阚清子, 淡淡, Sinje Lee'],
+  ]},
+  {k:'ssbx', name:'声生不息·港乐季', en:'Infinity and Beyond', vi:'Thanh Sinh Bất Tức · mùa nhạc Hồng Kông', y:2022, lives:[
+    ['第3期','自作多情 - Live',275,90963,'6c4ba079ae18f4f6e5faefa8','1eLhfDdR1V7Dqdw2MioNxQ',''],
+    ['第4期','夏日倾情 - Live',261,164653,'801d518f51e1cf08025c8a3c','40s9bJWKBBps9soDUHljKr','Mike 曾比特'],
+    ['第6期','Cha Cha Cha - Live',258,80606,'19454ca171e81b89d0c465ca','7LA7Y06gsuYv84dXrmkAQZ','馬賽克樂隊'],
+    ['第7期','下一站天后 - Live',330,480896,'70acaad1494542870a2c883f','3EpUcbFdKfmufCz3GYNvkv','Hacken Lee, Jerry Lamb, Chilam, Miriam Yeung, Li Jian, CoCo Lee, 周笔畅, 刘惜君, Mike 曾比特, 马赛克乐队, Mao Buyi, 魔动闪霸, 王源, 單依純, Gigi炎明熹'],
+    ['第9期','甘心替代你 - Live',237,105648,'5198790df5269c236aa9b8a5','2DWE9oSJpjMz5dqJwn14Il','Rainie Yang'],
+    ['第10期','我的骄傲 - Live',240,148962,'668d1691a620bc238c3e05b8','33vww8fwCic5mDLdrXAgu8','糖妹, Gigi炎明熹'],
+    ['第11期','醒醒 - Live',284,47719,'a966d82dfabc7410e786bee7','0zmcZoVjTMFvH84AXxK37I','Bibi Zhou'],
+    ['第12期','眉飞色舞 - Live',292,110956,'2870c394b6d4b8e71b7c747a','7nKNfzqCckf7K2fpVdrQpA','Mike 曾比特, Mao Buyi, Gigi炎明熹'],
+    ['第12期','友情岁月 - Live',247,499372,'2870c394b6d4b8e71b7c747a','086QMMoVMIMtLAANYHwMi8','Sally Yeh, Gigi炎明熹, Miriam Yeung, Bibi Zhou, 刘惜君'],
+  ]},
+  {k:'blwt', name:'爆裂舞台', en:'Stage Boom', vi:'Bạo Liệt Vũ Đài', y:2021, champ:true, lives:[
+    ['第1期','Yea - Live',98,0,'64b1cb098bf90c1b3674e6ef','67jHIWUzKb6o5SsGHFEcdL',''],
+    ['第3期','烦 - Live',213,0,'00c1fd42e356df1e5257e20d','4CTLlxJySHy2wPTEAeEHZ4',''],
+    ['第4期','It’s The Time (是时候用尽全身力气了) - B版Live',117,0,'52a5c7f8ff8ec92f57a7b6b0','2d7udrajdeVaDeGJWVf4iO','Lexie Liu'],
+    ['第5期','玫瑰少年 - Live',219,1920,'a3b2782d5b7f685c5cbbd635','7ku17i6xdLYsJvb7DRxtFY','Lexie Liu'],
+    ['第7期','自由世界 - Live',292,1482,'0705e72a633a101388d3b736','5RsAqk7JGk8MYRHAznf9Q2','罗一舟, Krystal Chan'],
+    ['第8期','爆裂阵线联盟 - Live',631,1262,'92eebb400572fb496ee5b708','3pRssfJU9UFDD1uJjd8sB9','單依純, 陸柯燃K, Yamy郭颖, Krystal Chan, 张航'],
+    ['第9期','末路狂花 - Live',205,0,'b537cee33f09248ed9329e99','0an2gvO7qo0NKGT0djRZ58',''],
+    ['第10期','神奇 - Live',249,0,'364c87a0c96987a146236f2d','4U8pKCR9dVqIUQMthAWLMo',''],
+    ['第12期','The One - Live',246,0,'a75f867760ad8100d19ab486','1ZjQE76czDHaWTt3G2aQfj',''],
+    ['第12期','Fancy - Live',252,0,'a75f867760ad8100d19ab486','7JSxwzRNJzEJO1R8mV4k0C',''],
+    ['第12期','VVS - Live',360,14181,'a75f867760ad8100d19ab486','41q2l563pT0X38MPVSBLIh','Lexie Liu, YUQI, 陸柯燃K, VAVA, Yamy郭颖, Krystal Chan, 周潔瓊'],
+  ]},
+  {k:'tcds', name:'天赐的声音 第二季', en:'Melody Journey S2', vi:'Thiên Tứ Đích Thanh Âm mùa 2', y:2021, lives:[
+    ['第10期','潇洒小姐 - Live',199,0,'6a58ee23da1ea602b360004f','3PAbIX7XZWa5Bjq0ii1WOe','上官喜爱'],
+    ['第10期','红日 - Live',298,0,'6a58ee23da1ea602b360004f','0SFdVa8hipv3rHOnAvrAlR','胡海泉, 上官喜爱'],
+  ]},
+  {k:'qc3', name:'青春有你3', en:'Youth With You 3', vi:'Thanh Xuân Có Bạn 3', y:2021, lives:[
+    ['第21期','Yes！OK！ + We Rock - Live',265,1960,'3f7359a393411b7e393144bf','50qbUGcOS7RIodP0KPAvd8','喻言, 陸柯燃K, 草鱼BoogieFish, 常华森, 何德瑞, 彦希, G.G张思源, 郑星源'],
+  ]},
+  {k:'qc2', name:'青春有你2', en:'Youth With You 2', vi:'Thanh Xuân Có Bạn 2', y:2020, lives:[
+    ['第6期','Play - Live',199,6171,'a8ab81350fb3955bd26c2312','1lKuKCE9aGX1AGqtF3s67n','葛鑫怡, 黄欣苑, 金子涵, 孔雪儿, 魏辰, 文哲'],
+    ['第13期','有点甜 - Live',234,12279,'186acb87531ad0def0959939','6gGoVKD3Nk8xS2W3ixLv5Y','符雅凝, 靳阳阳, 李依宸, 莫寒'],
+    ['第14期','十面埋伏2 - 练习室版Live',230,5638,'94a0a403c607dd3a719171c0','4Jn0retKQF9WSe3yvSDAoW','符雅凝, 孔雪儿, XIN LIU, 李依宸'],
+    ['第17期','Lion - Live',220,13352,'b138fa7c99c0b157327719e9','4MxEGqHx51SztcIiUBmRyP','陳珏, 戴萌, XIN LIU, 上官喜爱, 王承渲 Sharon Wang, 喻言'],
+    ['第20期','溯 (Reverse) - Live',220,8887,'e2341df8ef34b01136c87daa','5YWLqhiy0Tttzv1eYq0FXy','陳珏, 戴萌, XIN LIU, 上官喜爱, 王承渲 Sharon Wang, 喻言'],
+    ['第21期','情人 - Live',212,10372,'930652a9fbc50c77d44714c4','3T6VXEtV6VSHVv7iZNU5Gv','KUN, 葛鑫怡, 劉令姿, 許馨文, SNH48许杨玉琢'],
+  ]},
+];
+
+// other TV shows, galas and concerts (Baidu Baike): [date, name, type, performance]
+const APPEARANCES = [
+  ['2026-08-30','2026青春芒果夜','gala','《美丽新世界》Mix《我怎么这么好看》'],
+  ['2026-03-03','2026湖南卫视芒果TV元宵喜乐会','gala','《威风锣鼓闹元宵》'],
+  ['2025-12-31','2025-2026湖南卫视芒果TV跨年演唱会','concert','《She’s back》'],
+  ['2025-12-20','上线吧姐姐','variety',''],
+  ['2025-02-27','百分百歌手对战季','variety','《不完美女生》'],
+  ['2025-02-12','2025年中央广播电视总台元宵晚会','gala','《上元欢渝夜》'],
+  ['2024-10-12','向山海出发','variety',''],
+  ['2024-08-04','上场吧！啦啦队','variety',''],
+  ['2024-03-27','百分百歌手','variety',''],
+  ['2024-02-24','2024湖南卫视芒果TV元宵喜乐会','gala','《开工醒神操》'],
+  ['2024-02-08','2024川渝春节联欢晚会','gala','《FIRE》'],
+  ['2024-02-03','同心向未来——2024中国网络视听年度盛典','gala',''],
+  ['2023-10-27','THE9 多远都可以到达演唱会','concert',''],
+  ['2023-07-29','舞台2023','variety',''],
+  ['2022-10-14','这十年·追光之夜','gala','《你好！新模样》'],
+  ['2022-02-25','超有趣滑雪大会','variety',''],
+  ['2021-03-13','为歌而赞','variety',''],
+  ['2020-12-31','2021江苏卫视跨年演唱会','concert','《斯芬克斯》《Dumb Dumb Bomb》《我要我们在一起》'],
+  ['2020-12-06','希望的田野','variety',''],
+  ['2020-09-04','非日常派对','variety',''],
+];
+
+// YouTube channel @babymonsteranqi (dates in China time, views as of 7 Oct 2026)
+const MVS = [
+  {yt:'qPmZze5xyEA', song:'nyg',  t:'你有鬼',         type:'dance',  d:'2026-10-05', v:5914},
+  {yt:'WfxQo3Bk-sg', song:'ice',  t:'Ice In My Walk', type:'dance',  d:'2026-09-30', v:57044, sp:'4WVHG79ksfSrcmUDBpskyk'},
+  {yt:'tR8_sTpbmKU', song:'bwm',  t:'不完美女生',     type:'dance',  d:'2024-10-29', v:12112},
+  {yt:'5vXekgGGtcc', song:'lic',  t:'Licorice',       type:'perf',   d:'2023-05-26', v:11054, sp:'40U1lYBBdblNjkQSkloVB8'},
+  {yt:'4TkYzBETcT4', song:'lic',  t:'Licorice',       type:'mv',     d:'2023-05-16', v:32135, sp:'4AhLufwOY1Pzo0HZ5JtxuN', sp2:'09aq8JmqiyvnfzENKJr56Q'},
+  {yt:'c4iGTd7sJQ8', song:'lic',  t:'Licorice',       type:'teaser', d:'2023-05-15', v:684},
+  {yt:'530MnuPPa30', song:'fire', t:'Fire',           type:'dance',  d:'2023-02-01', v:18077},
+  {yt:'KN5rBn312M4', song:'fire', t:'Fire',           type:'mv',     d:'2023-01-18', v:91450, sp:'5IA8JDOkjFtKbod2wvjWPN', sp2:'4RqUuPjc3NwtJBGMcAPQEe'},
+  {yt:'spQjnPWXBww', song:'fire', t:'Fire',           type:'teaser', d:'2023-01-17', v:995},
+];
+
+const TIMELINE = [
+  {y:2018,
+    en:'Debuts on 14 September with the girl group Hickey 喜祺 and the single Monkey World.',
+    zh:'9月14日随女子组合 Hickey喜祺 发行单曲《Monkey World》正式出道。',
+    vi:'Ngày 14/9 ra mắt cùng nhóm nữ Hickey 喜祺 với single Monkey World.'},
+  {y:2019,
+    en:'With Hickey, sings 月亮, the theme of the animation 少年锦衣卫, and releases the EP 蔷薇骑士.',
+    zh:'随 Hickey喜祺 推出动画《少年锦衣卫》主题曲《月亮》，并发行首张 EP《蔷薇骑士》。',
+    vi:'Cùng Hickey hát 月亮, nhạc chủ đề phim hoạt hình 少年锦衣卫, và phát hành EP 蔷薇骑士.'},
+  {y:2020, shows:['qc2'], songs:['yea'],
+    en:'Finishes 6th on Youth With You 2 and debuts in THE9 on 30 May, then is voted team captain. Her solo track Yea appears on THE9’s album 虚实X境 in December.',
+    zh:'在《青春有你第二季》中以第6名成团 THE9（5月30日），随后当选队长；12月个人单曲《Yea》收录于 THE9 专辑《虚实X境》。',
+    vi:'Đứng hạng 6 tại Thanh Xuân Có Bạn 2, ra mắt cùng THE9 ngày 30/5 và được bầu làm trưởng nhóm. Tháng 12, ca khúc solo Yea nằm trong album 虚实X境 của THE9.'},
+  {y:2021, shows:['blwt','tcds','qc3'], songs:['miss','rgzj'],
+    en:'Releases the drama song Missing You and the single 如果再见, then wins the championship of 爆裂舞台 in October. THE9 releases its farewell EP THE NINE and disbands in December.',
+    zh:'发行影视插曲《Missing You》与单曲《如果再见》；10月获得《爆裂舞台》总冠军。12月 THE9 发布毕业 EP《THE NINE》后解散。',
+    vi:'Phát hành nhạc phim Missing You và single 如果再见; tháng 10 giành quán quân 爆裂舞台. Tháng 12, THE9 phát hành EP chia tay THE NINE rồi tan rã.'},
+  {y:2022, shows:['ssbx'], songs:['girl','xdaq','fire'],
+    en:'Sings Hong Kong classics on 声生不息·港乐季 from April, features on VAVA’s The Girls, and releases 现代爱情故事 with 梁靖康 and Fire.',
+    zh:'4月起参加《声生不息·港乐季》；合作 VAVA《The Girls》，与梁靖康发行《现代爱情故事》，年底发行《Fire》。',
+    vi:'Từ tháng 4 tham gia 声生不息·港乐季 hát nhạc Hồng Kông; góp giọng trong The Girls của VAVA, phát hành 现代爱情故事 cùng 梁靖康 và Fire.'},
+  {y:2023, songs:['nof','lic','lyy'],
+    en:'Releases Now or Forever and the EP Becoming Pt.1 with the Licorice MV, reunites with THE9 for concerts on 27–28 October, and releases 冷雨夜.',
+    zh:'发行《Now or Forever》与 EP《Becoming Pt.1》及《Licorice》MV；10月27–28日参加 THE9 演唱会；发行《冷雨夜》。',
+    vi:'Phát hành Now or Forever, EP Becoming Pt.1 cùng MV Licorice; tái hợp THE9 trong concert ngày 27–28/10; phát hành 冷雨夜.'},
+  {y:2024, songs:['bwm','fbxa'],
+    en:'Performs FIRE at the 2024 Sichuan–Chongqing Spring Festival Gala, joins 百分百歌手, 上场吧！啦啦队 and 向山海出发, and releases 不完美女生 and the Olympic cheer song 飞奔向爱.',
+    zh:'登上《2024川渝春节联欢晚会》演唱《FIRE》；参加《百分百歌手》《上场吧！啦啦队》《向山海出发》；发行《不完美女生》与奥运推广曲《飞奔向爱》。',
+    vi:'Biểu diễn FIRE tại Gala Xuân Tứ Xuyên – Trùng Khánh 2024; tham gia 百分百歌手, 上场吧！啦啦队, 向山海出发; phát hành 不完美女生 và bài cổ vũ Olympic 飞奔向爱.'},
+  {y:2025, songs:['mma','sbk'],
+    en:'Performs at the CMG Lantern Festival Gala, sings 慢慢爱 for the series 七根心简, signs with EE-Media (天娱传媒) on 11 December, and performs SHE’S BACK at the Hunan TV New Year’s Eve concert.',
+    zh:'参加《2025年中央广播电视总台元宵晚会》；6月演唱网剧《七根心简》插曲《慢慢爱》；12月11日加入天娱传媒；在跨年演唱会表演《She’s back》。',
+    vi:'Biểu diễn tại Gala Nguyên Tiêu của Đài Trung ương (CMG); hát 慢慢爱 cho phim 七根心简; ký hợp đồng với 天娱传媒 ngày 11/12; trình diễn SHE’S BACK tại concert giao thừa của Hồ Nam TV.'},
+  {y:2026, shows:['cf26'], songs:['zcfl','yyw','nzp','nyg','ice'],
+    en:'Joins Ride the Wind 2026 from 3 April and wins one of the year’s Ride the Wind seats on 27 June. Releases 月牙湾, 女字旁, 你有鬼 and Ice In My Walk.',
+    zh:'4月3日起参加《乘风2026》，6月27日获得年度乘风席位；陆续发行《月牙湾》《女字旁》《你有鬼》《Ice In My Walk》。',
+    vi:'Tham gia Đạp Gió 2026 từ 3/4 và giành một suất Đạp Gió của năm vào 27/6. Phát hành 月牙湾, 女字旁, 你有鬼 và Ice In My Walk.'},
+];
+
+/* ---------- words ---------- */
+const T = {
+  en:{
+    'nav.home':'Universe','nav.artist':'Artist','nav.songs':'Songs','nav.stages':'Stages','nav.mv':'MV','nav.label':'Pages',
+    'home.core':'About 安崎','home.system':'Songs orbiting by release year',
+    'artist.eyebrow':'Artist profile',
+    'artist.bio':'安崎 (An Qi), born Chen Yaxin on 13 May 1996 in Chongqing, is a Chinese singer and dancer who trained in dance for more than ten years. She debuted in 2018 with the girl group Hickey 喜祺. In 2020 she finished 6th on Youth With You 2 to join THE9 and became its captain, and in 2021 she won the championship of 爆裂舞台. Since THE9 disbanded at the end of 2021 she has released solo singles and the EP Becoming Pt.1. She signed with EE-Media in December 2025 and joined Ride the Wind 2026.',
+    'artist.channels':'Official channels','artist.timeline':'Timeline',
+    'stream.title':'Does listening through this site count?',
+    'stream.intro':'Yes. This site never plays music itself. Every button opens the official platform, so your plays are counted there.',
+    'stream.rows':[
+      ['Spotify','Counts when you are logged in and play for at least 30 seconds. Logged-out plays are 30-second previews and do not count.'],
+      ['YouTube','Views count when you press play yourself and actually watch. Autoplay and constant skipping are often filtered out.'],
+      ['Bilibili','Plays (播放量) count when you open the video on Bilibili. Log in to like, 投币 and favourite.'],
+      ['QQ Music · NetEase · Kugou','Only count inside the official app or site while logged in. Many songs need a VIP account for the full track.'],
+    ],
+    'songs.title':'Songs','songs.sub':n=>`${n} songs · 2020 → 2026 · newest first`,'songs.ph':'Search songs or featured artists',
+    'stages.title':'Stages','stages.sub':(n,s)=>`${n} live stages · ${s} shows`,'stages.ph':'Search songs, shows or co-stars',
+    'appear.title':'More TV shows, galas and concerts',
+    'atype':{gala:'Gala',concert:'Concert',variety:'Variety show'},'perf':'Performed ',
+    'champ':'Champion',
+    'mv.title':'MV','mv.sub':n=>`${n} videos on YouTube · newest first`,
+    'empty':q=>`No results for “${q}”. Try the Chinese title, a show name or a co-star.`,
+    'with':'with ','solo':'Solo','plays':n=>`${n} plays`,'views':n=>`${n} views`,'stages.n':n=>`${n} stages`,
+    'ep':e=>'Ep. '+e.match(/\d+/)[0],
+    'kind':{single:'Single',ost:'Soundtrack',feat:'Feature',group:'Group song',theme:'Theme song',ep:'EP track',comp:'Album track'},
+    'mvtype':{mv:'Official MV',dance:'Dance version',perf:'Dance performance',teaser:'Teaser'},
+    'sh.song':'Song','sh.stage':'Stage','sh.mv':'Video',
+    'sh.plays':n=>`${n} plays on Spotify`,'sh.under':'under 1,000 plays on Spotify','sh.views':n=>`${n} views on YouTube`,
+    'sh.with':'With ','sh.costar':'On stage with ','sh.inst':'Instrumental (伴奏) ↗',
+    'sh.watch':m=>`Watch: ${m}`,'sh.listen':s=>`Listen to ${s}`,
+    'sh.tip':'Log in and play the full track on the official platform so it counts for 安崎.','sh.close':'Close',
+    'pf':{bili:'Bilibili',qq:'QQ Music',ncm:'NetEase Cloud',kg:'Kugou'},
+    'pf.open':'Open song ↗','pf.watch':'Watch ↗','pf.watchmv':'Watch MV ↗','pf.search':'Search ↗','pf.song':'Song ↗','pf.alt':'Other version ↗',
+    'foot.1':`Unofficial fan site · Profile from <a href="${BAIKE}" target="_blank" rel="noopener">Baidu Baike</a> · songs, plays and covers from Spotify · videos from YouTube · updated 7 Oct 2026.`,
+    'foot.2':'Dashed buttons open a search page. Solid buttons open the song or video directly.',
+  },
+  zh:{
+    'nav.home':'宇宙','nav.artist':'歌手','nav.songs':'歌曲','nav.stages':'舞台','nav.mv':'MV','nav.label':'页面',
+    'home.core':'关于安崎','home.system':'按发行年份环绕的歌曲',
+    'artist.eyebrow':'歌手资料',
+    'artist.bio':'安崎，本名陈雅馨，1996年5月13日出生于重庆市，中国内地流行乐女歌手，自幼学习舞蹈，毕业于广西艺术学院民族民间舞专业。2018年随女子组合 Hickey喜祺 出道；2020年在《青春有你第二季》中以第6名成团 THE9 并当选队长；2021年获得《爆裂舞台》总冠军。THE9 于2021年底解散后，她陆续发行个人单曲与 EP《Becoming Pt.1》。2025年12月加入天娱传媒，2026年参加《乘风2026》。',
+    'artist.channels':'官方频道','artist.timeline':'时间轴',
+    'stream.title':'通过本站收听算播放量吗？',
+    'stream.intro':'算。本站不直接播放音乐，所有按钮都会跳转到官方平台，播放量在那里正常计算。',
+    'stream.rows':[
+      ['Spotify','登录后播放满 30 秒才计入。未登录只能试听 30 秒，不计入。'],
+      ['YouTube','自己点击播放并真实观看才计入观看次数。自动播放或频繁快进通常会被过滤。'],
+      ['哔哩哔哩','在 B 站打开视频即计入播放量。登录后可以点赞、投币、收藏。'],
+      ['QQ音乐 · 网易云 · 酷狗','需在官方 App 或网页登录后收听才计入。很多歌曲需要会员才能听完整版。'],
+    ],
+    'songs.title':'歌曲','songs.sub':n=>`${n} 首 · 2020 → 2026 · 由新到旧`,'songs.ph':'搜索歌名或合作歌手',
+    'stages.title':'舞台','stages.sub':(n,s)=>`${s} 档节目 · ${n} 个现场舞台`,'stages.ph':'搜索歌名、节目或同台歌手',
+    'appear.title':'其他综艺、晚会与演唱会',
+    'atype':{gala:'晚会',concert:'演唱会',variety:'综艺'},'perf':'表演 ',
+    'champ':'总冠军',
+    'mv.title':'MV','mv.sub':n=>`YouTube 上 ${n} 支视频 · 由新到旧`,
+    'empty':q=>`没有找到“${q}”的结果。试试中文歌名、节目名或同台歌手。`,
+    'with':'合作：','solo':'独唱','plays':n=>`${n} 次播放`,'views':n=>`${n} 次观看`,'stages.n':n=>`${n} 个舞台`,
+    'ep':e=>e,
+    'kind':{single:'单曲',ost:'影视原声',feat:'合作',group:'合唱',theme:'主题曲',ep:'EP 收录曲',comp:'专辑收录'},
+    'mvtype':{mv:'官方MV',dance:'舞蹈版',perf:'舞蹈表演版',teaser:'预告'},
+    'sh.song':'歌曲','sh.stage':'舞台','sh.mv':'视频',
+    'sh.plays':n=>`Spotify 播放 ${n} 次`,'sh.under':'Spotify 播放不足 1,000 次','sh.views':n=>`YouTube 观看 ${n} 次`,
+    'sh.with':'合作：','sh.costar':'同台：','sh.inst':'伴奏版 ↗',
+    'sh.watch':m=>`观看：${m}`,'sh.listen':s=>`收听《${s}》`,
+    'sh.tip':'请在官方平台登录并完整收听，播放量才会计入。','sh.close':'关闭',
+    'pf':{bili:'哔哩哔哩',qq:'QQ音乐',ncm:'网易云音乐',kg:'酷狗音乐'},
+    'pf.open':'打开歌曲 ↗','pf.watch':'观看 ↗','pf.watchmv':'观看 MV ↗','pf.search':'搜索 ↗','pf.song':'歌曲 ↗','pf.alt':'另一版本 ↗',
+    'foot.1':`非官方粉丝站 · 资料来自<a href="${BAIKE}" target="_blank" rel="noopener">百度百科</a> · 歌曲、播放量与封面来自 Spotify · 视频来自 YouTube · 更新于 2026.10.07。`,
+    'foot.2':'虚线按钮打开搜索页，实线按钮直接打开歌曲或视频。',
+  },
+  vi:{
+    'nav.home':'Vũ trụ','nav.artist':'Nghệ sĩ','nav.songs':'Bài hát','nav.stages':'Sân khấu','nav.mv':'MV','nav.label':'Các trang',
+    'home.core':'Về An Kỳ','home.system':'Các bài hát xoay quanh theo năm phát hành',
+    'artist.eyebrow':'Hồ sơ nghệ sĩ',
+    'artist.bio':'An Kỳ (安崎), tên thật Trần Nhã Hinh (陈雅馨), sinh ngày 13/5/1996 tại Trùng Khánh, là nữ ca sĩ kiêm vũ công Trung Quốc với hơn mười năm học múa, tốt nghiệp chuyên ngành múa dân tộc – dân gian tại Học viện Nghệ thuật Quảng Tây. Cô ra mắt năm 2018 cùng nhóm nữ Hickey 喜祺. Năm 2020, cô đứng hạng 6 tại Thanh Xuân Có Bạn 2, ra mắt cùng THE9 và được bầu làm trưởng nhóm; năm 2021 giành quán quân 爆裂舞台. Sau khi THE9 tan rã cuối năm 2021, cô phát hành các single solo và EP Becoming Pt.1. Tháng 12/2025 cô ký hợp đồng với 天娱传媒 (EE-Media) và năm 2026 tham gia Đạp Gió 2026.',
+    'artist.channels':'Kênh chính thức','artist.timeline':'Dòng thời gian',
+    'stream.title':'Nghe qua trang này có được tính lượt stream không?',
+    'stream.intro':'Có. Trang này không tự phát nhạc. Mỗi nút mở thẳng nền tảng chính thức, nên lượt nghe được ghi nhận ở đó.',
+    'stream.rows':[
+      ['Spotify','Tính khi bạn đã đăng nhập và nghe từ 30 giây trở lên. Chưa đăng nhập thì chỉ nghe thử 30 giây, không được tính.'],
+      ['YouTube','Lượt xem tính khi bạn tự bấm phát và xem thật. Video tự phát hoặc tua liên tục thường bị loại.'],
+      ['Bilibili','Lượt xem (播放量) tính khi mở video trên Bilibili. Đăng nhập để like, 投币 và lưu video.'],
+      ['QQ Music · NetEase · Kugou','Chỉ tính khi nghe trong app hoặc web chính thức và đã đăng nhập. Nhiều bài cần tài khoản VIP mới nghe trọn bài.'],
+    ],
+    'songs.title':'Bài hát','songs.sub':n=>`${n} bài · 2020 → 2026 · mới nhất trước`,'songs.ph':'Tìm bài hát hoặc người hát cùng',
+    'stages.title':'Sân khấu','stages.sub':(n,s)=>`${n} sân khấu live · ${s} chương trình`,'stages.ph':'Tìm bài, chương trình hoặc người diễn cùng',
+    'appear.title':'Các show, đêm hội và concert khác',
+    'atype':{gala:'Đêm hội',concert:'Concert',variety:'Show giải trí'},'perf':'Biểu diễn ',
+    'champ':'Quán quân',
+    'mv.title':'MV','mv.sub':n=>`${n} video trên YouTube · mới nhất trước`,
+    'empty':q=>`Không có kết quả cho “${q}”. Thử tên bài bằng chữ Hán, tên chương trình hoặc người diễn cùng.`,
+    'with':'cùng ','solo':'Solo','plays':n=>`${n} lượt nghe`,'views':n=>`${n} lượt xem`,'stages.n':n=>`${n} sân khấu`,
+    'ep':e=>'Tập '+e.match(/\d+/)[0],
+    'kind':{single:'Single',ost:'Nhạc phim',feat:'Hợp tác',group:'Hợp ca',theme:'Ca khúc chủ đề',ep:'Trong EP',comp:'Trong album'},
+    'mvtype':{mv:'MV chính thức',dance:'Bản vũ đạo',perf:'Bản biểu diễn vũ đạo',teaser:'Teaser'},
+    'sh.song':'Bài hát','sh.stage':'Sân khấu','sh.mv':'Video',
+    'sh.plays':n=>`${n} lượt nghe trên Spotify`,'sh.under':'dưới 1.000 lượt nghe trên Spotify','sh.views':n=>`${n} lượt xem trên YouTube`,
+    'sh.with':'Hát cùng: ','sh.costar':'Diễn cùng: ','sh.inst':'Bản nhạc nền (伴奏) ↗',
+    'sh.watch':m=>`Xem: ${m}`,'sh.listen':s=>`Nghe bài ${s}`,
+    'sh.tip':'Đăng nhập và nghe trọn bài trên nền tảng chính thức để lượt nghe được tính cho An Kỳ.','sh.close':'Đóng',
+    'pf':{bili:'Bilibili',qq:'QQ Music',ncm:'NetEase Cloud',kg:'Kugou'},
+    'pf.open':'Mở bài hát ↗','pf.watch':'Xem ↗','pf.watchmv':'Xem MV ↗','pf.search':'Tìm kiếm ↗','pf.song':'Bài hát ↗','pf.alt':'Bản khác ↗',
+    'foot.1':`Trang fan không chính thức · Tiểu sử theo <a href="${BAIKE}" target="_blank" rel="noopener">Baidu Baike</a> · bài hát, lượt nghe, ảnh bìa từ Spotify · video từ YouTube · cập nhật 07.10.2026.`,
+    'foot.2':'Nút viền nét đứt mở trang tìm kiếm. Nút viền liền mở thẳng bài hát hoặc video.',
+  },
+};
+const LANGS = ['en','zh','vi'];
+
+/* ---------- icons ---------- */
+const ICON = {
+  spotify:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="M6.8 9.4c3.6-1.1 7.6-.8 10.6 1M7.4 12.6c3-.8 6.1-.5 8.7 1M8 15.6c2.4-.6 4.8-.4 6.8.8" fill="none" stroke="var(--void)" stroke-width="1.7" stroke-linecap="round"/></svg>',
+  youtube:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="1.8" y="5" width="20.4" height="14" rx="4.2" fill="currentColor"/><path d="M10 8.8v6.4l5.4-3.2z" fill="var(--void)"/></svg>',
+  ytmusic:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor"/><circle cx="12" cy="12" r="5.6" fill="none" stroke="var(--void)" stroke-width="1.4"/><path d="M10.6 9.6v4.8l4-2.4z" fill="var(--void)"/></svg>',
+  bilibili:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.2 2.8 10 5.6M16.8 2.8 14 5.6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><rect x="2.4" y="5.8" width="19.2" height="14.4" rx="3.6" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8.2 11.4v2.2M15.8 11.4v2.2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+  weibo:'<svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="10.2" cy="14.8" rx="7.8" ry="5.4" fill="currentColor"/><ellipse cx="9.6" cy="15.3" rx="3" ry="2.2" fill="var(--void)"/><path d="M15.2 4.2a5 5 0 0 1 5.2 5.4M15.4 7.3a2.1 2.1 0 0 1 2.2 2.3" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>',
+  instagram:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5.2" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="17.3" cy="6.7" r="1.2" fill="currentColor"/></svg>',
+  apple:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.2 17.4V6.2L19 4.2v11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="6.8" cy="17.4" r="2.6" fill="currentColor"/><circle cx="16.6" cy="15.2" r="2.6" fill="currentColor"/></svg>',
+};
+
+/* ===================================================================== */
+const $ = id => document.getElementById(id);
+const enc = encodeURIComponent;
+let lang = 'en';
+try { const saved = localStorage.getItem('anqi-lang'); if (LANGS.includes(saved)) lang = saved; } catch(_) {}
+const t = (k, ...a) => { const v = T[lang][k]; return typeof v === 'function' ? v(...a) : v; };
+const tx = v => v == null ? '' : typeof v === 'object' ? v[lang] : v;
+const all = v => v == null ? '' : typeof v === 'object' ? Object.values(v).join(' ') : v;
+const num = n => n.toLocaleString(lang === 'vi' ? 'vi-VN' : 'en-US');
+const dur = s => Math.floor(s/60) + ':' + String(s%60).padStart(2,'0');
+const day = d => d.replace(/-/g,'.');
+const fold = s => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/đ/g,'d');
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const base = s => s.replace(/\s*-\s*(B版|练习室版)?Live$/,'').replace(/\s*[（(][^）)]*[）)]/g,'').trim();
+const shortWith = w => { const a = w.split(', '); return a.length > 3 ? a.slice(0,3).join(', ') + ' +' + (a.length-3) : w; };
+const showName = sh => lang === 'zh' ? sh.name : sh[lang];
+
+const FIND = {
+  yt:   q => 'https://www.youtube.com/results?search_query=' + enc(q),
+  bili: q => 'https://search.bilibili.com/all?keyword=' + enc(q),
+  qq:   q => 'https://y.qq.com/n/ryqq/search?w=' + enc(q),
+  ncm:  q => 'https://music.163.com/#/search/m/?s=' + enc(q) + '&type=1',
+  kg:   q => 'https://www.kugou.com/yy/html/search.html#searchType=song&searchKeyWord=' + enc(q),
+};
+
+/* one index of everything that opens the detail sheet */
+const ITEMS = {};
+SONGS.forEach(s => ITEMS['s-'+s.k] = {...s, type:'song', img:'covers/'+s.c+'.jpg', q:ARTIST+' '+base(s.t)});
+SHOWS.forEach(sh => sh.lives.forEach(([ep,ti,s,p,c,sp,w]) => {
+  ITEMS['l-'+sp] = {type:'live', t:ti, ep, s, p, sp, w, show:sh, img:'covers/'+c+'.jpg', q:ARTIST+' '+base(ti)+' '+sh.name.split(/[·\s]/)[0]};
+}));
+MVS.forEach(m => ITEMS['m-'+m.yt] = {...m, type:'mv', img:'yt/'+m.yt+'.jpg', q:ARTIST+' '+m.t+' MV'});
+const songMV = k => MVS.find(m => m.song === k && m.type === 'mv') || MVS.find(m => m.song === k && m.type !== 'teaser');
+const LIVE_COUNT = SHOWS.reduce((a,s) => a + s.lives.length, 0);
+
+/* ---------- router ---------- */
+const VIEWS = ['home','artist','songs','stages','mv'];
+let view = 'home';
+function go(v, push = true){
+  if (!VIEWS.includes(v)) v = 'home';
+  view = v;
+  document.querySelectorAll('[data-view]').forEach(s => s.hidden = s.dataset.view !== v);
+  document.querySelectorAll('#nav a').forEach(a => a.dataset.go === v ? a.setAttribute('aria-current','page') : a.removeAttribute('aria-current'));
+  $('footer').hidden = v === 'home';
+  window.scrollTo(0, 0);
+  if (push) { try { history.pushState(null, '', v === 'home' ? location.pathname + location.search : '#' + v); } catch(_) {} }
+}
+addEventListener('popstate', () => go(location.hash.slice(1), false));
+addEventListener('hashchange', () => go(location.hash.slice(1), false));
+
+/* ---------- orbit system: one ring per year, inner = 2020 (built once) ---------- */
+(function(){
+  const sys = $('system'), readout = $('readout');
+  const YEARS = [2020,2021,2022,2023,2024,2025,2026];
+  YEARS.forEach((y,i) => {
+    const r = 16 + i*4.85;
+    const period = (60 * Math.pow(r/16, 1.5)).toFixed(1) + 's';
+    const lab = document.createElement('span');
+    lab.className = 'yr'; lab.style.setProperty('--r', r - 2.4); lab.textContent = y;
+    sys.appendChild(lab);
+    const ring = document.createElement('div');
+    ring.className = 'ring'; ring.style.setProperty('--r', r); ring.style.setProperty('--T', period);
+    const list = SONGS.filter(s => s.d.startsWith(String(y))).sort((a,b) => a.d < b.d ? -1 : 1);
+    list.forEach((s,j) => {
+      const a = (i*47 + j*360/list.length - 90) * Math.PI/180;
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'planet'; b.dataset.open = 's-'+s.k;
+      b.style.left = (50 + 50*Math.cos(a)).toFixed(3) + '%';
+      b.style.top  = (50 + 50*Math.sin(a)).toFixed(3) + '%';
+      b.setAttribute('aria-label', s.t + ', ' + day(s.d));
+      b.innerHTML = `<img src="covers/${s.c}.jpg" alt="">`;
+      const show = () => readout.innerHTML = `<b>${esc(s.t)}</b> · ${day(s.d)} · ${dur(s.s)}`;
+      b.addEventListener('mouseenter', show);
+      b.addEventListener('focus', show);
+      b.addEventListener('blur', () => readout.textContent = '');
+      ring.appendChild(b);
+    });
+    sys.appendChild(ring);
+  });
+  sys.addEventListener('mouseleave', () => readout.textContent = '');
+})();
+
+/* ---------- cards ---------- */
+function card(key){
+  const it = ITEMS[key];
+  if (it.type === 'song') {
+    const h = fold([it.t, all(it.w), all(it.note), ...LANGS.map(l => T[l].kind[it.kind]), it.d].join(' '));
+    return `<button type="button" class="card" data-open="${key}" data-h="${esc(h)}">
+      <span class="art"><img loading="lazy" src="${it.img}" alt=""></span>
+      <span class="ttl">${esc(it.t)}</span>
+      <span class="meta">${day(it.d)} · ${dur(it.s)}</span>
+      ${it.w ? `<span class="with">${t('with')}${esc(shortWith(tx(it.w)))}</span>` : ''}
+    </button>`;
+  }
+  if (it.type === 'live') {
+    const h = fold([it.t, it.w, it.ep, it.show.name, it.show.en, it.show.vi, it.show.y].join(' '));
+    return `<button type="button" class="card" data-open="${key}" data-h="${esc(h)}">
+      <span class="art"><img loading="lazy" src="${it.img}" alt=""><span class="badge ep">${esc(t('ep', it.ep))}</span></span>
+      <span class="ttl">${esc(base(it.t) || it.t)}</span>
+      <span class="meta">${dur(it.s)}${it.p ? ' · ' + t('plays', num(it.p)) : ''}</span>
+      <span class="with">${it.w ? t('with') + esc(shortWith(it.w)) : t('solo')}</span>
+    </button>`;
+  }
+  return `<button type="button" class="card mvc" data-open="${key}">
+    <span class="art"><img loading="lazy" src="${it.img}" alt=""><span class="badge ${it.type}">${t('mvtype')[it.type]}</span></span>
+    <span class="ttl">${esc(it.t)}</span>
+    <span class="meta">${day(it.d)} · ${t('views', num(it.v))}</span>
+  </button>`;
+}
+
+/* ---------- render everything for the current language ---------- */
+function render(){
+  document.documentElement.lang = {en:'en', zh:'zh-CN', vi:'vi'}[lang];
+  document.querySelectorAll('[data-lang]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
+  document.querySelectorAll('[data-i]').forEach(el => el.textContent = t(el.dataset.i));
+  document.querySelectorAll('[data-ph]').forEach(el => el.placeholder = t(el.dataset.ph));
+  document.querySelectorAll('[data-al]').forEach(el => el.setAttribute('aria-label', t(el.dataset.al)));
+  $('foot-1').innerHTML = t('foot.1');
+
+  $('home-icons').innerHTML = CHANNELS.map(c =>
+    `<a class="ico" href="${c.u}" target="_blank" rel="noopener" aria-label="${c.n}" title="${c.n}">${ICON[c.k]}</a>`).join('');
+  $('channels').innerHTML = CHANNELS.map(c =>
+    `<a class="chan" href="${c.u}" target="_blank" rel="noopener"><span class="ico">${ICON[c.k]}</span><span><b>${c.n}</b><small>${esc(c.h)}</small></span></a>`).join('');
+  $('facts').innerHTML = FACTS.map(f => `<div><dt>${tx(f.k)}</dt><dd>${esc(tx(f.v))}</dd></div>`).join('');
+
+  $('timeline').innerHTML = TIMELINE.map(r => `<li><span class="y">${r.y}</span><div>
+    <p>${esc(r[lang])}</p>
+    <div class="chips">${(r.shows||[]).map(k => `<button type="button" class="chip show-chip" data-show="${k}">${esc(showName(SHOWS.find(x => x.k === k)))}</button>`).join('')}${(r.songs||[]).map(k => `<button type="button" class="chip" data-open="s-${k}">${esc(SONGS.find(x => x.k === k).t)}</button>`).join('')}</div>
+  </div></li>`).join('');
+  $('streams').innerHTML = t('stream.rows').map(([a,b]) => `<div><dt>${a}</dt><dd>${b}</dd></div>`).join('');
+
+  $('songs-sub').textContent = t('songs.sub', SONGS.length);
+  $('g-songs').innerHTML = SONGS.map(s => card('s-'+s.k)).join('');
+
+  $('stages-sub').textContent = t('stages.sub', LIVE_COUNT, SHOWS.length);
+  $('show-index').innerHTML = SHOWS.map(sh => `<button type="button" class="show-card" data-show="${sh.k}">
+    <b>${sh.name}</b>${lang === 'zh' ? '' : `<span>${sh[lang]}</span>`}<em>${sh.y} · ${t('stages.n', sh.lives.length)}${sh.champ ? ' · ' + t('champ') : ''}</em></button>`).join('');
+  $('g-stages').innerHTML = SHOWS.map(sh => `<div class="show" id="show-${sh.k}">
+    <div class="show-head"><h3>${sh.name}</h3>${lang === 'zh' ? '' : `<span class="sub">${sh[lang]}</span>`}<span class="tag">${sh.y} · ${t('stages.n', sh.lives.length)}${sh.champ ? ' · ' + t('champ') : ''}</span></div>
+    <div class="grid">${sh.lives.map(l => card('l-'+l[5])).join('')}</div>
+  </div>`).join('');
+  $('alist').innerHTML = APPEARANCES.map(([d,n,ty,p]) => {
+    const h = fold([d, n, p, ...LANGS.map(l => T[l].atype[ty])].join(' '));
+    return `<li class="hit" data-h="${esc(h)}"><time>${day(d)}</time><div><b>${esc(n)}</b>${p ? `<span class="perf">${t('perf')}${esc(p)}</span>` : ''}</div><span class="type">${t('atype')[ty]}</span></li>`;
+  }).join('');
+
+  $('mv-sub').textContent = t('mv.sub', MVS.length);
+  $('mv-links').innerHTML = CHANNELS.filter(c => c.k === 'youtube' || c.k === 'bilibili').map(c =>
+    `<a class="pill" href="${c.u}" target="_blank" rel="noopener">${ICON[c.k]}${c.n} ↗</a>`).join('');
+  $('g-mv').innerHTML = MVS.map(m => card('m-'+m.yt)).join('');
+
+  filter('songs'); filter('stages');
+  if (sheet.open && current) openItem(current);
+}
+
+/* ---------- search ---------- */
+function filter(v){
+  const sec = document.querySelector(`[data-view="${v}"]`);
+  const inp = sec.querySelector('input[type="search"]');
+  const raw = inp.value.trim(), q = fold(raw);
+  let n = 0;
+  sec.querySelectorAll('.card, .hit').forEach(c => { const ok = !q || c.dataset.h.includes(q); c.hidden = !ok; if (ok) n++; });
+  sec.querySelectorAll('.show').forEach(g => g.hidden = !g.querySelector('.card:not([hidden])'));
+  const ap = sec.querySelector('.appear'); if (ap) ap.hidden = !ap.querySelector('.hit:not([hidden])');
+  const idx = sec.querySelector('.show-index'); if (idx) idx.hidden = !!q;
+  const e = sec.querySelector('.empty'); e.hidden = n > 0; if (!n) e.textContent = t('empty', raw);
+}
+$('q-songs').addEventListener('input', () => filter('songs'));
+$('q-stages').addEventListener('input', () => filter('stages'));
+
+/* ---------- detail sheet ---------- */
+const sheet = $('sheet');
+let current = null;
+function btn(name, url, label, cls){
+  return `<a class="pf ${cls}" href="${esc(url)}" target="_blank" rel="noopener"><b>${name}</b><span>${label}</span></a>`;
+}
+function links(it){
+  const P = t('pf'), out = [];
+  if (it.type === 'mv') {
+    out.push(btn('YouTube', 'https://www.youtube.com/watch?v=' + it.yt, t('pf.watch'), 'main'));
+    if (it.sp) out.push(btn('Spotify', 'https://open.spotify.com/track/' + it.sp, t('pf.watch'), ''));
+    else { const s = SONGS.find(x => x.k === it.song); out.push(btn('Spotify', 'https://open.spotify.com/track/' + s.sp, t('pf.song'), '')); }
+    out.push(it.bili ? btn(P.bili, it.bili, t('pf.watch'), '') : btn(P.bili, FIND.bili(it.q), t('pf.search'), 'find'));
+    if (it.sp2) out.push(btn('Spotify', 'https://open.spotify.com/track/' + it.sp2, t('pf.alt'), ''));
+    return out.join('');
+  }
+  out.push(btn('Spotify', 'https://open.spotify.com/track/' + it.sp, t('pf.open'), 'main'));
+  const mv = it.type === 'song' ? songMV(it.k) : null;
+  if (it.yt) out.push(btn('YouTube', it.yt, t('pf.open'), ''));
+  else if (mv) out.push(btn('YouTube', 'https://www.youtube.com/watch?v=' + mv.yt, t('pf.watchmv'), ''));
+  else out.push(btn('YouTube', FIND.yt(it.q), t('pf.search'), 'find'));
+  ['bili','qq','ncm','kg'].forEach(k => out.push(it[k] ? btn(P[k], it[k], t('pf.open'), '') : btn(P[k], FIND[k](it.q), t('pf.search'), 'find')));
+  return out.join('');
+}
+function openItem(key){
+  const it = ITEMS[key]; if (!it) return;
+  current = key;
+  $('sh-top').classList.toggle('wide', it.type === 'mv');
+  $('sh-art').src = it.img;
+  $('sh-title').textContent = it.t;
+  let kind, meta, withTxt = '', note = '', chips = '';
+  if (it.type === 'song') {
+    kind = t('sh.song') + ' · ' + t('kind')[it.kind];
+    meta = [day(it.d), dur(it.s), t('sh.plays', num(it.p))].join(' · ');
+    if (it.w) withTxt = t('sh.with') + tx(it.w);
+    note = esc(tx(it.note));
+    if (it.inst) note += (note ? ' ' : '') + `<a href="https://open.spotify.com/track/${it.inst}" target="_blank" rel="noopener">${t('sh.inst')}</a>`;
+    chips = MVS.filter(m => m.song === it.k).map(m => `<button type="button" class="chip" data-open="m-${m.yt}">${esc(t('sh.watch', t('mvtype')[m.type]))}</button>`).join('');
+  } else if (it.type === 'live') {
+    kind = t('sh.stage') + ' · ' + it.show.name + ' ' + t('ep', it.ep);
+    meta = [it.show.y, dur(it.s), it.p ? t('sh.plays', num(it.p)) : t('sh.under')].join(' · ');
+    if (it.w) withTxt = t('sh.costar') + it.w;
+    note = lang === 'zh' ? '' : esc(it.show[lang]);
+  } else {
+    kind = t('sh.mv') + ' · ' + t('mvtype')[it.type];
+    meta = [day(it.d), t('sh.views', num(it.v))].join(' · ');
+    const s = SONGS.find(x => x.k === it.song);
+    chips = `<button type="button" class="chip" data-open="s-${s.k}">${esc(t('sh.listen', s.t))}</button>`;
+  }
+  $('sh-kind').textContent = kind;
+  $('sh-meta').textContent = meta;
+  $('sh-with').textContent = withTxt; $('sh-with').hidden = !withTxt;
+  $('sh-note').innerHTML = note;      $('sh-note').hidden = !note;
+  $('sh-chips').innerHTML = chips;    $('sh-chips').hidden = !chips;
+  $('sh-links').innerHTML = links(it);
+  if (!sheet.open) sheet.showModal();
+  sheet.scrollTop = 0;
+}
+$('sh-x').addEventListener('click', () => sheet.close());
+sheet.addEventListener('click', e => { if (e.target === sheet) sheet.close(); });
+sheet.addEventListener('close', () => current = null);
+
+/* ---------- one click handler for the whole page ---------- */
+document.addEventListener('click', e => {
+  const g = e.target.closest('[data-go]');
+  if (g) { e.preventDefault(); if (sheet.open) sheet.close(); go(g.dataset.go); return; }
+  const o = e.target.closest('[data-open]');
+  if (o) { openItem(o.dataset.open); return; }
+  const s = e.target.closest('[data-show]');
+  if (s) {
+    if (sheet.open) sheet.close();
+    if (view !== 'stages') go('stages');
+    const q = $('q-stages'); if (q.value) { q.value = ''; filter('stages'); }
+    requestAnimationFrame(() => { const el = $('show-' + s.dataset.show); if (el) el.scrollIntoView({block:'start'}); });
+    return;
+  }
+  const l = e.target.closest('[data-lang]');
+  if (l && l.dataset.lang !== lang) {
+    lang = l.dataset.lang;
+    try { localStorage.setItem('anqi-lang', lang); } catch(_) {}
+    render();
+  }
+});
+
+render();
+go(location.hash.slice(1), false);
+
+/* ---------- starfield ---------- */
+(function(){
+  const c = $('stars'), ctx = c.getContext('2d');
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let W, H, stars = [], last = 0, timer;
+  function init(){
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    W = innerWidth; H = innerHeight;
+    c.width = W*dpr; c.height = H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0);
+    const n = Math.min(420, Math.round(W*H/4200));
+    stars = Array.from({length:n}, () => ({
+      x:Math.random()*W, y:Math.random()*H,
+      r:Math.random() < .93 ? Math.random()*.9 + .2 : Math.random()*1.1 + 1,
+      a:Math.random()*.55 + .25, f:Math.random()*1.6 + .4, p:Math.random()*6.283, h:Math.random()
+    }));
+    draw(performance.now());
+  }
+  function draw(time){
+    ctx.clearRect(0,0,W,H);
+    for (const s of stars){
+      ctx.globalAlpha = s.a * (still ? 1 : .62 + .38*Math.sin(time/1000*s.f + s.p));
+      ctx.fillStyle = s.h < .07 ? '#ffd9b0' : s.h < .2 ? '#cfe9ff' : '#ffffff';
+      ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, 6.283); ctx.fill();
+    }
+  }
+  function loop(time){ if (time - last > 50 && !document.hidden){ draw(time); last = time; } requestAnimationFrame(loop); }
+  init();
+  addEventListener('resize', () => { clearTimeout(timer); timer = setTimeout(init, 150); });
+  if (!still) requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
