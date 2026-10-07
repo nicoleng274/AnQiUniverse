@@ -1,0 +1,41 @@
+rules_version = '2';
+
+// Fan chat for 安崎 Universe.
+// Anyone can read. Signed-in visitors (anonymous auth) can post short messages,
+// at most one every 3 seconds. Nobody can edit or delete from the site;
+// moderators delete messages in the Firebase console.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /rooms/{room}/messages/{id} {
+      allow read: if true;
+      allow create: if request.auth != null
+        && request.resource.data.keys().hasOnly(['name', 'text', 'uid', 'at', 'song'])
+        && request.resource.data.keys().hasAll(['name', 'text', 'uid', 'at'])
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.name.size() <= 24
+        && request.resource.data.text is string
+        && request.resource.data.text.size() > 0
+        && request.resource.data.text.size() <= 300
+        && (!('song' in request.resource.data)
+            || (request.resource.data.song is string && request.resource.data.song.size() <= 80))
+        && request.resource.data.at == request.time
+        && getAfter(/databases/$(database)/documents/posters/$(request.auth.uid)).data.at == request.time
+        && (!exists(/databases/$(database)/documents/posters/$(request.auth.uid))
+            || get(/databases/$(database)/documents/posters/$(request.auth.uid)).data.at
+               < request.time - duration.value(3, 's'));
+      allow update, delete: if false;
+    }
+
+    // last post time per visitor, used for the 3-second limit above
+    match /posters/{uid} {
+      allow read: if false;
+      allow write: if request.auth != null
+        && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['at'])
+        && request.resource.data.at == request.time;
+    }
+  }
+}

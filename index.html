@@ -196,6 +196,74 @@ a.ico:hover,a.ico:focus-visible{color:var(--ice);border-color:var(--ice);box-sha
 .streams dt{font-weight:600}
 .streams dd{margin:0;color:var(--dust);font-size:14px}
 
+/* ---------- listening room ---------- */
+.nav a.live::before{content:"";display:inline-block;width:6px;height:6px;margin-right:7px;vertical-align:2px;border-radius:50%;background:var(--flare);box-shadow:0 0 8px var(--flare)}
+.room{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:28px;align-items:start}
+@media (max-width:900px){.room{grid-template-columns:minmax(0,1fr)}}
+.player{display:flex;flex-direction:column;gap:16px;min-width:0}
+.seg{display:inline-flex;align-self:flex-start;padding:3px;border:1px solid var(--line-2);border-radius:999px}
+.seg button{padding:8px 14px;border:0;border-radius:999px;background:none;color:var(--dust);font:500 13px/1 var(--f-body);cursor:pointer}
+.seg button:hover{color:var(--star)}
+.seg button[aria-pressed="true"]{background:var(--star);color:var(--void)}
+.hint{margin:0;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:rgba(166,220,255,.05);color:var(--mist);font-size:13.5px}
+.hint a{color:var(--ice);text-underline-offset:3px}
+.np{display:grid;grid-template-columns:96px minmax(0,1fr);gap:18px;align-items:center}
+.np img{display:block;width:96px;aspect-ratio:1;border-radius:50%;object-fit:cover;box-shadow:0 0 0 1px var(--line-2),0 0 30px rgba(166,220,255,.3)}
+.np img.wide{aspect-ratio:16/9;border-radius:8px}
+.np img.spin{animation:spin 24s linear infinite}
+.np h3{margin:0;font:700 22px/1.3 var(--f-cjk);overflow-wrap:anywhere}
+.np .sub{margin:4px 0 0;font:400 12px/1.5 var(--f-mono);color:var(--dust)}
+.pill-st{display:inline-block;margin-top:10px;padding:5px 11px;border:1px solid var(--line-2);border-radius:999px;color:var(--mist);font-size:12px}
+.pill-st.ok{border-color:rgba(166,220,255,.5);color:var(--ice)}
+.pill-st.warn{border-color:rgba(255,197,138,.55);color:var(--flare)}
+.embed-sp{min-height:80px}
+.embed-sp iframe{display:block;width:100%;border:0;border-radius:12px}
+.embed-yt{position:relative;aspect-ratio:16/9;max-width:100%;overflow:hidden;border-radius:12px;background:var(--panel)}
+.embed-yt iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.blocked{margin:0;padding:12px 14px;border:1px dashed rgba(255,197,138,.5);border-radius:10px;color:var(--flare);font-size:13.5px}
+.controls{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}
+.ctl{padding:8px 14px;border:1px solid var(--line-2);border-radius:999px;background:none;color:var(--star);font:500 13px/1 var(--f-body);cursor:pointer}
+.ctl:hover{border-color:var(--ice)}
+.loop{display:inline-flex;align-items:center;gap:8px;color:var(--mist);font-size:13px;cursor:pointer}
+.loop input{accent-color:var(--ice)}
+.controls .seg{margin-left:auto}
+.queue{max-height:440px;margin:0;padding:0;overflow:auto;list-style:none;border:1px solid var(--line);border-radius:12px}
+.queue button{display:grid;grid-template-columns:2em 40px minmax(0,1fr) auto;gap:12px;align-items:center;width:100%;padding:8px 12px;border:0;border-bottom:1px solid var(--line);background:none;color:var(--star);font:inherit;text-align:left;cursor:pointer}
+.queue li:last-child button{border-bottom:0}
+.queue.q-yt button{grid-template-columns:2em 64px minmax(0,1fr) auto}
+.queue button:hover{background:rgba(255,255,255,.04)}
+.queue .on button{background:rgba(166,220,255,.09)}
+.queue img{display:block;width:40px;height:40px;border-radius:6px;object-fit:cover}
+.queue.q-yt img{width:64px;height:36px}
+.qx{display:flex;flex-direction:column;min-width:0}
+.qt{overflow:hidden;font:600 14px/1.35 var(--f-cjk);white-space:nowrap;text-overflow:ellipsis}
+.qs{overflow:hidden;font:400 11.5px/1.4 var(--f-mono);color:var(--dust);white-space:nowrap;text-overflow:ellipsis}
+.qn,.qd{font:400 12px var(--f-mono);color:var(--dust);font-variant-numeric:tabular-nums}
+.queue .on .qn{color:var(--ice)}
+
+.chat{position:sticky;top:90px;display:flex;flex-direction:column;height:min(680px,calc(100vh - 120px));overflow:hidden;border:1px solid var(--line-2);border-radius:16px;background:rgba(13,16,34,.88)}
+@media (max-width:900px){.chat{position:static;height:520px}}
+.chat-head{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line)}
+.chat-head h3{margin:0;font:600 15px/1.2 var(--f-display)}
+.chat-head i{width:8px;height:8px;border-radius:50%;background:var(--ice);box-shadow:0 0 10px var(--ice)}
+.msgs{display:flex;flex:1;flex-direction:column;gap:12px;margin:0;padding:14px 16px;overflow:auto;list-style:none}
+.msg .mh{display:flex;align-items:baseline;gap:8px}
+.msg b{overflow-wrap:anywhere;color:var(--ice);font-size:13px}
+.msg.me b{color:var(--flare)}
+.msg time{font:400 11px var(--f-mono);color:var(--dust);white-space:nowrap}
+.msg .ms{display:block;color:var(--dust);font-size:11.5px}
+.msg p{margin:2px 0 0;color:var(--star);font-size:14px;overflow-wrap:anywhere}
+.chat-empty,.chat-off{margin:auto;padding:24px;color:var(--dust);text-align:center}
+#chat-form{display:flex;flex-direction:column;gap:8px;padding:12px;border-top:1px solid var(--line)}
+#chat-form input{box-sizing:border-box;width:100%;min-width:0;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.04);color:var(--star);font:400 14px var(--f-body)}
+#chat-form input::placeholder{color:var(--dust)}
+#chat-form input:focus{outline:none;border-color:var(--ice)}
+.chat-row{display:flex;gap:8px}
+.send{flex:none;padding:10px 16px;border:0;border-radius:10px;background:var(--ice);color:var(--ink-on-ice);font:600 14px/1 var(--f-body);cursor:pointer}
+.send:disabled{opacity:.6;cursor:default}
+#chat-status{min-height:1.2em;margin:0;color:var(--flare);font-size:12px}
+.chat-note{margin:0;color:var(--dust);font-size:11.5px}
+
 footer{padding-block:40px 48px;color:var(--dust);font:400 12px/1.7 var(--f-mono)}
 footer p{margin:0}
 footer a{color:var(--mist);text-underline-offset:3px}
@@ -244,6 +312,7 @@ footer a{color:var(--mist);text-underline-offset:3px}
       <a class="brand" href="#" data-go="home"><span class="cjk">安崎</span><span class="latin">AN QI</span></a>
       <nav class="nav" id="nav" data-al="nav.label">
         <a href="#" data-go="home" data-i="nav.home"></a>
+        <a href="#listen" data-go="listen" data-i="nav.listen" class="live"></a>
         <a href="#artist" data-go="artist" data-i="nav.artist"></a>
         <a href="#songs" data-go="songs" data-i="nav.songs"></a>
         <a href="#stages" data-go="stages" data-i="nav.stages"></a>
@@ -269,6 +338,57 @@ footer a{color:var(--mist);text-underline-offset:3px}
           <a class="core" href="#artist" data-go="artist" data-al="home.core"><img src="artist/avatar.jpg" alt=""></a>
         </div>
         <p class="readout" id="readout" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <!-- LISTEN: embedded players + fan chat -->
+    <section class="wrap view v-listen" data-view="listen" hidden>
+      <div class="page-head">
+        <div><p class="eyebrow" data-i="listen.eyebrow"></p><h2 data-i="listen.title"></h2></div>
+      </div>
+      <div class="room">
+        <div class="player">
+          <div class="seg" id="src-seg">
+            <button type="button" data-src="sp" aria-pressed="true">Spotify</button>
+            <button type="button" data-src="yt" aria-pressed="false">YouTube MV</button>
+          </div>
+          <p class="hint" id="listen-hint"></p>
+          <div class="np">
+            <img id="np-img" alt="">
+            <div>
+              <h3 id="np-title"></h3>
+              <p class="sub" id="np-sub"></p>
+              <span class="pill-st" id="np-st"></span>
+            </div>
+          </div>
+          <div class="embed-sp" id="sp-box"><div id="sp-embed"></div></div>
+          <div class="embed-yt" id="yt-box" hidden><div id="yt-embed"></div></div>
+          <p class="blocked" id="embed-blocked" data-i="listen.blocked" hidden></p>
+          <div class="controls">
+            <button type="button" class="ctl" id="prev" data-i="ctl.prev"></button>
+            <button type="button" class="ctl" id="next" data-i="ctl.next"></button>
+            <label class="loop"><input type="checkbox" id="loop" checked><span data-i="ctl.loop"></span></label>
+            <div class="seg" id="list-seg">
+              <button type="button" data-list="songs" aria-pressed="true" data-i="list.songs"></button>
+              <button type="button" data-list="live" aria-pressed="false" data-i="list.live"></button>
+            </div>
+          </div>
+          <ol class="queue" id="queue"></ol>
+        </div>
+        <aside class="chat" data-al="chat.title">
+          <div class="chat-head"><i></i><h3 data-i="chat.title"></h3></div>
+          <p class="chat-off" id="chat-off"></p>
+          <ol class="msgs" id="msgs" aria-live="polite" hidden></ol>
+          <form id="chat-form" hidden>
+            <input id="chat-name" maxlength="24" autocomplete="nickname" data-ph="chat.name" data-al="chat.name">
+            <div class="chat-row">
+              <input id="chat-text" maxlength="300" autocomplete="off" data-ph="chat.text" data-al="chat.text">
+              <button type="submit" class="send" id="chat-send" data-i="chat.send"></button>
+            </div>
+            <p id="chat-status" role="status"></p>
+            <p class="chat-note" data-i="chat.note"></p>
+          </form>
+        </aside>
       </div>
     </section>
 
@@ -373,6 +493,12 @@ footer a{color:var(--mist);text-underline-offset:3px}
    ===================================================================== */
 const ARTIST = '安崎';
 const BAIKE = 'https://baike.baidu.com/item/%E5%AE%89%E5%B4%8E/22831154';
+
+/* Fan chat (Firebase). Paste the web app config from
+   Firebase console → Project settings → Your apps, e.g.
+   { apiKey:'…', authDomain:'….firebaseapp.com', projectId:'…', appId:'…' }
+   Leave null to show "chat opens soon". Setup steps: README.md */
+const FIREBASE_CONFIG = null;
 
 const CHANNELS = [
   {k:'spotify',   n:'Spotify',       h:'安崎',              u:'https://open.spotify.com/artist/3lkWf9z5ce3DZCUY5U8zSS'},
@@ -676,6 +802,47 @@ const T = {
 };
 const LANGS = ['en','zh','vi'];
 
+/* words for the listening room and chat */
+Object.assign(T.en, {
+  'nav.listen':'Listen',
+  'listen.eyebrow':'Stream together','listen.title':'Listening room',
+  'listen.hint':'Log in to <a href="https://accounts.spotify.com/login" target="_blank" rel="noopener">Spotify</a> in this browser before you press play, then reload this page. Without a login the player only gives 30-second previews, and those don’t count as streams.',
+  'listen.ythint':'YouTube counts a view when you press play yourself and keep watching. Videos that start on their own are not counted.',
+  'listen.blocked':'The players can’t load here. Open the site on GitHub Pages, and check that Spotify and YouTube are reachable on your network.',
+  'st.idle':'Press play to start','st.full':'Full track · counts as a stream','st.preview':'30-second preview · not counted. Log in to Spotify and reload.','st.yt':'Plays here count as YouTube views',
+  'ctl.prev':'‹ Previous','ctl.next':'Next ›','ctl.loop':'Repeat list','list.songs':'Songs','list.live':'Live stages',
+  'chat.title':'Fan chat','chat.name':'Your nickname','chat.text':'Say something to other fans','chat.send':'Send',
+  'chat.connecting':'Connecting to the chat…','chat.soon':'The fan chat opens soon.','chat.error':'The chat can’t connect right now. Reload the page to try again.',
+  'chat.needName':'Enter a nickname first.','chat.slow':'Wait a few seconds between messages.','chat.fail':'The message didn’t send. Check your connection and try again.',
+  'chat.empty':'No messages yet. Say hi!','chat.note':'Messages are public. Be kind to other fans.',
+});
+Object.assign(T.zh, {
+  'nav.listen':'收听',
+  'listen.eyebrow':'一起听歌','listen.title':'收听室',
+  'listen.hint':'请先在本浏览器登录 <a href="https://accounts.spotify.com/login" target="_blank" rel="noopener">Spotify</a>，再刷新本页后播放。未登录时只能试听 30 秒，不计入播放量。',
+  'listen.ythint':'在 YouTube 播放器中自己点击播放并持续观看才计入观看次数，自动播放不计入。',
+  'listen.blocked':'播放器无法在此加载。请在 GitHub Pages 打开本站，并确认网络可以访问 Spotify 和 YouTube。',
+  'st.idle':'点击播放开始','st.full':'完整播放 · 计入播放量','st.preview':'30 秒试听 · 不计入。请登录 Spotify 后刷新。','st.yt':'在此播放计入 YouTube 观看次数',
+  'ctl.prev':'‹ 上一首','ctl.next':'下一首 ›','ctl.loop':'列表循环','list.songs':'歌曲','list.live':'现场舞台',
+  'chat.title':'粉丝聊天室','chat.name':'你的昵称','chat.text':'和其他粉丝聊聊吧','chat.send':'发送',
+  'chat.connecting':'正在连接聊天室…','chat.soon':'粉丝聊天室即将开放。','chat.error':'聊天室暂时无法连接，请刷新页面重试。',
+  'chat.needName':'请先填写昵称。','chat.slow':'发言太快了，请稍等几秒。','chat.fail':'消息未发送，请检查网络后重试。',
+  'chat.empty':'还没有消息，来打个招呼吧！','chat.note':'消息公开可见，请友善交流。',
+});
+Object.assign(T.vi, {
+  'nav.listen':'Nghe nhạc',
+  'listen.eyebrow':'Cùng nhau stream','listen.title':'Phòng nghe nhạc',
+  'listen.hint':'Đăng nhập <a href="https://accounts.spotify.com/login" target="_blank" rel="noopener">Spotify</a> trên trình duyệt này trước khi bấm phát, rồi tải lại trang. Chưa đăng nhập thì trình phát chỉ cho nghe thử 30 giây và không được tính lượt stream.',
+  'listen.ythint':'YouTube tính lượt xem khi bạn tự bấm phát và xem tiếp. Video tự phát không được tính.',
+  'listen.blocked':'Trình phát không tải được ở đây. Hãy mở trang trên GitHub Pages và kiểm tra mạng có vào được Spotify, YouTube không.',
+  'st.idle':'Bấm phát để bắt đầu','st.full':'Nghe trọn bài · được tính lượt stream','st.preview':'Bản nghe thử 30 giây · không được tính. Đăng nhập Spotify rồi tải lại trang.','st.yt':'Phát ở đây được tính lượt xem YouTube',
+  'ctl.prev':'‹ Bài trước','ctl.next':'Bài sau ›','ctl.loop':'Lặp danh sách','list.songs':'Bài hát','list.live':'Sân khấu live',
+  'chat.title':'Chat cùng fan','chat.name':'Biệt danh của bạn','chat.text':'Nhắn gì đó cho các fan khác','chat.send':'Gửi',
+  'chat.connecting':'Đang kết nối chat…','chat.soon':'Khung chat sẽ sớm mở.','chat.error':'Chat chưa kết nối được. Tải lại trang để thử lại.',
+  'chat.needName':'Nhập biệt danh trước đã.','chat.slow':'Gửi chậm lại vài giây nhé.','chat.fail':'Tin nhắn chưa gửi được. Kiểm tra mạng rồi thử lại.',
+  'chat.empty':'Chưa có tin nhắn nào. Chào mọi người đi!','chat.note':'Tin nhắn công khai. Hãy thân thiện với các fan khác.',
+});
+
 /* ---------- icons ---------- */
 const ICON = {
   spotify:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="M6.8 9.4c3.6-1.1 7.6-.8 10.6 1M7.4 12.6c3-.8 6.1-.5 8.7 1M8 15.6c2.4-.6 4.8-.4 6.8.8" fill="none" stroke="var(--void)" stroke-width="1.7" stroke-linecap="round"/></svg>',
@@ -723,7 +890,7 @@ const songMV = k => MVS.find(m => m.song === k && m.type === 'mv') || MVS.find(m
 const LIVE_COUNT = SHOWS.reduce((a,s) => a + s.lives.length, 0);
 
 /* ---------- router ---------- */
-const VIEWS = ['home','artist','songs','stages','mv'];
+const VIEWS = ['home','listen','artist','songs','stages','mv'];
 let view = 'home';
 function go(v, push = true){
   if (!VIEWS.includes(v)) v = 'home';
@@ -732,6 +899,7 @@ function go(v, push = true){
   document.querySelectorAll('#nav a').forEach(a => a.dataset.go === v ? a.setAttribute('aria-current','page') : a.removeAttribute('aria-current'));
   $('footer').hidden = v === 'home';
   window.scrollTo(0, 0);
+  if (v === 'listen') initListen();
   if (push) { try { history.pushState(null, '', v === 'home' ? location.pathname + location.search : '#' + v); } catch(_) {} }
 }
 addEventListener('popstate', () => go(location.hash.slice(1), false));
@@ -839,6 +1007,8 @@ function render(){
   $('g-mv').innerHTML = MVS.map(m => card('m-'+m.yt)).join('');
 
   filter('songs'); filter('stages');
+  if (L.init) drawListen();
+  drawChat();
   if (sheet.open && current) openItem(current);
 }
 
@@ -941,6 +1111,200 @@ document.addEventListener('click', e => {
   }
 });
 
+/* ---------- listening room: Spotify iFrame API + YouTube IFrame API ---------- */
+const SP_LISTS = {
+  songs: SONGS.map(s => ({sp:s.sp, t:s.t, s:s.s, img:'covers/'+s.c+'.jpg', d:s.d})),
+  live: SHOWS.flatMap(sh => sh.lives.map(([ep,ti,s,p,c,sp]) => ({sp, t:base(ti) || ti, s, img:'covers/'+c+'.jpg', show:sh, ep}))),
+};
+const YT_LIST = MVS.map(m => ({yt:m.yt, t:m.t, type:m.type, img:'yt/'+m.yt+'.jpg', d:m.d}));
+const L = {init:false, src:'sp', list:'songs', sp:0, yt:0, loop:true, started:false, playing:false, mode:'idle', spState:'', ytState:'', loadedAt:0, ended:''};
+let spCtl = null, ytPlayer = null, ytReady = false;
+
+const items = () => L.src === 'yt' ? YT_LIST : SP_LISTS[L.list];
+const curIdx = () => L.src === 'yt' ? L.yt : L.sp;
+const cur = () => items()[curIdx()];
+const subOf = it => it.yt ? day(it.d) + ' · ' + t('mvtype')[it.type] : it.show ? it.show.name + ' ' + t('ep', it.ep) : day(it.d);
+
+function loadScript(src){
+  const s = document.createElement('script');
+  s.src = src; s.async = true;
+  s.onerror = () => { $('embed-blocked').hidden = false; };
+  document.head.appendChild(s);
+}
+function ensureSpotify(){
+  if (L.spState) return;
+  L.spState = 'loading';
+  window.onSpotifyIframeApiReady = api => {
+    api.createController($('sp-embed'), {uri:'spotify:track:' + SP_LISTS[L.list][L.sp].sp, width:'100%', height:80}, ctl => {
+      spCtl = ctl; L.spState = 'ready';
+      ctl.addListener('playback_update', onSpUpdate);
+    });
+  };
+  loadScript('https://open.spotify.com/embed/iframe-api/v1');
+}
+function onSpUpdate(e){
+  if (L.src !== 'sp') return;
+  const d = e.data || {}, it = SP_LISTS[L.list][L.sp];
+  const was = L.playing;
+  L.playing = !d.isPaused;
+  if (L.playing) L.started = true;
+  // previews are cut to 30 s, so a short duration on a long song means the listener is not logged in
+  if (d.duration > 0) L.mode = d.duration < 31000 && it.s > 40 ? 'preview' : 'full';
+  drawNow();
+  if (was !== L.playing) drawQueue();
+  if (Date.now() - L.loadedAt > 2000 && d.duration > 0 && d.position >= d.duration - 1000) {
+    const key = L.list + ':' + L.sp;
+    if (L.ended !== key) { L.ended = key; next(true); }
+  }
+}
+function ensureYT(){
+  if (L.ytState) return;
+  L.ytState = 'loading';
+  window.onYouTubeIframeAPIReady = () => {
+    ytPlayer = new YT.Player('yt-embed', {
+      width:'100%', height:'100%', videoId:YT_LIST[L.yt].yt,
+      playerVars:{rel:0, playsinline:1},
+      events:{
+        onReady:() => { ytReady = true; },
+        onStateChange:e => {
+          if (e.data === 1) { L.started = true; L.playing = true; }
+          else if (e.data === 2) L.playing = false;
+          else if (e.data === 0) { L.playing = false; next(true); }
+          drawNow(); drawQueue();
+        },
+      },
+    });
+  };
+  loadScript('https://www.youtube.com/iframe_api');
+}
+function playAt(i){
+  if (L.src === 'yt') {
+    L.yt = i;
+    if (ytReady) ytPlayer.loadVideoById(YT_LIST[i].yt); else ensureYT();
+  } else {
+    L.sp = i; L.loadedAt = Date.now(); L.ended = '';
+    if (spCtl) { spCtl.loadUri('spotify:track:' + SP_LISTS[L.list][i].sp); setTimeout(() => spCtl.play(), 400); }
+    else ensureSpotify();
+  }
+  drawNow(); drawQueue();
+}
+function next(auto){
+  let i = curIdx() + 1;
+  if (i >= items().length) {
+    if (auto && !L.loop) { L.playing = false; drawNow(); drawQueue(); return; }
+    i = 0;
+  }
+  playAt(i);
+}
+function pauseCurrent(){
+  if (L.src === 'sp' && spCtl) { if (spCtl.pause) spCtl.pause(); else if (L.playing) spCtl.togglePlay(); }
+  if (L.src === 'yt' && ytReady) ytPlayer.pauseVideo();
+  L.playing = false;
+}
+function setSrc(src){
+  if (src === L.src) return;
+  pauseCurrent();
+  L.src = src;
+  src === 'sp' ? ensureSpotify() : ensureYT();
+  drawListen();
+}
+function setList(list){
+  if (list === L.list) return;
+  L.list = list; L.sp = 0; L.mode = 'idle'; L.ended = '';
+  if (spCtl) { L.loadedAt = Date.now(); spCtl.loadUri('spotify:track:' + SP_LISTS[list][0].sp); }
+  drawListen();
+}
+function drawNow(){
+  const it = cur(); if (!it) return;
+  const img = $('np-img');
+  if (!img.src.endsWith(it.img)) img.src = it.img;
+  img.classList.toggle('wide', !!it.yt);
+  img.classList.toggle('spin', L.playing && !it.yt);
+  $('np-title').textContent = it.t;
+  $('np-sub').textContent = subOf(it) + (it.s ? ' · ' + dur(it.s) : '');
+  let k = 'st.idle', cls = '';
+  if (L.src === 'yt') { k = 'st.yt'; cls = 'ok'; }
+  else if (L.mode === 'preview') { k = 'st.preview'; cls = 'warn'; }
+  else if (L.mode === 'full' && L.started) { k = 'st.full'; cls = 'ok'; }
+  const st = $('np-st'); st.className = 'pill-st ' + cls; st.textContent = t(k);
+}
+function drawQueue(){
+  const ci = curIdx(), q = $('queue');
+  q.classList.toggle('q-yt', L.src === 'yt');
+  q.innerHTML = items().map((it,i) => `<li class="${i === ci ? 'on' : ''}"><button type="button" data-q="${i}">
+    <span class="qn">${i === ci && L.playing ? '♪' : i + 1}</span><img loading="lazy" src="${it.img}" alt="">
+    <span class="qx"><span class="qt">${esc(it.t)}</span><span class="qs">${esc(subOf(it))}</span></span>
+    <span class="qd">${it.s ? dur(it.s) : ''}</span></button></li>`).join('');
+}
+function drawListen(){
+  document.querySelectorAll('#src-seg [data-src]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.src === L.src)));
+  document.querySelectorAll('#list-seg [data-list]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.list === L.list)));
+  $('list-seg').hidden = L.src !== 'sp';
+  $('sp-box').hidden = L.src !== 'sp';
+  $('yt-box').hidden = L.src !== 'yt';
+  $('listen-hint').innerHTML = t(L.src === 'yt' ? 'listen.ythint' : 'listen.hint');
+  $('loop').checked = L.loop;
+  drawNow(); drawQueue();
+}
+function initListen(){
+  if (L.init) return;
+  L.init = true;
+  drawListen();
+  ensureSpotify();
+}
+$('src-seg').addEventListener('click', e => { const b = e.target.closest('[data-src]'); if (b) setSrc(b.dataset.src); });
+$('list-seg').addEventListener('click', e => { const b = e.target.closest('[data-list]'); if (b) setList(b.dataset.list); });
+$('queue').addEventListener('click', e => { const b = e.target.closest('[data-q]'); if (b) playAt(+b.dataset.q); });
+$('prev').addEventListener('click', () => playAt(Math.max(0, curIdx() - 1)));
+$('next').addEventListener('click', () => next(false));
+$('loop').addEventListener('change', e => { L.loop = e.target.checked; });
+
+/* ---------- fan chat UI (the Firebase module below fills it in) ---------- */
+const chatUI = {
+  send:null, list:null, uid:null, state: FIREBASE_CONFIG ? 'chat.connecting' : 'chat.soon',
+  off(k){ this.state = k; this.send = null; drawChat(); },
+  ready(fn){ this.send = fn; this.state = null; drawChat(); },
+  render(list, uid){ this.list = list; this.uid = uid; drawChat(); },
+};
+window.chatUI = chatUI;
+window.FIREBASE_CONFIG = FIREBASE_CONFIG;
+const pad2 = n => String(n).padStart(2, '0');
+function when(ms){
+  const d = new Date(ms), now = new Date();
+  const hm = pad2(d.getHours()) + ':' + pad2(d.getMinutes());
+  return d.toDateString() === now.toDateString() ? hm : `${d.getFullYear()}.${pad2(d.getMonth()+1)}.${pad2(d.getDate())} ${hm}`;
+}
+function drawChat(){
+  const box = $('msgs'), off = $('chat-off'), k = chatUI.state;
+  off.hidden = !k;
+  if (k) off.textContent = t(k);
+  $('chat-form').hidden = !chatUI.send;
+  box.hidden = !!k;
+  if (k) return;
+  const list = chatUI.list || [];
+  const near = box.scrollHeight - box.scrollTop - box.clientHeight < 80;
+  box.innerHTML = list.length ? list.map(m => `<li class="msg${m.uid === chatUI.uid ? ' me' : ''}">
+    <div class="mh"><b>${esc(m.name || '')}</b><time>${when(m.at)}</time></div>
+    ${m.song ? `<span class="ms">♪ ${esc(m.song)}</span>` : ''}<p>${esc(m.text || '')}</p></li>`).join('')
+    : `<li class="chat-empty">${t('chat.empty')}</li>`;
+  if (near || !drawChat.scrolled) { box.scrollTop = box.scrollHeight; drawChat.scrolled = true; }
+}
+try { $('chat-name').value = localStorage.getItem('anqi-chat-name') || ''; } catch(_) {}
+$('chat-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const st = $('chat-status'), name = $('chat-name').value.trim(), text = $('chat-text').value.trim();
+  st.textContent = '';
+  if (!name) { st.textContent = t('chat.needName'); $('chat-name').focus(); return; }
+  if (!text || !chatUI.send) return;
+  try { localStorage.setItem('anqi-chat-name', name); } catch(_) {}
+  const it = L.started ? cur() : null;
+  const song = it ? (it.t + (it.yt ? ' MV' : '')).slice(0, 80) : '';
+  const btn = $('chat-send'); btn.disabled = true;
+  try { await chatUI.send(name.slice(0, 24), text.slice(0, 300), song); $('chat-text').value = ''; }
+  catch (err) { st.textContent = t(err && err.code === 'permission-denied' ? 'chat.slow' : 'chat.fail'); }
+  finally { btn.disabled = false; $('chat-text').focus(); }
+});
+
 render();
 go(location.hash.slice(1), false);
 
@@ -974,6 +1338,41 @@ go(location.hash.slice(1), false);
   addEventListener('resize', () => { clearTimeout(timer); timer = setTimeout(init, 150); });
   if (!still) requestAnimationFrame(loop);
 })();
+</script>
+
+<!-- fan chat: Firebase anonymous sign-in + Firestore (rules in firestore.rules) -->
+<script type="module">
+const cfg = window.FIREBASE_CONFIG, ui = window.chatUI;
+if (cfg) {
+  try {
+    const src = 'https://www.gstatic.com/firebasejs/10.12.2/';
+    const [{initializeApp}, {getAuth, signInAnonymously}, fs] = await Promise.all([
+      import(src + 'firebase-app.js'), import(src + 'firebase-auth.js'), import(src + 'firebase-firestore.js'),
+    ]);
+    const app = initializeApp(cfg);
+    const db = fs.getFirestore(app);
+    const {user} = await signInAnonymously(getAuth(app));
+    const msgs = fs.collection(db, 'rooms', 'main', 'messages');
+    fs.onSnapshot(fs.query(msgs, fs.orderBy('at', 'desc'), fs.limit(100)), snap => {
+      ui.render(snap.docs.map(d => {
+        const m = d.data({serverTimestamps:'estimate'});
+        return {...m, at: m.at ? m.at.toMillis() : Date.now()};
+      }).reverse(), user.uid);
+    }, err => { console.error(err); ui.off('chat.error'); });
+    ui.ready(async (name, text, song) => {
+      // one message per 3 s per visitor: the rules compare this timestamp with the previous one
+      const batch = fs.writeBatch(db);
+      batch.set(fs.doc(db, 'posters', user.uid), {at: fs.serverTimestamp()});
+      const m = {name, text, uid: user.uid, at: fs.serverTimestamp()};
+      if (song) m.song = song;
+      batch.set(fs.doc(msgs), m);
+      await batch.commit();
+    });
+  } catch (err) {
+    console.error(err);
+    ui.off('chat.error');
+  }
+}
 </script>
 </body>
 </html>
