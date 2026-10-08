@@ -3,6 +3,10 @@
 Trang fan không chính thức tổng hợp bài hát, sân khấu live và MV của **安崎 (An Qi / An Kỳ)**.
 An unofficial fan site collecting 安崎's songs, live stages and music videos.
 
+**Xem trang:** https://nicoleng274.github.io/AnQiUniverse/
+
+Mỗi trang có link riêng để chia sẻ: `#listen`, `#artist`, `#songs`, `#stages`, `#mv`. Từng bài, sân khấu hay MV cũng có link riêng, ví dụ `#s-yyw` (月牙湾); bấm **Copy link** trong bảng chi tiết để lấy.
+
 - **Universe**: trang chủ, mỗi vòng quỹ đạo là một năm (2020 → 2026), mỗi hành tinh là một bài hát.
 - **Artist**: hồ sơ, kênh chính thức, dòng thời gian.
 - **Songs / Stages / MV**: danh sách bài hát, sân khấu theo chương trình, video YouTube.
