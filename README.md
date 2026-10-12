@@ -16,8 +16,10 @@ Trang không tự phát nhạc. Mỗi nút mở thẳng Spotify, YouTube, Bilibi
 
 ## Phòng nghe nhạc (Listen) và chat
 
-Trang **Listen** nhúng trình phát Spotify và YouTube ngay trong web, bên cạnh là khung chat cho fan.
+Trang **Listen** nhúng trình phát YouTube và Spotify ngay trong web, bên cạnh là khung chat cho fan.
+Link nghe nhạc để chia sẻ: https://nicoleng274.github.io/AnQiUniverse/#listen
 
+- **YouTube (mặc định):** ai cũng nghe được trọn bài, không cần tài khoản. Có album **ANQI**, 16 bài hát (bản audio từ kênh 安崎 Topic hoặc MV chính thức) và 9 video MV. Tự bấm phát thì được tính lượt xem YouTube.
 - **Spotify:** lượt nghe chỉ được tính khi người nghe đã đăng nhập Spotify trên trình duyệt đó và nghe từ 30 giây. Chưa đăng nhập thì chỉ có bản nghe thử 30 giây, trang sẽ hiện cảnh báo màu cam.
 - **YouTube:** tính lượt xem khi người xem tự bấm phát.
 - Trình phát chỉ chạy khi trang được mở qua web (GitHub Pages). Bản xem trước trên claude.ai không nhúng được trình phát.

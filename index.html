@@ -266,6 +266,16 @@ a.ico:hover,a.ico:focus-visible{color:var(--ice);border-color:var(--ice);box-sha
 #chat-status{min-height:1.2em;margin:0;color:var(--flare);font-size:12px}
 .chat-note{margin:0;color:var(--dust);font-size:11.5px}
 
+/* ---------- new album ---------- */
+.album{display:grid;grid-template-columns:180px minmax(0,1fr);gap:24px;align-items:center;margin-bottom:40px;padding:20px;border:1px solid rgba(166,220,255,.35);border-radius:16px;background:radial-gradient(120% 140% at 0% 0%,rgba(166,220,255,.12),transparent 60%),rgba(13,16,34,.6)}
+@media (max-width:620px){.album{grid-template-columns:minmax(0,1fr)}.album img{max-width:220px}}
+.album img{display:block;width:100%;aspect-ratio:1;border-radius:10px;object-fit:cover;box-shadow:0 0 0 1px var(--line-2),0 20px 40px -18px rgba(166,220,255,.5)}
+.album h3{margin:6px 0 0;font:600 clamp(28px,4vw,40px)/1.05 var(--f-display);letter-spacing:.06em}
+.album .eyebrow{color:var(--ice)}
+.album .sub{margin:6px 0 0;font:400 12.5px/1.5 var(--f-mono);color:var(--dust)}
+.album .chips{margin-top:14px}
+.album .row{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+
 /* ---------- links between pages ---------- */
 .act{display:inline-flex;align-items:center;gap:6px;padding:10px 16px;border:1px solid var(--flare);border-radius:999px;background:rgba(255,197,138,.1);color:var(--flare);font:600 13.5px/1 var(--f-body);cursor:pointer;white-space:nowrap}
 .act:hover,.act:focus-visible{background:rgba(255,197,138,.2);outline:none}
@@ -368,8 +378,8 @@ footer a{color:var(--mist);text-underline-offset:3px}
       <div class="room">
         <div class="player">
           <div class="seg" id="src-seg">
-            <button type="button" data-src="sp" aria-pressed="true">Spotify</button>
-            <button type="button" data-src="yt" aria-pressed="false">YouTube MV</button>
+            <button type="button" data-src="yt" aria-pressed="true" data-i="src.yt"></button>
+            <button type="button" data-src="sp" aria-pressed="false" data-i="src.sp"></button>
           </div>
           <p class="hint" id="listen-hint"></p>
           <div class="np">
@@ -387,10 +397,7 @@ footer a{color:var(--mist);text-underline-offset:3px}
             <button type="button" class="ctl" id="prev" data-i="ctl.prev"></button>
             <button type="button" class="ctl" id="next" data-i="ctl.next"></button>
             <label class="loop"><input type="checkbox" id="loop" checked><span data-i="ctl.loop"></span></label>
-            <div class="seg" id="list-seg">
-              <button type="button" data-list="songs" aria-pressed="true" data-i="list.songs"></button>
-              <button type="button" data-list="live" aria-pressed="false" data-i="list.live"></button>
-            </div>
+            <div class="seg" id="list-seg"></div>
           </div>
           <ol class="queue" id="queue"></ol>
         </div>
@@ -447,6 +454,7 @@ footer a{color:var(--mist);text-underline-offset:3px}
           </label>
         </div>
       </div>
+      <div class="album" id="album"></div>
       <div class="grid" id="g-songs"></div>
       <p class="empty" hidden></p>
     </section>
@@ -553,11 +561,20 @@ const FACTS = [
    v:{en:'158 cm', zh:'158 cm', vi:'158 cm'}},
 ];
 
+// ytm: YouTube video with the full song (安崎 Topic channel or the official MV), embeddable, no login needed
+const ON_ANQI = {en:'Also on the album ANQI (2026).', zh:'亦收录于专辑《ANQI》(2026)。', vi:'Cũng có trong album ANQI (2026).'};
+const FROM_ANQI = {en:'From the album ANQI.', zh:'收录于专辑《ANQI》。', vi:'Trong album ANQI.'};
 const SONGS = [
-  {k:'ice',  t:'Ice In My Walk', d:'2026-09-29', s:182, p:2255,   c:'637b2fa3dcbe032a19a3c84e', sp:'6ythEzBdfLgdzIL5G5ZbnX', inst:'3Z6hAuezhky5Iye0TdxM8D', kind:'single'},
-  {k:'nyg',  t:'你有鬼',          d:'2026-09-22', s:162, p:4388,   c:'197c99a70db058a85508ffa0', sp:'43dQd3NAqdywMGanu90I3M', inst:'5CQyLkTPcOdC7hqSKLh7pX', kind:'single'},
-  {k:'nzp',  t:'女字旁',          d:'2026-09-15', s:150, p:9144,   c:'ccc74ef91de0d8a4d53a296b', sp:'10Bx8mUuU3FntACi7esC21', inst:'5eXJtRZqlrYDNvtfc2R6zX', kind:'single'},
-  {k:'yyw',  t:'月牙湾',          d:'2026-07-24', s:278, p:37164,  c:'4e8792dd3e079e19a4ca0293', sp:'1olKCZMOwXUa5T8ow1U0d0', kind:'single'},
+  {k:'intro', t:'Intro',          d:'2026-10-13', s:44,  p:0, c:'57253f0a14acefd85eb8969e', sp:'7c3ITX1cQ0yhpnJhpisuxT', ytm:'clhFxOz4HeU', kind:'album', note:FROM_ANQI},
+  {k:'sd',   t:'圣代',            d:'2026-10-13', s:221, p:0, c:'57253f0a14acefd85eb8969e', sp:'7tG9poV3oydGklcxOWAtNY', inst:'0TZ4s06L862D7ZvQZzlsax', ytm:'lCsKeDAZLgM', kind:'album', note:FROM_ANQI},
+  {k:'dream', t:'Dream Of Something Better', d:'2026-10-13', s:194, p:0, c:'57253f0a14acefd85eb8969e', sp:'2q0BQ41esWZqlG8fBLP9eM', inst:'3KAJDl1uV0S8SgcPe3fhbp', ytm:'RDElWNVKcao', kind:'album', note:FROM_ANQI},
+  {k:'lights', t:'Lights Up',     d:'2026-10-13', s:162, p:0, c:'57253f0a14acefd85eb8969e', sp:'5WsMgoLdk4IkM8goTKTBej', inst:'4nY4M2Ca8FDGj1cMH1BWPu', ytm:'5FSaRv0wiVA', kind:'album', note:FROM_ANQI},
+  {k:'zw',   t:'祝我',            d:'2026-10-13', s:188, p:0, c:'57253f0a14acefd85eb8969e', sp:'2g05H3fh85rVxkN5oNmsDi', inst:'7iFzjHR8rV0CxUOppxloTt', ytm:'zLPEyr4URbk', kind:'album', note:FROM_ANQI},
+  {k:'xxbl', t:'消息不灵通',      d:'2026-10-13', s:192, p:0, c:'57253f0a14acefd85eb8969e', sp:'1FwjTfr4FiNUWNXwVCNx47', inst:'6Le1cC4HwAsklUaeyDVCVF', ytm:'XITlSnrvOMk', kind:'album', note:FROM_ANQI},
+  {k:'ice',  t:'Ice In My Walk', d:'2026-09-29', s:182, p:2255,   c:'637b2fa3dcbe032a19a3c84e', sp:'6ythEzBdfLgdzIL5G5ZbnX', inst:'3Z6hAuezhky5Iye0TdxM8D', ytm:'WfxQo3Bk-sg', kind:'single', note:ON_ANQI},
+  {k:'nyg',  t:'你有鬼',          d:'2026-09-22', s:162, p:4388,   c:'197c99a70db058a85508ffa0', sp:'43dQd3NAqdywMGanu90I3M', inst:'5CQyLkTPcOdC7hqSKLh7pX', ytm:'GJd7Ak0IXz4', kind:'single', note:ON_ANQI},
+  {k:'nzp',  t:'女字旁',          d:'2026-09-15', s:150, p:9144,   c:'ccc74ef91de0d8a4d53a296b', sp:'10Bx8mUuU3FntACi7esC21', inst:'5eXJtRZqlrYDNvtfc2R6zX', ytm:'d2XUJn3zHm0', kind:'single', note:ON_ANQI},
+  {k:'yyw',  t:'月牙湾',          d:'2026-07-24', s:278, p:37164,  c:'4e8792dd3e079e19a4ca0293', sp:'1olKCZMOwXUa5T8ow1U0d0', ytm:'-ByrBNQFkB8', kind:'single'},
   {k:'zcfl', t:'自乘风浪',        d:'2026',       s:249, p:148021, c:'9583205a8591ae366ef44ea5', sp:'62I2nU8njevjX1RkVehITp', kind:'theme',
     w:{en:'the Ride the Wind 2026 cast', zh:'乘风2026 全体姐姐', vi:'dàn chị đẹp Đạp Gió 2026'},
     note:{en:'Theme song of Ride the Wind 2026 (乘风2026).', zh:'《乘风2026》主题曲。', vi:'Ca khúc chủ đề của Đạp Gió 2026 (乘风2026).'}},
@@ -566,18 +583,18 @@ const SONGS = [
   {k:'sbk',  t:'SHE’S BACK',      d:'2025-12-29', s:217, p:25180,  c:'84c6840671072060702517e3', sp:'7uiO511SEWDl7w7DubUv76', inst:'5AdCveMOwCUxgrfaksNL3i', kind:'single', w:'李斯丹妮, 袁一琦'},
   {k:'mma',  t:'慢慢愛',          d:'2025-06-09', s:224, p:34111,  c:'81960759475a7416db865d20', sp:'3UdNmeMYQvyaivr5aYJIRH', inst:'6RQKWAcwvJrI3FRctruHHS', kind:'ost',
     note:{en:'Insert song from the web series 七根心简.', zh:'网剧《七根心简》插曲。', vi:'Nhạc chèn phim bộ 七根心简.'}},
-  {k:'bwm',  t:'不完美女生',      d:'2024-10-29', s:190, p:10485,  c:'131dff5d13eff31f828ae3a9', sp:'1UbD9oXrlCfXpjlGd5Ykkr', kind:'single',
+  {k:'bwm',  t:'不完美女生',      d:'2024-10-29', s:190, p:10485,  c:'131dff5d13eff31f828ae3a9', sp:'1UbD9oXrlCfXpjlGd5Ykkr', ytm:'tR8_sTpbmKU', kind:'single',
     note:{en:'She also sang it on 百分百歌手对战季 in February 2025.', zh:'2025年2月曾在《百分百歌手对战季》演唱。', vi:'Cô từng hát bài này tại 百分百歌手对战季 tháng 2/2025.'}},
   {k:'fbxa', t:'飞奔向爱',        d:'2024',       s:220, p:2901,   c:'15e3a56b2533975f8f91311c', sp:'4nE4B7aFKiPtL1F6tkhjoA', inst:'0jC3DIF6h4cW4uGsZcRIoO', kind:'group', w:'刘宇, 王濛, 张豆豆, 管晨辰',
     note:{en:'Cheer song for Team China at the Paris 2024 Olympics.', zh:'出征巴黎奥运会“为中国奥运健儿加油”推广曲。', vi:'Bài hát cổ vũ đoàn thể thao Trung Quốc tại Olympic Paris 2024.'}},
-  {k:'lyy',  t:'冷雨夜',          d:'2023-11-07', s:264, p:12519,  c:'f0cb7e6ad54516d39ec26438', sp:'4qdL6igdRV4Ot6M67LfZaE', inst:'52NVbkpOYEWCxC3Q9DRGPA', kind:'single'},
-  {k:'lic',  t:'Licorice',        d:'2023-05-13', s:179, p:26752,  c:'86740dbdff3ea7dce97db7b8', sp:'25JgIRwWJaJPofIBtAFUy9', kind:'ep',
+  {k:'lyy',  t:'冷雨夜',          d:'2023-11-07', s:264, p:12519,  c:'f0cb7e6ad54516d39ec26438', sp:'4qdL6igdRV4Ot6M67LfZaE', inst:'52NVbkpOYEWCxC3Q9DRGPA', ytm:'xh9JIlEr8pI', kind:'single'},
+  {k:'lic',  t:'Licorice',        d:'2023-05-13', s:179, p:26752,  c:'86740dbdff3ea7dce97db7b8', sp:'25JgIRwWJaJPofIBtAFUy9', ytm:'4TkYzBETcT4', kind:'ep',
     note:{en:'From her solo EP Becoming Pt.1, with Fire and Now or Forever.', zh:'收录于个人 EP《Becoming Pt.1》，同辑还有 Fire、Now or Forever。', vi:'Nằm trong EP solo Becoming Pt.1, cùng Fire và Now or Forever.'}},
-  {k:'nof',  t:'Now or Forever',  d:'2023-02-22', s:210, p:21850,  c:'bf18684c4138b710c6b0329e', sp:'7uES6Ddo3dQCc4nafEJvyW', kind:'single',
+  {k:'nof',  t:'Now or Forever',  d:'2023-02-22', s:210, p:21850,  c:'bf18684c4138b710c6b0329e', sp:'7uES6Ddo3dQCc4nafEJvyW', ytm:'d3kNimmwMFA', kind:'single',
     note:{en:'Also on the EP Becoming Pt.1 (2023).', zh:'亦收录于 EP《Becoming Pt.1》(2023)。', vi:'Cũng có trong EP Becoming Pt.1 (2023).'}},
-  {k:'fire', t:'Fire',            d:'2022-12-23', s:202, p:38240,  c:'96e985104782e6d8e46141d2', sp:'6yN0QuEj4QWnEmn9mXqEyE', kind:'single',
+  {k:'fire', t:'Fire',            d:'2022-12-23', s:202, p:38240,  c:'96e985104782e6d8e46141d2', sp:'6yN0QuEj4QWnEmn9mXqEyE', ytm:'KN5rBn312M4', kind:'single',
     note:{en:'Also on the EP Becoming Pt.1 (2023). She performed it at the 2024 Sichuan–Chongqing Spring Festival Gala.', zh:'亦收录于 EP《Becoming Pt.1》(2023)；曾在《2024川渝春节联欢晚会》演唱。', vi:'Cũng có trong EP Becoming Pt.1 (2023); từng biểu diễn tại Gala Xuân Tứ Xuyên – Trùng Khánh 2024.'}},
-  {k:'xdaq', t:'现代爱情故事',    d:'2022-12-09', s:279, p:18187,  c:'1e2a99573c2c0b4d06f2ff56', sp:'2Vky0H2UnHz5NiS23qEFhW', inst:'1B68hQbMHEthNiTEJ3O5ar', kind:'single', w:'梁靖康',
+  {k:'xdaq', t:'现代爱情故事',    d:'2022-12-09', s:279, p:18187,  c:'1e2a99573c2c0b4d06f2ff56', sp:'2Vky0H2UnHz5NiS23qEFhW', inst:'1B68hQbMHEthNiTEJ3O5ar', ytm:'ESJjmlhiMoQ', kind:'single', w:'梁靖康',
     note:{en:'Special episode of 粤好听•青春重置计划.', zh:'粤好听•青春重置计划 特别篇。', vi:'Tập đặc biệt của 粤好听•青春重置计划.'}},
   {k:'girl', t:'The Girls',       d:'2022',       s:181, p:101143, c:'925fa7b0997af635efb5a0ff', sp:'6EUX5SSKPaPp4mtXvifQK6', kind:'feat', w:'VAVA',
     note:{en:'VAVA feat. 安崎, from the album V解之謎.', zh:'VAVA feat. 安崎，收录于专辑《V解之謎》。', vi:'VAVA feat. 安崎, trong album V解之謎.'}},
@@ -588,6 +605,20 @@ const SONGS = [
   {k:'yea',  t:'Yea',             d:'2020-12-25', s:205, p:509796, c:'331b2eee5ad178fd46ba8759', sp:'15EHqDTVPzPAmXLGlBuCSV', kind:'comp',
     note:{en:'Her solo track on THE9’s album 虚实X境.', zh:'THE9 专辑《虚实X境》中的个人单曲。', vi:'Ca khúc solo của cô trong album 虚实X境 của THE9.'}},
 ];
+
+// album ANQI (2026-10-13) in track order: [song key, Spotify album-track id, YouTube id]
+// 17 tracks on Spotify: these 9 songs plus 8 instrumentals
+const ALBUM = {t:'ANQI', id:'7in0VRGizzHrtIPJR8JjD4', d:'2026-10-13', c:'57253f0a14acefd85eb8969e', ytpl:'OLAK5uy_m3U-7cLDv9L5kWpBAbV8mjv2FExND0_aY', tracks:[
+  ['intro', '7c3ITX1cQ0yhpnJhpisuxT', 'clhFxOz4HeU'],
+  ['nzp',   '6Cw9PrhwaGVevBSiw4gVPO', 'KWy7Sr1lUJI'],
+  ['ice',   '79qOwTiGquTdujPkLJFwWA', 'WfxQo3Bk-sg'],
+  ['nyg',   '46ni3qIfilLaYOACRNz4LJ', 'nES3-HS7i8s'],
+  ['sd',    '7tG9poV3oydGklcxOWAtNY', 'lCsKeDAZLgM'],
+  ['dream', '2q0BQ41esWZqlG8fBLP9eM', 'RDElWNVKcao'],
+  ['lights','5WsMgoLdk4IkM8goTKTBej', '5FSaRv0wiVA'],
+  ['zw',    '2g05H3fh85rVxkN5oNmsDi', 'zLPEyr4URbk'],
+  ['xxbl',  '1FwjTfr4FiNUWNXwVCNx47', 'XITlSnrvOMk'],
+]};
 
 // lives: [episode, title, seconds, Spotify plays, cover, Spotify id, co-stars]
 const SHOWS = [
@@ -714,10 +745,10 @@ const TIMELINE = [
     en:'Performs at the CMG Lantern Festival Gala, sings 慢慢爱 for the series 七根心简, signs with EE-Media (天娱传媒) on 11 December, and performs SHE’S BACK at the Hunan TV New Year’s Eve concert.',
     zh:'参加《2025年中央广播电视总台元宵晚会》；6月演唱网剧《七根心简》插曲《慢慢爱》；12月11日加入天娱传媒；在跨年演唱会表演《She’s back》。',
     vi:'Biểu diễn tại Gala Nguyên Tiêu của Đài Trung ương (CMG); hát 慢慢爱 cho phim 七根心简; ký hợp đồng với 天娱传媒 ngày 11/12; trình diễn SHE’S BACK tại concert giao thừa của Hồ Nam TV.'},
-  {y:2026, shows:['cf26'], songs:['zcfl','yyw','nzp','nyg','ice'],
-    en:'Joins Ride the Wind 2026 from 3 April and wins one of the year’s Ride the Wind seats on 27 June. Releases 月牙湾, 女字旁, 你有鬼 and Ice In My Walk.',
-    zh:'4月3日起参加《乘风2026》，6月27日获得年度乘风席位；陆续发行《月牙湾》《女字旁》《你有鬼》《Ice In My Walk》。',
-    vi:'Tham gia Đạp Gió 2026 từ 3/4 và giành một suất Đạp Gió của năm vào 27/6. Phát hành 月牙湾, 女字旁, 你有鬼 và Ice In My Walk.'},
+  {y:2026, shows:['cf26'], songs:['zcfl','yyw','nzp','nyg','ice','sd'],
+    en:'Joins Ride the Wind 2026 from 3 April and wins one of the year’s Ride the Wind seats on 27 June. Releases 月牙湾, 女字旁, 你有鬼 and Ice In My Walk, then the album ANQI on 13 October with six new songs.',
+    zh:'4月3日起参加《乘风2026》，6月27日获得年度乘风席位；陆续发行《月牙湾》《女字旁》《你有鬼》《Ice In My Walk》，10月13日发行专辑《ANQI》，收录六首新歌。',
+    vi:'Tham gia Đạp Gió 2026 từ 3/4 và giành một suất Đạp Gió của năm vào 27/6. Phát hành 月牙湾, 女字旁, 你有鬼, Ice In My Walk, rồi album ANQI ngày 13/10 với sáu bài mới.'},
 ];
 
 /* ---------- words ---------- */
@@ -745,7 +776,7 @@ const T = {
     'empty':q=>`No results for “${q}”. Try the Chinese title, a show name or a co-star.`,
     'with':'with ','solo':'Solo','plays':n=>`${n} plays`,'views':n=>`${n} views`,'stages.n':n=>`${n} stages`,
     'ep':e=>'Ep. '+e.match(/\d+/)[0],
-    'kind':{single:'Single',ost:'Soundtrack',feat:'Feature',group:'Group song',theme:'Theme song',ep:'EP track',comp:'Album track'},
+    'kind':{single:'Single',ost:'Soundtrack',feat:'Feature',group:'Group song',theme:'Theme song',ep:'EP track',comp:'Album track',album:'Album ANQI'},
     'mvtype':{mv:'Official MV',dance:'Dance version',perf:'Dance performance',teaser:'Teaser'},
     'sh.song':'Song','sh.stage':'Stage','sh.mv':'Video',
     'sh.plays':n=>`${n} plays on Spotify`,'sh.under':'under 1,000 plays on Spotify','sh.views':n=>`${n} views on YouTube`,
@@ -754,7 +785,7 @@ const T = {
     'sh.tip':'Log in and play the full track on the official platform so it counts for 安崎.','sh.close':'Close',
     'pf':{bili:'Bilibili',qq:'QQ Music',ncm:'NetEase Cloud',kg:'Kugou'},
     'pf.open':'Open song ↗','pf.watch':'Watch ↗','pf.watchmv':'Watch MV ↗','pf.search':'Search ↗','pf.song':'Song ↗','pf.alt':'Other version ↗',
-    'foot.1':`Unofficial fan site · Profile from <a href="${BAIKE}" target="_blank" rel="noopener">Baidu Baike</a> · songs, plays and covers from Spotify · videos from YouTube · updated 7 Oct 2026.`,
+    'foot.1':`Unofficial fan site · Profile from <a href="${BAIKE}" target="_blank" rel="noopener">Baidu Baike</a> · songs, plays and covers from Spotify · videos from YouTube · updated 12 Oct 2026.`,
     'foot.2':'Dashed buttons open a search page. Solid buttons open the song or video directly.',
   },
   zh:{
@@ -780,7 +811,7 @@ const T = {
     'empty':q=>`没有找到“${q}”的结果。试试中文歌名、节目名或同台歌手。`,
     'with':'合作：','solo':'独唱','plays':n=>`${n} 次播放`,'views':n=>`${n} 次观看`,'stages.n':n=>`${n} 个舞台`,
     'ep':e=>e,
-    'kind':{single:'单曲',ost:'影视原声',feat:'合作',group:'合唱',theme:'主题曲',ep:'EP 收录曲',comp:'专辑收录'},
+    'kind':{single:'单曲',ost:'影视原声',feat:'合作',group:'合唱',theme:'主题曲',ep:'EP 收录曲',comp:'专辑收录',album:'专辑《ANQI》'},
     'mvtype':{mv:'官方MV',dance:'舞蹈版',perf:'舞蹈表演版',teaser:'预告'},
     'sh.song':'歌曲','sh.stage':'舞台','sh.mv':'视频',
     'sh.plays':n=>`Spotify 播放 ${n} 次`,'sh.under':'Spotify 播放不足 1,000 次','sh.views':n=>`YouTube 观看 ${n} 次`,
@@ -789,7 +820,7 @@ const T = {
     'sh.tip':'请在官方平台登录并完整收听，播放量才会计入。','sh.close':'关闭',
     'pf':{bili:'哔哩哔哩',qq:'QQ音乐',ncm:'网易云音乐',kg:'酷狗音乐'},
     'pf.open':'打开歌曲 ↗','pf.watch':'观看 ↗','pf.watchmv':'观看 MV ↗','pf.search':'搜索 ↗','pf.song':'歌曲 ↗','pf.alt':'另一版本 ↗',
-    'foot.1':`非官方粉丝站 · 资料来自<a href="${BAIKE}" target="_blank" rel="noopener">百度百科</a> · 歌曲、播放量与封面来自 Spotify · 视频来自 YouTube · 更新于 2026.10.07。`,
+    'foot.1':`非官方粉丝站 · 资料来自<a href="${BAIKE}" target="_blank" rel="noopener">百度百科</a> · 歌曲、播放量与封面来自 Spotify · 视频来自 YouTube · 更新于 2026.10.12。`,
     'foot.2':'虚线按钮打开搜索页，实线按钮直接打开歌曲或视频。',
   },
   vi:{
@@ -815,7 +846,7 @@ const T = {
     'empty':q=>`Không có kết quả cho “${q}”. Thử tên bài bằng chữ Hán, tên chương trình hoặc người diễn cùng.`,
     'with':'cùng ','solo':'Solo','plays':n=>`${n} lượt nghe`,'views':n=>`${n} lượt xem`,'stages.n':n=>`${n} sân khấu`,
     'ep':e=>'Tập '+e.match(/\d+/)[0],
-    'kind':{single:'Single',ost:'Nhạc phim',feat:'Hợp tác',group:'Hợp ca',theme:'Ca khúc chủ đề',ep:'Trong EP',comp:'Trong album'},
+    'kind':{single:'Single',ost:'Nhạc phim',feat:'Hợp tác',group:'Hợp ca',theme:'Ca khúc chủ đề',ep:'Trong EP',comp:'Trong album',album:'Album ANQI'},
     'mvtype':{mv:'MV chính thức',dance:'Bản vũ đạo',perf:'Bản biểu diễn vũ đạo',teaser:'Teaser'},
     'sh.song':'Bài hát','sh.stage':'Sân khấu','sh.mv':'Video',
     'sh.plays':n=>`${n} lượt nghe trên Spotify`,'sh.under':'dưới 1.000 lượt nghe trên Spotify','sh.views':n=>`${n} lượt xem trên YouTube`,
@@ -824,7 +855,7 @@ const T = {
     'sh.tip':'Đăng nhập và nghe trọn bài trên nền tảng chính thức để lượt nghe được tính cho An Kỳ.','sh.close':'Đóng',
     'pf':{bili:'Bilibili',qq:'QQ Music',ncm:'NetEase Cloud',kg:'Kugou'},
     'pf.open':'Mở bài hát ↗','pf.watch':'Xem ↗','pf.watchmv':'Xem MV ↗','pf.search':'Tìm kiếm ↗','pf.song':'Bài hát ↗','pf.alt':'Bản khác ↗',
-    'foot.1':`Trang fan không chính thức · Tiểu sử theo <a href="${BAIKE}" target="_blank" rel="noopener">Baidu Baike</a> · bài hát, lượt nghe, ảnh bìa từ Spotify · video từ YouTube · cập nhật 07.10.2026.`,
+    'foot.1':`Trang fan không chính thức · Tiểu sử theo <a href="${BAIKE}" target="_blank" rel="noopener">Baidu Baike</a> · bài hát, lượt nghe, ảnh bìa từ Spotify · video từ YouTube · cập nhật 12.10.2026.`,
     'foot.2':'Nút viền nét đứt mở trang tìm kiếm. Nút viền liền mở thẳng bài hát hoặc video.',
   },
 };
@@ -892,6 +923,26 @@ Object.assign(T.vi, {
   'np.info':'Chi tiết','play.songs':'▶ Phát tất cả trong phòng nghe','play.show':'▶ Phát chương trình này','play.mv':'▶ Phát tất cả MV',
   'more.title':'Khám phá thêm',
   'more.d':{home:'Các bài hát xoay quanh theo năm phát hành',listen:'Nghe Spotify, YouTube ngay trên web và chat cùng fan',artist:'Hồ sơ, dòng thời gian và kênh chính thức',songs:'Tất cả bài hát từ 2020 đến 2026',stages:'Sân khấu live theo từng chương trình',mv:'MV trên YouTube'},
+});
+
+/* words for the album ANQI and the YouTube full-song source */
+Object.assign(T.en, {
+  'album.eyebrow':'New album','album.meta':(d,n)=>`${d} · ${n} songs + 8 instrumentals`,'album.play':'▶ Play the album here',
+  'listen.ythint':'Anyone can listen to the full songs here, no account needed. Plays count as YouTube views when you press play yourself and keep listening.',
+  'list.album':'Album ANQI','list.mv':'MV','src.yt':'YouTube · everyone','src.sp':'Spotify · log in',
+  'sh.new':'New release','pf.listen':'Listen ↗',
+});
+Object.assign(T.zh, {
+  'album.eyebrow':'新专辑','album.meta':(d,n)=>`${d} · ${n} 首歌曲 + 8 首伴奏`,'album.play':'▶ 在本站播放专辑',
+  'listen.ythint':'任何人都能在这里听完整歌曲，无需账号。自己点击播放并持续收听，会计入 YouTube 观看次数。',
+  'list.album':'专辑《ANQI》','list.mv':'MV','src.yt':'YouTube · 所有人','src.sp':'Spotify · 需登录',
+  'sh.new':'新发行','pf.listen':'收听 ↗',
+});
+Object.assign(T.vi, {
+  'album.eyebrow':'Album mới','album.meta':(d,n)=>`${d} · ${n} bài hát + 8 bản nhạc nền`,'album.play':'▶ Nghe album ngay trên web',
+  'listen.ythint':'Ai cũng nghe được trọn bài ở đây, không cần tài khoản. Tự bấm phát và nghe tiếp thì được tính lượt xem YouTube.',
+  'list.album':'Album ANQI','list.mv':'MV','src.yt':'YouTube · ai cũng nghe được','src.sp':'Spotify · cần đăng nhập',
+  'sh.new':'Mới phát hành','pf.listen':'Nghe ↗',
 });
 
 /* ---------- icons ---------- */
@@ -1052,6 +1103,14 @@ function render(){
   $('streams').innerHTML = t('stream.rows').map(([a,b]) => `<div><dt>${a}</dt><dd>${b}</dd></div>`).join('');
 
   $('songs-sub').textContent = t('songs.sub', SONGS.length);
+  $('album').innerHTML = `<img src="covers/${ALBUM.c}.jpg" alt="ANQI"><div>
+    <p class="eyebrow">${t('album.eyebrow')}</p><h3>${ALBUM.t}</h3>
+    <p class="sub">${t('album.meta', day(ALBUM.d), ALBUM.tracks.length)}</p>
+    <div class="chips">${ALBUM.tracks.map(([k]) => chip('s-' + k, SONGS.find(s => s.k === k).t)).join('')}</div>
+    <div class="row"><button type="button" class="act" data-play="album">${t('album.play')}</button>
+      <a class="pill" href="https://open.spotify.com/album/${ALBUM.id}" target="_blank" rel="noopener">${ICON.spotify}Spotify ↗</a>
+      <a class="pill" href="https://music.youtube.com/playlist?list=${ALBUM.ytpl}" target="_blank" rel="noopener">${ICON.ytmusic}YouTube Music ↗</a></div>
+  </div>`;
   $('g-songs').innerHTML = SONGS.map(s => card('s-'+s.k)).join('');
 
   $('stages-sub').textContent = t('stages.sub', LIVE_COUNT, SHOWS.length);
@@ -1089,6 +1148,7 @@ function filter(v){
   sec.querySelectorAll('.show').forEach(g => g.hidden = !g.querySelector('.card:not([hidden])'));
   const ap = sec.querySelector('.appear'); if (ap) ap.hidden = !ap.querySelector('.hit:not([hidden])');
   const idx = sec.querySelector('.show-index'); if (idx) idx.hidden = !!q;
+  const al = sec.querySelector('.album'); if (al) al.hidden = !!q;
   const e = sec.querySelector('.empty'); e.hidden = n > 0; if (!n) e.textContent = t('empty', raw);
 }
 $('q-songs').addEventListener('input', () => filter('songs'));
@@ -1113,6 +1173,7 @@ function links(it){
   out.push(btn('Spotify', 'https://open.spotify.com/track/' + it.sp, t('pf.open'), 'main'));
   const mv = it.type === 'song' ? songMV(it.k) : null;
   if (it.yt) out.push(btn('YouTube', it.yt, t('pf.open'), ''));
+  else if (it.ytm) out.push(btn('YouTube', 'https://www.youtube.com/watch?v=' + it.ytm, t(MVS.some(m => m.yt === it.ytm) ? 'pf.watchmv' : 'pf.listen'), ''));
   else if (mv) out.push(btn('YouTube', 'https://www.youtube.com/watch?v=' + mv.yt, t('pf.watchmv'), ''));
   else out.push(btn('YouTube', FIND.yt(it.q), t('pf.search'), 'find'));
   ['bili','qq','ncm','kg'].forEach(k => out.push(it[k] ? btn(P[k], it[k], t('pf.open'), '') : btn(P[k], FIND[k](it.q), t('pf.search'), 'find')));
@@ -1127,7 +1188,7 @@ function openItem(key){
   let kind, meta, withTxt = '', note = '', chips = '';
   if (it.type === 'song') {
     kind = t('sh.song') + ' · ' + t('kind')[it.kind];
-    meta = [day(it.d), dur(it.s), t('sh.plays', num(it.p))].join(' · ');
+    meta = [day(it.d), dur(it.s), it.p ? t('sh.plays', num(it.p)) : t('sh.new')].join(' · ');
     if (it.w) withTxt = t('sh.with') + tx(it.w);
     note = esc(tx(it.note));
     if (it.inst) note += (note ? ' ' : '') + `<a href="https://open.spotify.com/track/${it.inst}" target="_blank" rel="noopener">${t('sh.inst')}</a>`;
@@ -1202,19 +1263,29 @@ document.addEventListener('click', e => {
   }
 });
 
-/* ---------- listening room: Spotify iFrame API + YouTube IFrame API ---------- */
-const SP_LISTS = {
-  songs: SONGS.map(s => ({key:'s-'+s.k, sp:s.sp, t:s.t, s:s.s, img:'covers/'+s.c+'.jpg', d:s.d})),
-  live: SHOWS.flatMap(sh => sh.lives.map(([ep,ti,s,p,c,sp]) => ({key:'l-'+sp, sp, t:base(ti) || ti, s, img:'covers/'+c+'.jpg', show:sh, ep}))),
+/* ---------- listening room: YouTube IFrame API (anyone) + Spotify iFrame API (logged-in listeners) ---------- */
+const songItem = s => ({key:'s-'+s.k, t:s.t, s:s.s, img:'covers/'+s.c+'.jpg', d:s.d});
+const LISTS = {
+  yt: {
+    album: ALBUM.tracks.map(([k,,yt]) => ({...songItem(SONGS.find(s => s.k === k)), yt})),
+    songs: SONGS.filter(s => s.ytm).map(s => ({...songItem(s), yt:s.ytm})),
+    mv: MVS.map(m => ({key:'m-'+m.yt, yt:m.yt, t:m.t, type:m.type, img:'yt/'+m.yt+'.jpg', d:m.d})),
+  },
+  sp: {
+    album: ALBUM.tracks.map(([k,sp]) => ({...songItem(SONGS.find(s => s.k === k)), sp})),
+    songs: SONGS.map(s => ({...songItem(s), sp:s.sp})),
+    live: SHOWS.flatMap(sh => sh.lives.map(([ep,ti,s,p,c,sp]) => ({key:'l-'+sp, sp, t:base(ti) || ti, s, img:'covers/'+c+'.jpg', show:sh, ep}))),
+  },
 };
-const YT_LIST = MVS.map(m => ({key:'m-'+m.yt, yt:m.yt, t:m.t, type:m.type, img:'yt/'+m.yt+'.jpg', d:m.d}));
-const L = {init:false, src:'sp', list:'songs', sp:0, yt:0, loop:true, started:false, playing:false, mode:'idle', spState:'', ytState:'', loadedAt:0, ended:'', want:false};
+const LIST_LABEL = {album:'list.album', songs:'list.songs', live:'list.live', mv:'list.mv'};
+const L = {init:false, src:'yt', list:{yt:'album', sp:'album'}, idx:{yt:0, sp:0}, loop:true, started:false, playing:false, mode:'idle', spState:'', ytState:'', loadedAt:0, ended:'', want:false};
 let spCtl = null, ytPlayer = null, ytReady = false;
 
-const items = () => L.src === 'yt' ? YT_LIST : SP_LISTS[L.list];
-const curIdx = () => L.src === 'yt' ? L.yt : L.sp;
+const listOf = src => LISTS[src][L.list[src]];
+const items = () => listOf(L.src);
+const curIdx = () => L.idx[L.src];
 const cur = () => items()[curIdx()];
-const subOf = it => it.yt ? day(it.d) + ' · ' + t('mvtype')[it.type] : it.show ? it.show.name + ' ' + t('ep', it.ep) : day(it.d);
+const subOf = it => it.type ? day(it.d) + ' · ' + t('mvtype')[it.type] : it.show ? it.show.name + ' ' + t('ep', it.ep) : day(it.d);
 
 function loadScript(src){
   const s = document.createElement('script');
@@ -1226,7 +1297,7 @@ function ensureSpotify(){
   if (L.spState) return;
   L.spState = 'loading';
   window.onSpotifyIframeApiReady = api => {
-    api.createController($('sp-embed'), {uri:'spotify:track:' + SP_LISTS[L.list][L.sp].sp, width:'100%', height:80}, ctl => {
+    api.createController($('sp-embed'), {uri:'spotify:track:' + listOf('sp')[L.idx.sp].sp, width:'100%', height:80}, ctl => {
       spCtl = ctl; L.spState = 'ready';
       ctl.addListener('playback_update', onSpUpdate);
       if (L.want) { L.want = false; setTimeout(() => ctl.play(), 500); }
@@ -1236,7 +1307,7 @@ function ensureSpotify(){
 }
 function onSpUpdate(e){
   if (L.src !== 'sp') return;
-  const d = e.data || {}, it = SP_LISTS[L.list][L.sp];
+  const d = e.data || {}, it = listOf('sp')[L.idx.sp];
   const was = L.playing;
   L.playing = !d.isPaused;
   if (L.playing) L.started = true;
@@ -1245,7 +1316,7 @@ function onSpUpdate(e){
   drawNow();
   if (was !== L.playing) drawQueue();
   if (Date.now() - L.loadedAt > 2000 && d.duration > 0 && d.position >= d.duration - 1000) {
-    const key = L.list + ':' + L.sp;
+    const key = L.list.sp + ':' + L.idx.sp;
     if (L.ended !== key) { L.ended = key; next(true); }
   }
 }
@@ -1254,7 +1325,7 @@ function ensureYT(){
   L.ytState = 'loading';
   window.onYouTubeIframeAPIReady = () => {
     ytPlayer = new YT.Player('yt-embed', {
-      width:'100%', height:'100%', videoId:YT_LIST[L.yt].yt,
+      width:'100%', height:'100%', videoId:listOf('yt')[L.idx.yt].yt,
       playerVars:{rel:0, playsinline:1},
       events:{
         onReady:() => { ytReady = true; },
@@ -1270,30 +1341,32 @@ function ensureYT(){
   loadScript('https://www.youtube.com/iframe_api');
 }
 function playAt(i){
+  L.idx[L.src] = i;
+  const it = items()[i];
   if (L.src === 'yt') {
-    L.yt = i;
-    if (ytReady) ytPlayer.loadVideoById(YT_LIST[i].yt); else ensureYT();
+    if (ytReady) ytPlayer.loadVideoById(it.yt); else ensureYT();
   } else {
-    L.sp = i; L.loadedAt = Date.now(); L.ended = '';
-    if (spCtl) { spCtl.loadUri('spotify:track:' + SP_LISTS[L.list][i].sp); setTimeout(() => spCtl.play(), 400); }
-    else ensureSpotify();
+    L.loadedAt = Date.now(); L.ended = '';
+    if (spCtl) { spCtl.loadUri('spotify:track:' + it.sp); setTimeout(() => spCtl.play(), 400); }
+    else { L.want = true; ensureSpotify(); }
   }
   drawNow(); drawQueue();
 }
-// "Play in the listening room" from any page: switch source and list, then start that item
+// "Play in the listening room" from any page: pick a source and list that has the item, then start it
 function playInRoom(key){
-  const it = ITEMS[key]; if (!it) return;
   if (sheet.open) sheet.close();
   if (view !== 'listen') go('listen');
-  if (it.type === 'mv') {
-    setSrc('yt');
-    playAt(Math.max(0, YT_LIST.findIndex(x => x.yt === it.yt)));
-  } else {
-    setSrc('sp');
-    setList(it.type === 'live' ? 'live' : 'songs');
-    if (!spCtl) L.want = true;
-    playAt(Math.max(0, SP_LISTS[L.list].findIndex(x => x.sp === it.sp)));
-  }
+  if (key === 'album') { setList('album'); playAt(0); return; }
+  const it = ITEMS[key]; if (!it) return;
+  const inAlbum = src => L.list[src] === 'album' && LISTS[src].album.some(x => x.key === key);
+  let src, list;
+  if (it.type === 'mv') { src = 'yt'; list = 'mv'; }
+  else if (it.type === 'live') { src = 'sp'; list = 'live'; }
+  else if (L.src === 'yt' && it.ytm) { src = 'yt'; list = inAlbum('yt') ? 'album' : 'songs'; }
+  else { src = 'sp'; list = inAlbum('sp') ? 'album' : 'songs'; }
+  setSrc(src);
+  setList(list);
+  playAt(Math.max(0, items().findIndex(x => x.key === key)));
 }
 function next(auto){
   let i = curIdx() + 1;
@@ -1316,17 +1389,20 @@ function setSrc(src){
   drawListen();
 }
 function setList(list){
-  if (list === L.list) return;
-  L.list = list; L.sp = 0; L.mode = 'idle'; L.ended = '';
-  if (spCtl) { L.loadedAt = Date.now(); spCtl.loadUri('spotify:track:' + SP_LISTS[list][0].sp); }
+  if (list === L.list[L.src] || !LISTS[L.src][list]) return;
+  L.list[L.src] = list; L.idx[L.src] = 0;
+  if (L.src === 'sp') {
+    L.mode = 'idle'; L.ended = '';
+    if (spCtl) { L.loadedAt = Date.now(); spCtl.loadUri('spotify:track:' + items()[0].sp); }
+  } else if (ytReady) ytPlayer.cueVideoById(items()[0].yt);
   drawListen();
 }
 function drawNow(){
   const it = cur(); if (!it) return;
   const img = $('np-img');
   if (!img.src.endsWith(it.img)) img.src = it.img;
-  img.classList.toggle('wide', !!it.yt);
-  img.classList.toggle('spin', L.playing && !it.yt);
+  img.classList.toggle('wide', !!it.type);
+  img.classList.toggle('spin', L.playing && !it.type);
   $('np-title').textContent = it.t;
   $('np-info').dataset.open = it.key;
   $('np-sub').textContent = subOf(it) + (it.s ? ' · ' + dur(it.s) : '');
@@ -1338,7 +1414,7 @@ function drawNow(){
 }
 function drawQueue(){
   const ci = curIdx(), q = $('queue');
-  q.classList.toggle('q-yt', L.src === 'yt');
+  q.classList.toggle('q-yt', L.src === 'yt' && L.list.yt === 'mv');
   q.innerHTML = items().map((it,i) => `<li class="${i === ci ? 'on' : ''}"><button type="button" data-q="${i}">
     <span class="qn">${i === ci && L.playing ? '♪' : i + 1}</span><img loading="lazy" src="${it.img}" alt="">
     <span class="qx"><span class="qt">${esc(it.t)}</span><span class="qs">${esc(subOf(it))}</span></span>
@@ -1346,8 +1422,8 @@ function drawQueue(){
 }
 function drawListen(){
   document.querySelectorAll('#src-seg [data-src]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.src === L.src)));
-  document.querySelectorAll('#list-seg [data-list]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.list === L.list)));
-  $('list-seg').hidden = L.src !== 'sp';
+  $('list-seg').innerHTML = Object.keys(LISTS[L.src]).map(k =>
+    `<button type="button" data-list="${k}" aria-pressed="${k === L.list[L.src]}">${t(LIST_LABEL[k])}</button>`).join('');
   $('sp-box').hidden = L.src !== 'sp';
   $('yt-box').hidden = L.src !== 'yt';
   $('listen-hint').innerHTML = t(L.src === 'yt' ? 'listen.ythint' : 'listen.hint');
@@ -1358,7 +1434,7 @@ function initListen(){
   if (L.init) return;
   L.init = true;
   drawListen();
-  ensureSpotify();
+  L.src === 'yt' ? ensureYT() : ensureSpotify();
 }
 $('src-seg').addEventListener('click', e => { const b = e.target.closest('[data-src]'); if (b) setSrc(b.dataset.src); });
 $('list-seg').addEventListener('click', e => { const b = e.target.closest('[data-list]'); if (b) setList(b.dataset.list); });
@@ -1406,7 +1482,7 @@ $('chat-form').addEventListener('submit', async e => {
   if (!text || !chatUI.send) return;
   try { localStorage.setItem('anqi-chat-name', name); } catch(_) {}
   const it = L.started ? cur() : null;
-  const song = it ? (it.t + (it.yt ? ' MV' : '')).slice(0, 80) : '';
+  const song = it ? (it.t + (it.type ? ' MV' : '')).slice(0, 80) : '';
   const btn = $('chat-send'); btn.disabled = true;
   try { await chatUI.send(name.slice(0, 24), text.slice(0, 300), song); $('chat-text').value = ''; }
   catch (err) { st.textContent = t(err && err.code === 'permission-denied' ? 'chat.slow' : 'chat.fail'); }
