@@ -5,7 +5,7 @@ An unofficial fan site collecting 安崎's songs, live stages and music videos.
 
 **Xem trang:** https://nicoleng274.github.io/AnQiUniverse/
 
-Mỗi trang có link riêng để chia sẻ: `#listen`, `#artist`, `#songs`, `#stages`, `#mv`. Từng bài, sân khấu hay MV cũng có link riêng, ví dụ `#s-yyw` (月牙湾); bấm **Copy link** trong bảng chi tiết để lấy.
+Mỗi trang có link riêng để chia sẻ: `#listen`, `#live`, `#artist`, `#songs`, `#stages`, `#mv`. Từng bài, sân khấu hay MV cũng có link riêng, ví dụ `#s-yyw` (月牙湾); bấm **Copy link** trong bảng chi tiết để lấy.
 
 - **Universe**: trang chủ, mỗi vòng quỹ đạo là một năm (2020 → 2026), mỗi hành tinh là một bài hát.
 - **Artist**: hồ sơ, kênh chính thức, dòng thời gian.
@@ -23,6 +23,18 @@ Link nghe nhạc để chia sẻ: https://nicoleng274.github.io/AnQiUniverse/#li
 - **Spotify:** lượt nghe chỉ được tính khi người nghe đã đăng nhập Spotify trên trình duyệt đó và nghe từ 30 giây. Chưa đăng nhập thì chỉ có bản nghe thử 30 giây, trang sẽ hiện cảnh báo màu cam.
 - **YouTube:** tính lượt xem khi người xem tự bấm phát.
 - Trình phát chỉ chạy khi trang được mở qua web (GitHub Pages). Bản xem trước trên claude.ai không nhúng được trình phát.
+
+### Tab Live: xem livestream Douyin, Weibo và chat cùng fan
+
+Link chia sẻ: https://nicoleng274.github.io/AnQiUniverse/#live
+
+Douyin và Weibo không cho trang khác nhúng livestream (không có trình phát nhúng chính thức, trang live chặn iframe, link luồng video có chữ ký và hết hạn nhanh), và phần bình luận trong live chỉ dùng được trong app của họ. Vì vậy tab **Live** trong phòng nghe nhạc:
+
+- có nút mở thẳng Douyin và trang Weibo của 安崎 (trong app nếu điện thoại có cài, không thì mở web). Xem trên nền tảng chính thức nên vẫn được tính vào số người xem của phòng live;
+- tạm dừng nhạc đang phát, để khung chat bên cạnh cho fan nói chuyện trong lúc xem;
+- tin nhắn gửi từ tab này có nhãn `🔴 LIVE · Douyin` hoặc `🔴 LIVE · Weibo` (theo nút vừa bấm), để mọi người biết đang nói về buổi live.
+
+Nút Douyin hiện mở trang tìm kiếm 安崎 trên Douyin. Khi có link trang cá nhân (`https://www.douyin.com/user/…`) hoặc phòng live (`https://live.douyin.com/…`), dán vào `u` của dòng `douyin` trong `LIVE` ở `index.html` để nút mở thẳng.
 
 ### Bật GitHub Pages
 
@@ -54,6 +66,7 @@ Dữ liệu nằm ở đầu thẻ `<script>` trong `index.html`:
 - `SHOWS`: sân khấu live theo chương trình.
 - `MVS`: video trên kênh YouTube.
 - `CHANNELS`: các kênh chính thức.
+- `LIVE`: nút mở livestream Douyin, Weibo ở tab Live.
 
 ## Nguồn
 
