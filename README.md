@@ -28,21 +28,34 @@ Link nghe nhạc để chia sẻ: https://nicoleng274.github.io/AnQiUniverse/#li
 
 Link chia sẻ: https://nicoleng274.github.io/AnQiUniverse/#live
 
-**Live của fan.** Fan đang live ở sự kiện (fansign, concert, sân bay…) dán link live vào tab này, kèm tên sự kiện. Mọi người thấy danh sách live trong 12 giờ gần nhất:
+**Ai được chia sẻ live.** Chỉ người được quản lý trang cho phép mới dán link hoặc chia sẻ màn hình được; fan khác chỉ xem và chat. Cách cho phép (làm một lần cho chính bạn):
+
+1. Mở tab Live, bấm mục **📡 Chia sẻ live**: trang hiện một mã.
+2. Vào Firestore → **Start collection** `hosts` (lần đầu) → **Add document**, *Document ID* là mã đó, thêm một trường bất kỳ (ví dụ `name`: tên người đó) → Save.
+3. Tải lại trang là thấy ô dán link và nút **Chia sẻ màn hình**. Muốn thu hồi thì xoá document đó.
+
+Mã gắn với trình duyệt: đổi máy, đổi trình duyệt hoặc xoá dữ liệu trang thì mã đổi, cần thêm lại.
+
+**Dán link live.** Ghi tên sự kiện rồi dán link. Mọi người thấy trong danh sách **Đang live** (12 giờ gần nhất):
 
 - **YouTube, Bilibili** (link `live.bilibili.com/<số phòng>` hoặc video `BV…`): bấm **▶ Xem ở đây** là xem ngay trên trang, khung chat ở bên cạnh.
-- **Douyin, Weibo, TikTok**: các nền tảng này không cho trang nào khác nhúng live, kể cả khi người xem đã đăng nhập (họ chặn bằng header của chính họ, trang web không gỡ được). Nút **Mở ↗** mở live trong app trên điện thoại, còn trên máy tính thì mở một cửa sổ nhỏ cạnh trang, dùng tài khoản của người xem như bình thường.
-- Dán được nguyên đoạn chia sẻ từ app (ví dụ `7.66 复制打开抖音，看看… https://v.douyin.com/…/`), trang tự lấy link. Chỉ nhận link từ Douyin, TikTok, Weibo, Bilibili (cả `b23.tv`), YouTube. Link rút gọn kiểu `t.cn` không được nhận.
-- Mỗi người chia sẻ tối đa 1 live mỗi phút. Người chia sẻ tự gỡ được live của mình. Muốn xoá link xấu: Firestore → `rooms/main/lives` → xoá document đó.
-- Biệt danh lấy từ ô biệt danh của khung chat. Phần này chỉ chạy khi khung chat đã bật (xem dưới).
+- **Douyin, Weibo, TikTok**: các nền tảng này không cho trang nào khác nhúng live, kể cả khi người xem đã đăng nhập (họ chặn bằng header của chính họ, trang web không gỡ được). Nút **Mở ↗** mở live trong app trên điện thoại, còn trên máy tính thì mở một cửa sổ nhỏ cạnh trang. Muốn mọi người xem ngay trên trang thì dùng **Chia sẻ màn hình**.
+- Dán được nguyên đoạn chia sẻ từ app (ví dụ `7.66 复制打开抖音，看看… https://v.douyin.com/…/`), trang tự lấy link. Chỉ nhận link từ Douyin, TikTok, Weibo, Bilibili (cả `b23.tv`), YouTube.
+- Tối đa 1 link mỗi phút. Người được cho phép gỡ được mọi link trong danh sách (nút **Gỡ**).
 
-**Chia sẻ màn hình.** Khi live không nhúng được (Douyin, Weibo, TikTok), người được cho phép mở live ở một tab khác rồi chia sẻ màn hình tab đó lên trang. Mọi người bấm **▶ Xem ở đây** trong danh sách Live của fan để xem, khung chat ở bên cạnh.
+**Chia sẻ màn hình.** Mở live ở một tab khác, bấm **🖥 Chia sẻ màn hình**, chọn tab đó và bật **Chia sẻ âm thanh của thẻ** (Share tab audio). Mọi người bấm **▶ Xem ở đây** trong danh sách Đang live.
 
-- Người chia sẻ cần dùng máy tính, Chrome hoặc Edge. Khi chọn tab, bật **Chia sẻ âm thanh của thẻ** (Share tab audio) thì người xem mới nghe được tiếng. Người xem dùng điện thoại hay máy tính đều được.
-- Hình và tiếng đi thẳng từ trình duyệt người chia sẻ tới từng người xem (WebRTC), không qua máy chủ nào, nên **tối đa 8 người xem cùng lúc** (đổi ở `SCREEN.max` trong `index.html`). Mạng upload của người chia sẻ cần khoảng 1,5 Mbps cho mỗi người xem. Muốn nhiều người xem hơn thì phát lại lên YouTube hoặc Bilibili (ví dụ bằng OBS) rồi dán link vào danh sách Live của fan.
+- Người chia sẻ cần dùng máy tính, Chrome hoặc Edge. Người xem dùng điện thoại hay máy tính đều được.
+- Hình và tiếng đi thẳng từ trình duyệt người chia sẻ tới từng người xem (WebRTC), không qua máy chủ nào, nên **tối đa 8 người xem cùng lúc** (đổi ở `SCREEN.max` trong `index.html`). Mạng upload cần khoảng 1,5 Mbps cho mỗi người xem. Muốn nhiều người xem hơn thì phát lại lên YouTube hoặc Bilibili (ví dụ bằng OBS) rồi dán link.
 - Một số mạng (mạng công ty, vài mạng di động) chặn kết nối trực tiếp. Nếu có người xem không vào được, thêm một máy chủ TURN vào `SCREEN.ice`.
-- Xem qua màn hình chia sẻ không được tính vào lượt xem của buổi live gốc. Nên hỏi người đang live trước khi chia sẻ lại buổi live của họ.
-- **Cho phép ai được chia sẻ:** người đó mở tab Live, mục **🖥 Chia sẻ màn hình** sẽ hiện một mã. Vào Firestore → **Start collection** `hosts` (lần đầu) → **Add document**, *Document ID* là mã đó, thêm một trường bất kỳ (ví dụ `name`: tên người đó) → Save. Người đó tải lại trang là thấy nút **Chia sẻ màn hình**. Muốn thu hồi thì xoá document đó. Mã gắn với trình duyệt: đổi máy, đổi trình duyệt hoặc xoá dữ liệu trang thì mã đổi, cần thêm lại.
+- Xem qua màn hình chia sẻ không được tính vào lượt xem của buổi live gốc.
+
+**Vietsub tự động.** Tích ô **Vietsub tự động (tiếng Trung → tiếng Việt)** trước hoặc trong lúc chia sẻ màn hình. Người xem thấy phụ đề tiếng Việt trên video (nút CC để ẩn, xem toàn màn hình vẫn có).
+
+- Chạy hoàn toàn trong Chrome của người chia sẻ, miễn phí, không cần tài khoản hay khoá API: Chrome nghe âm thanh tab đang chia sẻ để nhận dạng tiếng Trung (Web Speech API, Chrome 135 trở lên), rồi dịch sang tiếng Việt bằng bộ dịch có sẵn của Chrome (Translator API, Chrome 138 trở lên, máy tính). Lần đầu Chrome tải bộ dịch Trung–Việt về máy, trang hiện phần trăm.
+- Cần **Google Chrome 138 trở lên trên máy tính**. Edge và trình duyệt khác chưa chắc có đủ hai tính năng này.
+- Đây là dịch máy: chậm khoảng 1–3 giây, sai tên riêng và từ lóng, nói nhanh hay nhiều người nói cùng lúc thì kém, lúc hát gần như không dùng được. Phần nhận dạng giọng nói của Chrome gửi âm thanh tới máy chủ Google.
+- Người xem vào sau vẫn nhận phụ đề ngay câu đang chạy.
 
 **Kênh của 安崎.** Nút mở thẳng Douyin và trang Weibo của 安崎. Nút Douyin hiện mở trang tìm kiếm 安崎 trên Douyin. Khi có link trang cá nhân (`https://www.douyin.com/user/…`) hoặc phòng live (`https://live.douyin.com/…`), dán vào `u` của dòng `douyin` trong `LIVE` ở `index.html`.
 

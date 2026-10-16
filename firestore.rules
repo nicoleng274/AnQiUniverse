@@ -38,11 +38,12 @@ service cloud.firestore {
         && request.resource.data.at == request.time;
     }
 
-    // Live links fans share from events: only Douyin, TikTok, Weibo, Bilibili and YouTube links,
-    // at most one a minute per visitor. The person who shared a live can remove it.
+    // Live links: only people listed in /hosts can add them (Douyin, TikTok, Weibo, Bilibili and
+    // YouTube links, at most one a minute). The sharer or any host can remove one.
     match /rooms/{room}/lives/{id} {
       allow read: if true;
       allow create: if request.auth != null
+        && exists(/databases/$(database)/documents/hosts/$(request.auth.uid))
         && request.resource.data.keys().hasOnly(['name', 'title', 'url', 'uid', 'at'])
         && request.resource.data.keys().hasAll(['name', 'title', 'url', 'uid', 'at'])
         && request.resource.data.uid == request.auth.uid
@@ -60,11 +61,13 @@ service cloud.firestore {
         && (!exists(/databases/$(database)/documents/sharers/$(request.auth.uid))
             || get(/databases/$(database)/documents/sharers/$(request.auth.uid)).data.at
                < request.time - duration.value(60, 's'));
-      allow delete: if request.auth != null && resource.data.uid == request.auth.uid;
+      allow delete: if request.auth != null
+        && (resource.data.uid == request.auth.uid
+            || exists(/databases/$(database)/documents/hosts/$(request.auth.uid)));
       allow update: if false;
     }
 
-    // People allowed to share their screen. The site manager adds a document here in the console,
+    // People allowed to share lives and their screen. The site manager adds a document here in the console,
     // named with the code the person sees on the Live tab. A visitor can only check their own.
     match /hosts/{uid} {
       allow read: if request.auth != null && request.auth.uid == uid;

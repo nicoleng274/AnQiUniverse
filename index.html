@@ -268,19 +268,21 @@ a.ico:hover,a.ico:focus-visible{color:var(--ice);border-color:var(--ice);box-sha
 .fl .ctl{text-decoration:none;font-size:12.5px;padding:7px 12px}
 .fl .ctl.go{border-color:rgba(255,197,138,.55);color:var(--flare)}
 .fl-empty{padding:16px;color:var(--dust);font-size:13.5px}
-#share-form{display:flex;flex-direction:column;gap:8px}
-#share-status{min-height:1.2em;margin:0;color:var(--flare);font-size:12px}
+.host-ctl{display:flex;flex-direction:column;gap:10px}
+.host-scr{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px}
+#sub-status{margin:0;color:var(--mist);font-size:12.5px}
+#fan-player video::cue{background:rgba(5,6,12,.78);color:#fff}
 .embed-yt video{position:absolute;inset:0;width:100%;height:100%;background:#000}
 .scr-msg{position:absolute;inset:0;display:grid;place-items:center;margin:0;padding:24px;color:var(--mist);font-size:13.5px;text-align:center;pointer-events:none}
 .host{border:1px solid var(--line);border-radius:12px}
 .host summary{padding:12px 14px;color:var(--star);font:600 14px/1.3 var(--f-body);cursor:pointer}
 .host[open] summary{border-bottom:1px solid var(--line)}
 .host > :not(summary){margin:12px 14px}
-.host input{box-sizing:border-box;width:100%;min-width:0;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.04);color:var(--star);font:400 14px var(--f-body)}
-.host input::placeholder{color:var(--dust)}
-.host input:focus{outline:none;border-color:var(--ice)}
+.host input:not([type=checkbox]){box-sizing:border-box;width:100%;min-width:0;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.04);color:var(--star);font:400 14px var(--f-body)}
+.host input:not([type=checkbox])::placeholder{color:var(--dust)}
+.host input:not([type=checkbox]):focus{outline:none;border-color:var(--ice)}
 .host code{font-family:var(--f-mono);color:var(--ice);overflow-wrap:anywhere;user-select:all}
-#host-status{min-height:1.2em;color:var(--flare);font-size:12px}
+#host-status{min-height:1.2em;margin:0;color:var(--flare);font-size:12px}
 
 .chat{position:sticky;top:90px;display:flex;flex-direction:column;height:min(680px,calc(100vh - 120px));overflow:hidden;border:1px solid var(--line-2);border-radius:16px;background:rgba(13,16,34,.88)}
 @media (max-width:900px){.chat{position:static;height:520px}}
@@ -427,22 +429,23 @@ footer a{color:var(--mist);text-underline-offset:3px}
             <div class="embed-yt" id="fan-player" hidden></div>
             <h3 class="mini" data-i="lives.title"></h3>
             <ol class="fanlives" id="fanlives"></ol>
-            <form id="share-form" hidden>
-              <input id="share-url" maxlength="600" autocomplete="off" inputmode="url" data-ph="lives.url" data-al="lives.url">
-              <div class="chat-row">
-                <input id="share-what" maxlength="80" autocomplete="off" data-ph="lives.what" data-al="lives.what">
-                <button type="submit" class="send" id="share-send" data-i="lives.share"></button>
-              </div>
-              <p id="share-status" role="status"></p>
-            </form>
             <details class="host" id="host-box" hidden>
-              <summary data-i="scr.title"></summary>
+              <summary data-i="host.title"></summary>
               <p class="hint" id="host-note"></p>
-              <div class="chat-row" id="host-row" hidden>
+              <div class="host-ctl" id="host-ctl" hidden>
                 <input id="host-what" maxlength="80" autocomplete="off" data-ph="lives.what" data-al="lives.what">
-                <button type="button" class="send" id="host-go"></button>
+                <form class="chat-row" id="share-form">
+                  <input id="share-url" maxlength="600" autocomplete="off" inputmode="url" data-ph="lives.url" data-al="lives.url">
+                  <button type="submit" class="send" id="share-send" data-i="lives.share"></button>
+                </form>
+                <div class="host-scr">
+                  <button type="button" class="send" id="host-go"></button>
+                  <label class="loop" id="sub-row"><input type="checkbox" id="host-sub"><span data-i="sub.label"></span></label>
+                </div>
+                <p class="hint" id="scr-note"></p>
+                <p id="sub-status" role="status"></p>
+                <p id="host-status" role="status"></p>
               </div>
-              <p id="host-status" role="status"></p>
             </details>
             <h3 class="mini" data-i="lives.official"></h3>
             <div class="lives" id="lives"></div>
@@ -1039,17 +1042,23 @@ Object.assign(T.vi, {
 /* words for the live tab (Douyin, Weibo) */
 Object.assign(T.en, {
   'src.live':'Live · watch together','live.open':'Open the live ↗',
-  'live.hint':'Fans at an event can share their live here. YouTube and Bilibili lives play right on this page. Douyin, Weibo and TikTok don’t let any other site embed their lives, even for viewers who are logged in, so those open in their app, or on a computer in a small window beside this page, where your own login works. Chat with everyone here while you watch.',
-  'lives.title':'Fan lives','lives.official':'安崎’s own channels',
+  'live.hint':'Lives show up here when they start. YouTube and Bilibili lives play right on this page. Douyin, Weibo and TikTok don’t let other sites embed their lives, even for logged-in viewers, so those open in their app (on a computer, in a small window beside this page) or get shared here as a screen. Chat with everyone while you watch.',
+  'lives.title':'Live now','lives.official':'安崎’s own channels',
   'lives.url':'Paste a live link or the app’s share text','lives.what':'Which event? e.g. fansign in Shanghai','lives.share':'Share',
   'lives.watch':'▶ Watch here','lives.open':'Open ↗','lives.drop':'Remove',
-  'lives.empty':'No fan lives right now. Live at an event? Share your link below so other fans can watch.',
-  'lives.off':'Sharing fan lives opens together with the fan chat.','lives.error':'Fan lives can’t load right now. Reload the page to try again.',
+  'lives.empty':'Nothing live right now. When a live starts, it shows up here.',
+  'lives.off':'The live list opens together with the fan chat.','lives.error':'The live list can’t load right now. Reload the page to try again.',
   'lives.bad':'Paste a link from Douyin, Weibo, Bilibili, YouTube or TikTok.','lives.needWhat':'Say which event it is.','lives.slow':'You can share one live a minute.',
-  'scr.title':'🖥 Share your screen','scr.start':'Share screen','scr.stop':'Stop sharing','scr.kind':'Screen','scr.you':'You’re sharing',
-  'scr.how':n=>`Open the live in another tab, press Share screen, pick that tab and turn on “Share tab audio”. Everyone sees it in the Fan lives list. Up to ${n} people can watch at once, and watching here doesn’t count as a view on the original live.`,
+  'host.title':'📡 Share a live','scr.start':'🖥 Share screen','scr.stop':'Stop sharing','scr.kind':'Screen','scr.you':'You’re sharing',
+  'scr.how':n=>`Open the live in another tab, press Share screen, pick that tab and turn on “Share tab audio”. Everyone sees it in the Live now list. Up to ${n} people can watch at once, and watching here doesn’t count as a view on the original live.`,
   'scr.on':(v,n)=>`Sharing your screen · ${v}/${n} watching. Stop here or from the browser’s sharing bar.`,
-  'scr.ask':id=>`Only people the site manager has allowed can share their screen. To ask, send them this code: <code>${id}</code>`,
+  'host.ask':id=>`Only people the site manager has allowed can share lives here. To ask, send them this code: <code>${id}</code>`,
+  'host.how':'Name the event, then paste the live link, or share your screen when the live can’t play here. One link a minute.',
+  'sub.label':'Auto Vietnamese subtitles (Chinese → Vietnamese)','sub.need':'Auto subtitles need Chrome 138 or later on a computer.',
+  'sub.dl':n=>`Downloading the Chinese–Vietnamese translator… ${n}%`,'sub.ready':'Translator ready. Subtitles start when you share your screen.',
+  'sub.on':'Auto subtitles on: viewers see Vietnamese captions on the video (the CC button hides them). It’s machine translation, 1–3 seconds behind, with mistakes, especially in songs.',
+  'sub.noAudio':'There’s no sound in the share, so no subtitles. Share a tab and turn on “Share tab audio”.',
+  'sub.fail':'Auto subtitles stopped: Chrome couldn’t listen to the shared tab or translate it.','sub.unavailable':'This Chrome doesn’t have the Chinese–Vietnamese translator.',
   'scr.device':'Screen sharing works on a computer, in Chrome or Edge.','scr.error':'Screen sharing didn’t start. Try again in Chrome or Edge.',
   'scr.joining':'Connecting to the shared screen…','scr.full':n=>`This screen already has ${n} viewers. Try again in a bit.`,
   'scr.fail':'Couldn’t connect to the shared screen. Some networks block direct connections: try another network or reload.',
@@ -1058,17 +1067,23 @@ Object.assign(T.en, {
 });
 Object.assign(T.zh, {
   'src.live':'直播 · 一起看','live.open':'进入直播 ↗',
-  'live.hint':'在活动现场直播的粉丝可以把直播分享到这里。YouTube 和 B 站直播可以直接在本站观看。抖音、微博和 TikTok 不允许其他网站嵌入直播，登录了也一样，所以会在官方 App 中打开；用电脑时会在本页旁边弹出小窗口，用你自己的账号登录即可。边看边在这里和大家聊天吧。',
-  'lives.title':'粉丝直播','lives.official':'安崎本人账号',
+  'live.hint':'直播开始后会显示在这里。YouTube 和 B 站直播可以直接在本站观看。抖音、微博和 TikTok 不允许其他网站嵌入直播，登录了也一样，所以会在官方 App 中打开（电脑上会在本页旁边弹出小窗口），或以共享屏幕的方式在这里播放。边看边和大家聊天吧。',
+  'lives.title':'正在直播','lives.official':'安崎本人账号',
   'lives.url':'粘贴直播链接，或 App 里的整段分享文字','lives.what':'什么活动？例如：上海签售','lives.share':'分享',
   'lives.watch':'▶ 在本站看','lives.open':'打开 ↗','lives.drop':'删除',
-  'lives.empty':'现在没有粉丝直播。你在活动现场直播吗？在下面分享链接，让其他粉丝一起看。',
-  'lives.off':'粉丝直播分享会和粉丝聊天室一起开放。','lives.error':'粉丝直播暂时无法加载，请刷新页面重试。',
+  'lives.empty':'现在没有直播。直播开始后会显示在这里。',
+  'lives.off':'直播列表会和粉丝聊天室一起开放。','lives.error':'直播列表暂时无法加载，请刷新页面重试。',
   'lives.bad':'请粘贴抖音、微博、B 站、YouTube 或 TikTok 的链接。','lives.needWhat':'请写上是什么活动。','lives.slow':'每分钟只能分享一个直播。',
-  'scr.title':'🖥 共享屏幕','scr.start':'共享屏幕','scr.stop':'停止共享','scr.kind':'屏幕','scr.you':'你正在共享',
-  'scr.how':n=>`在另一个标签页打开直播，点“共享屏幕”，选择该标签页并打开“分享标签页音频”。大家会在粉丝直播列表里看到。最多 ${n} 人同时观看；在这里观看不计入原直播间人数。`,
+  'host.title':'📡 分享直播','scr.start':'🖥 共享屏幕','scr.stop':'停止共享','scr.kind':'屏幕','scr.you':'你正在共享',
+  'scr.how':n=>`在另一个标签页打开直播，点“共享屏幕”，选择该标签页并打开“分享标签页音频”。大家会在“正在直播”列表里看到。最多 ${n} 人同时观看；在这里观看不计入原直播间人数。`,
   'scr.on':(v,n)=>`正在共享屏幕 · ${v}/${n} 人观看。可在这里或浏览器的共享提示栏停止。`,
-  'scr.ask':id=>`只有站长允许的人才能共享屏幕。如需申请，请把这个代码发给站长：<code>${id}</code>`,
+  'host.ask':id=>`只有站长允许的人才能在这里分享直播。如需申请，请把这个代码发给站长：<code>${id}</code>`,
+  'host.how':'写上活动名称，然后粘贴直播链接；直播无法在本站播放时，可以共享屏幕。每分钟最多一个链接。',
+  'sub.label':'自动越南语字幕（中文 → 越南语）','sub.need':'自动字幕需要电脑版 Chrome 138 或更新版本。',
+  'sub.dl':n=>`正在下载中越翻译模型… ${n}%`,'sub.ready':'翻译模型已就绪，共享屏幕后开始显示字幕。',
+  'sub.on':'自动字幕已开启：观众会在视频上看到越南语字幕（可用 CC 按钮隐藏）。机器翻译，约慢 1–3 秒，会有错误，唱歌时尤其明显。',
+  'sub.noAudio':'共享内容没有声音，无法生成字幕。请共享标签页并打开“分享标签页音频”。',
+  'sub.fail':'自动字幕已停止：Chrome 无法收听或翻译共享的标签页。','sub.unavailable':'此 Chrome 没有中译越翻译模型。',
   'scr.device':'共享屏幕需要在电脑上用 Chrome 或 Edge。','scr.error':'共享屏幕没有开始，请用 Chrome 或 Edge 再试一次。',
   'scr.joining':'正在连接共享屏幕…','scr.full':n=>`这个屏幕已有 ${n} 人观看，请稍后再试。`,
   'scr.fail':'无法连接共享屏幕。有些网络会阻止直接连接，请换个网络或刷新页面。',
@@ -1077,17 +1092,23 @@ Object.assign(T.zh, {
 });
 Object.assign(T.vi, {
   'src.live':'Live · xem cùng nhau','live.open':'Vào xem live ↗',
-  'live.hint':'Fan đang live ở sự kiện có thể chia sẻ link live lên đây. Live YouTube và Bilibili xem được ngay trên trang. Douyin, Weibo và TikTok không cho trang nào khác nhúng live, kể cả khi người xem đã đăng nhập, nên sẽ mở trong app, hoặc trên máy tính thì mở một cửa sổ nhỏ cạnh trang này, dùng tài khoản của bạn như bình thường. Vừa xem vừa chat cùng mọi người ở đây nhé.',
-  'lives.title':'Live của fan','lives.official':'Kênh của 安崎',
+  'live.hint':'Live sẽ hiện ở đây khi bắt đầu. Live YouTube và Bilibili xem được ngay trên trang. Douyin, Weibo và TikTok không cho trang khác nhúng live, kể cả khi đã đăng nhập, nên sẽ mở trong app (trên máy tính thì mở cửa sổ nhỏ cạnh trang này), hoặc được chia sẻ màn hình lên đây. Vừa xem vừa chat cùng mọi người nhé.',
+  'lives.title':'Đang live','lives.official':'Kênh của 安崎',
   'lives.url':'Dán link live hoặc đoạn chia sẻ từ app','lives.what':'Sự kiện gì? VD: fansign Thượng Hải','lives.share':'Chia sẻ',
   'lives.watch':'▶ Xem ở đây','lives.open':'Mở ↗','lives.drop':'Gỡ',
-  'lives.empty':'Chưa có fan nào đang live. Bạn đang live ở sự kiện? Chia sẻ link ở dưới để các fan khác cùng xem.',
-  'lives.off':'Phần chia sẻ live của fan sẽ mở cùng lúc với khung chat.','lives.error':'Chưa tải được danh sách live của fan. Tải lại trang để thử lại.',
+  'lives.empty':'Hiện chưa có live nào. Khi có live, link sẽ hiện ở đây.',
+  'lives.off':'Danh sách live sẽ mở cùng lúc với khung chat.','lives.error':'Chưa tải được danh sách live. Tải lại trang để thử lại.',
   'lives.bad':'Dán link từ Douyin, Weibo, Bilibili, YouTube hoặc TikTok.','lives.needWhat':'Ghi tên sự kiện nhé.','lives.slow':'Mỗi phút chỉ chia sẻ được một live.',
-  'scr.title':'🖥 Chia sẻ màn hình','scr.start':'Chia sẻ màn hình','scr.stop':'Dừng chia sẻ','scr.kind':'Màn hình','scr.you':'Bạn đang chia sẻ',
-  'scr.how':n=>`Mở live ở một tab khác, bấm Chia sẻ màn hình, chọn tab đó và bật “Chia sẻ âm thanh của thẻ”. Mọi người sẽ thấy trong danh sách Live của fan. Tối đa ${n} người xem cùng lúc, và xem ở đây không được tính vào lượt xem của buổi live gốc.`,
+  'host.title':'📡 Chia sẻ live','scr.start':'🖥 Chia sẻ màn hình','scr.stop':'Dừng chia sẻ','scr.kind':'Màn hình','scr.you':'Bạn đang chia sẻ',
+  'scr.how':n=>`Mở live ở một tab khác, bấm Chia sẻ màn hình, chọn tab đó và bật “Chia sẻ âm thanh của thẻ”. Mọi người sẽ thấy trong danh sách Đang live. Tối đa ${n} người xem cùng lúc, và xem ở đây không được tính vào lượt xem của buổi live gốc.`,
   'scr.on':(v,n)=>`Đang chia sẻ màn hình · ${v}/${n} người đang xem. Dừng ở đây hoặc trên thanh chia sẻ của trình duyệt.`,
-  'scr.ask':id=>`Chỉ người được quản lý trang cho phép mới chia sẻ màn hình được. Muốn xin quyền, gửi mã này cho quản lý trang: <code>${id}</code>`,
+  'host.ask':id=>`Chỉ người được quản lý trang cho phép mới chia sẻ live lên đây được. Muốn xin quyền, gửi mã này cho quản lý trang: <code>${id}</code>`,
+  'host.how':'Ghi tên sự kiện, rồi dán link live, hoặc chia sẻ màn hình khi live không xem được trên trang. Mỗi phút dán được một link.',
+  'sub.label':'Vietsub tự động (tiếng Trung → tiếng Việt)','sub.need':'Vietsub tự động cần Chrome 138 trở lên trên máy tính.',
+  'sub.dl':n=>`Đang tải bộ dịch Trung–Việt… ${n}%`,'sub.ready':'Bộ dịch đã sẵn sàng. Phụ đề sẽ chạy khi bạn chia sẻ màn hình.',
+  'sub.on':'Đang bật vietsub tự động: người xem thấy phụ đề tiếng Việt trên video (nút CC để ẩn). Đây là dịch máy, chậm 1–3 giây và có chỗ sai, nhất là khi hát.',
+  'sub.noAudio':'Chia sẻ không có âm thanh nên không làm phụ đề được. Hãy chia sẻ tab và bật “Chia sẻ âm thanh của thẻ”.',
+  'sub.fail':'Vietsub tự động đã dừng: Chrome không nghe hoặc không dịch được tab đang chia sẻ.','sub.unavailable':'Chrome này chưa có bộ dịch Trung–Việt.',
   'scr.device':'Chia sẻ màn hình cần dùng máy tính, trình duyệt Chrome hoặc Edge.','scr.error':'Chưa chia sẻ được màn hình. Thử lại bằng Chrome hoặc Edge.',
   'scr.joining':'Đang kết nối tới màn hình chia sẻ…','scr.full':n=>`Màn hình này đã đủ ${n} người xem. Thử lại sau ít phút nhé.`,
   'scr.fail':'Không kết nối được tới màn hình chia sẻ. Một số mạng chặn kết nối trực tiếp: thử đổi mạng hoặc tải lại trang.',
@@ -1709,7 +1730,6 @@ function drawLives(){
   box.hidden = !key;
   drawHost();
   if (!live) return;
-  $('share-form').hidden = !chatUI.share;
   const k = chatUI.state === 'chat.error' || chatUI.livesErr ? 'lives.error' : chatUI.state ? 'lives.off' : list.length ? '' : 'lives.empty';
   $('fanlives').innerHTML = k ? `<li class="fl-empty">${t(k)}</li>` : list.map(x => {
     if (x.screen) return `<li class="fl${on && on.id === x.id ? ' on' : ''}"><span class="ico">${ICON.screen}</span>
@@ -1721,7 +1741,7 @@ function drawLives(){
       <span class="fx"><b>${esc(x.title || '')}</b><small>${p.n} · ${esc(x.name || '')} · ${when(x.at)}</small></span>
       ${embed ? `<button type="button" class="ctl go" data-watch="${esc(x.id)}" data-n="${p.n}">${t('lives.watch')}</button>` : ''}
       <a class="ctl${embed ? '' : ' go'}" href="${esc(x.url)}" target="_blank" rel="noopener" data-pop="${p.n}">${t('lives.open')}</a>
-      ${x.uid === chatUI.uid ? `<button type="button" class="ctl" data-drop="${esc(x.id)}">${t('lives.drop')}</button>` : ''}</li>`;
+      ${x.uid === chatUI.uid || (chatUI.screen && chatUI.screen.host) ? `<button type="button" class="ctl" data-drop="${esc(x.id)}">${t('lives.drop')}</button>` : ''}</li>`;
   }).join('');
 }
 function watchScreen(x, box){
@@ -1738,21 +1758,24 @@ function watchScreen(x, box){
     if (state === 'connected') { clearTimeout(timer); say(''); }
     else if (state === 'full') { clearTimeout(timer); say('scr.full', SCREEN.max); }
     else if (state === 'failed') { clearTimeout(timer); say('scr.fail'); }
-  });
+  }, d => caption(video, d.vi || d.zh));
   H.leave = () => { clearTimeout(timer); leave(); };
 }
 function drawHost(){
   const s = chatUI.screen, box = $('host-box');
   box.hidden = !s || L.src !== 'live';
   if (box.hidden) return;
+  $('host-note').innerHTML = s.host ? t('host.how') : t('host.ask', esc(s.uid));
+  $('host-ctl').hidden = !s.host;
+  if (!s.host) return;
+  if (!box.dataset.opened) { box.open = true; box.dataset.opened = '1'; }
   const can = !!(navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia);
-  $('host-note').innerHTML = !can ? t('scr.device') : !s.host ? t('scr.ask', esc(s.uid))
-    : H.stream ? t('scr.on', H.viewers, SCREEN.max) : t('scr.how', SCREEN.max);
-  $('host-row').hidden = !can || !s.host;
-  $('host-what').hidden = !!H.stream;
+  $('scr-note').textContent = !can ? t('scr.device') : H.stream ? t('scr.on', H.viewers, SCREEN.max) : t('scr.how', SCREEN.max);
+  $('host-go').hidden = $('sub-row').hidden = !can;
   $('host-go').textContent = t(H.stream ? 'scr.stop' : 'scr.start');
   $('host-go').disabled = H.busy;
-  if (s.host && can && !box.dataset.opened) { box.open = true; box.dataset.opened = '1'; }
+  $('host-sub').disabled = !SUBS_OK;
+  $('sub-status').textContent = !can ? '' : !SUBS_OK ? t('sub.need') : SUB.msg ? t(...SUB.msg) : '';
 }
 $('host-go').addEventListener('click', async () => {
   const st = $('host-status'), s = chatUI.screen;
@@ -1763,17 +1786,112 @@ $('host-go').addEventListener('click', async () => {
   if (!what) { st.textContent = t('lives.needWhat'); $('host-what').focus(); return; }
   if (!name) { st.textContent = $('chat-status').textContent = t('chat.needName'); $('chat-name').focus(); return; }
   try { localStorage.setItem('anqi-chat-name', name); } catch(_) {}
+  // the translator may need a download, which Chrome only allows right after a click
+  const sub = SUBS_OK && $('host-sub').checked;
+  if (sub) subsPrepare();
   H.busy = true; drawHost();
   try {
     H.stream = await s.start(name.slice(0, 24), what.slice(0, 80),
       n => { H.viewers = n; drawHost(); },
-      () => { H.stream = null; H.viewers = 0; drawLives(); });
+      () => {
+        H.stream = null; H.viewers = 0; subsStop();
+        if (SUB.msg && SUB.msg[0] === 'sub.on') SUB.msg = ['sub.ready'];
+        drawLives();
+      });
+    if (sub) subsStart(H.stream);
   } catch (err) {
     console.error(err);
     // closing the picker is not an error
     if (!err || err.name !== 'NotAllowedError') st.textContent = t('scr.error');
   } finally { H.busy = false; drawLives(); }
 });
+$('host-sub').addEventListener('change', e => {
+  if (!e.target.checked) { subsStop(); subSay(''); return; }
+  subsPrepare().then(() => { if (!H.stream) subSay('sub.ready'); }, () => {});
+  if (H.stream) subsStart(H.stream);
+});
+
+/* ---------- auto Vietnamese subtitles for a shared screen ----------
+   Runs in the sharer's Chrome: the Web Speech API listens to the shared tab (Chrome 135+) and Chrome's
+   built-in Translator turns the Chinese into Vietnamese on the computer (Chrome 138+). The lines go to
+   viewers along with the picture and show as captions on the video. */
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+const SUBS_OK = !!(SR && window.Translator);
+const SUB = {rec:null, tr:null, ready:null, msg:null, job:'', busy:false};
+const subSay = (k, ...a) => { SUB.msg = k ? [k, ...a] : null; drawHost(); };
+const tail = (s, n) => s.length <= n ? s : '…' + s.slice(-n).replace(/^\S*\s/, '');
+// a caption on the video: the CC button hides it, and it stays in full screen
+function caption(video, text){
+  if (!video) return;
+  let tr = video.subTrack;
+  if (!tr) { tr = video.subTrack = video.addTextTrack('subtitles', 'Tiếng Việt', 'vi'); tr.mode = 'showing'; }
+  [...(tr.cues || [])].forEach(c => tr.removeCue(c));
+  if (text) tr.addCue(new VTTCue(video.currentTime, video.currentTime + 7, text));
+}
+function subsPrepare(){
+  if (!SUB.ready) {
+    SUB.ready = (async () => {
+      const langs = {sourceLanguage: 'zh', targetLanguage: 'vi'};
+      if (await Translator.availability(langs) === 'unavailable') throw new Error('unavailable');
+      return Translator.create({...langs, monitor(m){ m.addEventListener('downloadprogress', e => subSay('sub.dl', Math.round(e.loaded * 100))); }});
+    })();
+    SUB.ready.catch(err => {
+      console.error(err);
+      SUB.ready = null; $('host-sub').checked = false;
+      subSay(err.message === 'unavailable' ? 'sub.unavailable' : 'sub.fail');
+    });
+  }
+  return SUB.ready;
+}
+function subsSend(zh, vi){
+  const text = tail(vi || zh, 120);
+  if (chatUI.screen) chatUI.screen.caption({zh: tail(zh, 80), vi: text});
+  if (H.stream) caption($('fan-player').querySelector('video'), text);
+}
+// translate the newest line; while one is being translated, only the latest waiting line is kept
+async function subsPump(){
+  if (SUB.busy || !SUB.job) return;
+  const zh = SUB.job;
+  SUB.job = ''; SUB.busy = true;
+  try { const vi = await SUB.tr.translate(zh); if (SUB.rec) subsSend(zh, vi); }
+  catch (err) { console.error(err); }
+  SUB.busy = false;
+  subsPump();
+}
+async function subsStart(stream){
+  const track = stream.getAudioTracks()[0];
+  if (!track) { subSay('sub.noAudio'); return; }
+  let tr;
+  try { tr = await subsPrepare(); } catch (_) { return; }
+  if (H.stream !== stream || SUB.rec) return;
+  const rec = new SR();
+  rec.lang = 'zh-CN'; rec.continuous = true; rec.interimResults = true;
+  rec.onresult = e => {
+    let zh = '';
+    for (let i = e.resultIndex; i < e.results.length; i++) zh += e.results[i][0].transcript;
+    if (zh.trim()) { SUB.job = zh.trim(); subsPump(); }
+  };
+  rec.onerror = e => {
+    // silence and network hiccups just restart; anything else stops the subtitles
+    if (['no-speech', 'aborted', 'network'].includes(e.error)) return;
+    console.error('speech recognition:', e.error);
+    subsStop(); $('host-sub').checked = false; subSay('sub.fail');
+  };
+  // Chrome ends a recognition session now and then: start a new one while still sharing
+  rec.onend = () => setTimeout(() => {
+    if (SUB.rec === rec && track.readyState === 'live') { try { rec.start(track); } catch (_) {} }
+  }, 500);
+  SUB.rec = rec; SUB.tr = tr;
+  try { rec.start(track); subSay('sub.on'); }
+  catch (err) { console.error(err); SUB.rec = null; subSay('sub.fail'); }
+}
+function subsStop(){
+  const rec = SUB.rec;
+  SUB.rec = null; SUB.job = '';
+  if (!rec) return;
+  try { rec.abort(); } catch (_) {}
+  subsSend('', '');
+}
 // drop screens whose sharer went quiet and links older than LIVE_HOURS
 setInterval(() => { if (L.src === 'live') drawLives(); }, 60e3);
 
@@ -1794,17 +1912,17 @@ $('live-box').addEventListener('click', e => {
 });
 $('share-form').addEventListener('submit', async e => {
   e.preventDefault();
-  const st = $('share-status'), name = $('chat-name').value.trim(), what = $('share-what').value.trim();
+  const st = $('host-status'), name = $('chat-name').value.trim(), what = $('host-what').value.trim();
   const url = liveUrl($('share-url').value);
   st.textContent = '';
   if (!url) { st.textContent = t('lives.bad'); $('share-url').focus(); return; }
-  if (!what) { st.textContent = t('lives.needWhat'); $('share-what').focus(); return; }
+  if (!what) { st.textContent = t('lives.needWhat'); $('host-what').focus(); return; }
   // the nickname comes from the chat box, so say it there too
   if (!name) { st.textContent = $('chat-status').textContent = t('chat.needName'); $('chat-name').focus(); return; }
   if (!chatUI.share) return;
   try { localStorage.setItem('anqi-chat-name', name); } catch(_) {}
   const btn = $('share-send'); btn.disabled = true;
-  try { await chatUI.share(name.slice(0, 24), what.slice(0, 80), url); $('share-url').value = ''; $('share-what').value = ''; }
+  try { await chatUI.share(name.slice(0, 24), what.slice(0, 80), url); $('share-url').value = ''; }
   catch (err) { st.textContent = t(err && err.code === 'permission-denied' ? 'lives.slow' : 'chat.fail'); }
   finally { btn.disabled = false; }
 });
@@ -1906,7 +2024,7 @@ function screenShare(fs, db, screens, uid, host){
     const timer = setTimeout(done, 3000);
     pc.addEventListener('icegatheringstatechange', () => { if (pc.iceGatheringState === 'complete') { clearTimeout(timer); done(); } });
   });
-  let end = null;
+  let end = null, chans = new Map(), last = '';
   return {
     host, uid,
     async start(name, title, onViewers, onEnd){
@@ -1917,9 +2035,9 @@ function screenShare(fs, db, screens, uid, host){
       const video = stream.getVideoTracks()[0];
       if (video) video.contentHint = 'motion';
       const sid = Math.random().toString(36).slice(2, 12);
-      const me = fs.doc(screens, uid), peers = fs.collection(me, 'peers'), pcs = new Map();
+      const me = fs.doc(screens, uid), peers = fs.collection(me, 'peers'), pcs = new Map(), chs = chans = new Map();
       const count = () => onViewers([...pcs.values()].filter(pc => pc.connectionState === 'connected').length);
-      const drop = id => { const pc = pcs.get(id); if (pc) { pc.close(); pcs.delete(id); count(); } };
+      const drop = id => { const pc = pcs.get(id); chs.delete(id); if (pc) { pc.close(); pcs.delete(id); count(); } };
       try { await fs.setDoc(me, {name, title, uid, sid, on: true, at: fs.serverTimestamp()}); }
       catch (err) { stream.getTracks().forEach(t => t.stop()); throw err; }
       const stopPeers = fs.onSnapshot(peers, snap => snap.docChanges().forEach(async ch => {
@@ -1934,6 +2052,10 @@ function screenShare(fs, db, screens, uid, host){
             const pc = new RTCPeerConnection(ice);
             pcs.set(id, pc);
             stream.getTracks().forEach(t => pc.addTrack(t, stream));
+            // subtitles travel on a data channel; a new viewer gets the current line straight away
+            const dc = pc.createDataChannel('subs');
+            dc.onopen = () => { if (last) dc.send(last); };
+            chs.set(id, dc);
             pc.onconnectionstatechange = () => { if (pc.connectionState === 'failed') drop(id); else count(); };
             await pc.setLocalDescription(await pc.createOffer());
             await gathered(pc);
@@ -1953,7 +2075,7 @@ function screenShare(fs, db, screens, uid, host){
       // check in every minute so a closed tab drops off everyone's list
       const beat = setInterval(() => fs.updateDoc(me, {at: fs.serverTimestamp()}).catch(() => {}), 60e3);
       end = () => {
-        end = null;
+        end = null; chans = new Map(); last = '';
         clearInterval(beat); stopPeers();
         removeEventListener('pagehide', stop);
         pcs.forEach((pc, id) => { pc.close(); fs.deleteDoc(fs.doc(peers, id)).catch(() => {}); });
@@ -1968,7 +2090,11 @@ function screenShare(fs, db, screens, uid, host){
       return stream;
     },
     stop(){ if (end) end(); },
-    watch(sharer, sid, onStream, onState){
+    caption(line){
+      last = JSON.stringify(line);
+      chans.forEach(ch => { if (ch.readyState === 'open') ch.send(last); });
+    },
+    watch(sharer, sid, onStream, onState, onCaption){
       const ref = fs.doc(screens, sharer, 'peers', uid);
       let pc = null, quit = false, stopDoc = () => {};
       const fail = err => { console.error(err); if (!quit) onState('failed'); };
@@ -1982,6 +2108,7 @@ function screenShare(fs, db, screens, uid, host){
           try {
             pc = new RTCPeerConnection(ice);
             pc.ontrack = e => onStream(e.streams[0]);
+            pc.ondatachannel = e => { e.channel.onmessage = m => { try { onCaption(JSON.parse(m.data)); } catch (_) {} }; };
             pc.onconnectionstatechange = () => onState(pc.connectionState);
             await pc.setRemoteDescription({type: 'offer', sdp: d.offer});
             await pc.setLocalDescription(await pc.createAnswer());
