@@ -270,6 +270,17 @@ a.ico:hover,a.ico:focus-visible{color:var(--ice);border-color:var(--ice);box-sha
 .fl-empty{padding:16px;color:var(--dust);font-size:13.5px}
 #share-form{display:flex;flex-direction:column;gap:8px}
 #share-status{min-height:1.2em;margin:0;color:var(--flare);font-size:12px}
+.embed-yt video{position:absolute;inset:0;width:100%;height:100%;background:#000}
+.scr-msg{position:absolute;inset:0;display:grid;place-items:center;margin:0;padding:24px;color:var(--mist);font-size:13.5px;text-align:center;pointer-events:none}
+.host{border:1px solid var(--line);border-radius:12px}
+.host summary{padding:12px 14px;color:var(--star);font:600 14px/1.3 var(--f-body);cursor:pointer}
+.host[open] summary{border-bottom:1px solid var(--line)}
+.host > :not(summary){margin:12px 14px}
+.host input{box-sizing:border-box;width:100%;min-width:0;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.04);color:var(--star);font:400 14px var(--f-body)}
+.host input::placeholder{color:var(--dust)}
+.host input:focus{outline:none;border-color:var(--ice)}
+.host code{font-family:var(--f-mono);color:var(--ice);overflow-wrap:anywhere;user-select:all}
+#host-status{min-height:1.2em;color:var(--flare);font-size:12px}
 
 .chat{position:sticky;top:90px;display:flex;flex-direction:column;height:min(680px,calc(100vh - 120px));overflow:hidden;border:1px solid var(--line-2);border-radius:16px;background:rgba(13,16,34,.88)}
 @media (max-width:900px){.chat{position:static;height:520px}}
@@ -424,6 +435,15 @@ footer a{color:var(--mist);text-underline-offset:3px}
               </div>
               <p id="share-status" role="status"></p>
             </form>
+            <details class="host" id="host-box" hidden>
+              <summary data-i="scr.title"></summary>
+              <p class="hint" id="host-note"></p>
+              <div class="chat-row" id="host-row" hidden>
+                <input id="host-what" maxlength="80" autocomplete="off" data-ph="lives.what" data-al="lives.what">
+                <button type="button" class="send" id="host-go"></button>
+              </div>
+              <p id="host-status" role="status"></p>
+            </details>
             <h3 class="mini" data-i="lives.official"></h3>
             <div class="lives" id="lives"></div>
           </div>
@@ -612,6 +632,10 @@ const LIVE_HOSTS = [
   {k:'youtube',  n:'YouTube',  re:/(^|\.)youtube\.com$|^youtu\.be$/},
 ];
 const LIVE_HOURS = 12;   // a shared live drops off the list after this many hours
+
+/* Screen sharing (WebRTC): the sharer's browser sends the picture to every viewer itself, so keep the
+   audience small. Add a TURN server to ice if some viewers can't connect (strict office or mobile networks). */
+const SCREEN = {max: 8, bitrate: 1500e3, ice: [{urls: 'stun:stun.l.google.com:19302'}]};
 
 const FACTS = [
   {k:{en:'Real name', zh:'本名', vi:'Tên thật'},
@@ -1022,6 +1046,13 @@ Object.assign(T.en, {
   'lives.empty':'No fan lives right now. Live at an event? Share your link below so other fans can watch.',
   'lives.off':'Sharing fan lives opens together with the fan chat.','lives.error':'Fan lives can’t load right now. Reload the page to try again.',
   'lives.bad':'Paste a link from Douyin, Weibo, Bilibili, YouTube or TikTok.','lives.needWhat':'Say which event it is.','lives.slow':'You can share one live a minute.',
+  'scr.title':'🖥 Share your screen','scr.start':'Share screen','scr.stop':'Stop sharing','scr.kind':'Screen','scr.you':'You’re sharing',
+  'scr.how':n=>`Open the live in another tab, press Share screen, pick that tab and turn on “Share tab audio”. Everyone sees it in the Fan lives list. Up to ${n} people can watch at once, and watching here doesn’t count as a view on the original live.`,
+  'scr.on':(v,n)=>`Sharing your screen · ${v}/${n} watching. Stop here or from the browser’s sharing bar.`,
+  'scr.ask':id=>`Only people the site manager has allowed can share their screen. To ask, send them this code: <code>${id}</code>`,
+  'scr.device':'Screen sharing works on a computer, in Chrome or Edge.','scr.error':'Screen sharing didn’t start. Try again in Chrome or Edge.',
+  'scr.joining':'Connecting to the shared screen…','scr.full':n=>`This screen already has ${n} viewers. Try again in a bit.`,
+  'scr.fail':'Couldn’t connect to the shared screen. Some networks block direct connections: try another network or reload.',
   'live.douyin':'Opens Douyin. When 安崎 is live, her profile picture has a red 直播中 ring: tap it to join. You can usually watch without logging in; comments and gifts in the Douyin live need a Douyin account.',
   'live.weibo':'Opens her Weibo page. When she’s live, a 直播 badge shows on her profile picture or newest post: tap it to watch.',
 });
@@ -1034,6 +1065,13 @@ Object.assign(T.zh, {
   'lives.empty':'现在没有粉丝直播。你在活动现场直播吗？在下面分享链接，让其他粉丝一起看。',
   'lives.off':'粉丝直播分享会和粉丝聊天室一起开放。','lives.error':'粉丝直播暂时无法加载，请刷新页面重试。',
   'lives.bad':'请粘贴抖音、微博、B 站、YouTube 或 TikTok 的链接。','lives.needWhat':'请写上是什么活动。','lives.slow':'每分钟只能分享一个直播。',
+  'scr.title':'🖥 共享屏幕','scr.start':'共享屏幕','scr.stop':'停止共享','scr.kind':'屏幕','scr.you':'你正在共享',
+  'scr.how':n=>`在另一个标签页打开直播，点“共享屏幕”，选择该标签页并打开“分享标签页音频”。大家会在粉丝直播列表里看到。最多 ${n} 人同时观看；在这里观看不计入原直播间人数。`,
+  'scr.on':(v,n)=>`正在共享屏幕 · ${v}/${n} 人观看。可在这里或浏览器的共享提示栏停止。`,
+  'scr.ask':id=>`只有站长允许的人才能共享屏幕。如需申请，请把这个代码发给站长：<code>${id}</code>`,
+  'scr.device':'共享屏幕需要在电脑上用 Chrome 或 Edge。','scr.error':'共享屏幕没有开始，请用 Chrome 或 Edge 再试一次。',
+  'scr.joining':'正在连接共享屏幕…','scr.full':n=>`这个屏幕已有 ${n} 人观看，请稍后再试。`,
+  'scr.fail':'无法连接共享屏幕。有些网络会阻止直接连接，请换个网络或刷新页面。',
   'live.douyin':'打开抖音。安崎开播时，头像外会有红色“直播中”圈，点击即可进入直播间。一般不登录也能观看，评论和送礼需要抖音账号。',
   'live.weibo':'打开她的微博主页。开播时，头像或最新微博上会出现“直播”标记，点击即可观看。',
 });
@@ -1046,12 +1084,20 @@ Object.assign(T.vi, {
   'lives.empty':'Chưa có fan nào đang live. Bạn đang live ở sự kiện? Chia sẻ link ở dưới để các fan khác cùng xem.',
   'lives.off':'Phần chia sẻ live của fan sẽ mở cùng lúc với khung chat.','lives.error':'Chưa tải được danh sách live của fan. Tải lại trang để thử lại.',
   'lives.bad':'Dán link từ Douyin, Weibo, Bilibili, YouTube hoặc TikTok.','lives.needWhat':'Ghi tên sự kiện nhé.','lives.slow':'Mỗi phút chỉ chia sẻ được một live.',
+  'scr.title':'🖥 Chia sẻ màn hình','scr.start':'Chia sẻ màn hình','scr.stop':'Dừng chia sẻ','scr.kind':'Màn hình','scr.you':'Bạn đang chia sẻ',
+  'scr.how':n=>`Mở live ở một tab khác, bấm Chia sẻ màn hình, chọn tab đó và bật “Chia sẻ âm thanh của thẻ”. Mọi người sẽ thấy trong danh sách Live của fan. Tối đa ${n} người xem cùng lúc, và xem ở đây không được tính vào lượt xem của buổi live gốc.`,
+  'scr.on':(v,n)=>`Đang chia sẻ màn hình · ${v}/${n} người đang xem. Dừng ở đây hoặc trên thanh chia sẻ của trình duyệt.`,
+  'scr.ask':id=>`Chỉ người được quản lý trang cho phép mới chia sẻ màn hình được. Muốn xin quyền, gửi mã này cho quản lý trang: <code>${id}</code>`,
+  'scr.device':'Chia sẻ màn hình cần dùng máy tính, trình duyệt Chrome hoặc Edge.','scr.error':'Chưa chia sẻ được màn hình. Thử lại bằng Chrome hoặc Edge.',
+  'scr.joining':'Đang kết nối tới màn hình chia sẻ…','scr.full':n=>`Màn hình này đã đủ ${n} người xem. Thử lại sau ít phút nhé.`,
+  'scr.fail':'Không kết nối được tới màn hình chia sẻ. Một số mạng chặn kết nối trực tiếp: thử đổi mạng hoặc tải lại trang.',
   'live.douyin':'Mở Douyin. Khi 安崎 đang live, ảnh đại diện có vòng đỏ 直播中, bấm vào là vào phòng live. Thường không cần đăng nhập vẫn xem được; bình luận hay tặng quà trong live Douyin thì cần tài khoản Douyin.',
   'live.weibo':'Mở trang Weibo của 安崎. Khi đang live, ảnh đại diện hoặc bài đăng mới nhất có nhãn 直播, bấm vào để xem.',
 });
 
 /* ---------- icons ---------- */
 const ICON = {
+  screen:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4.5" width="18" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8.5 20h7M12 16.5V20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
   douyin:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.6 3.2v11.4a3.9 3.9 0 1 1-3.9-3.9M13.6 3.2c.5 2.7 2.4 4.6 5.2 4.9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
   spotify:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="M6.8 9.4c3.6-1.1 7.6-.8 10.6 1M7.4 12.6c3-.8 6.1-.5 8.7 1M8 15.6c2.4-.6 4.8-.4 6.8.8" fill="none" stroke="var(--void)" stroke-width="1.7" stroke-linecap="round"/></svg>',
   youtube:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="1.8" y="5" width="20.4" height="14" rx="4.2" fill="currentColor"/><path d="M10 8.8v6.4l5.4-3.2z" fill="var(--void)"/></svg>',
@@ -1569,12 +1615,14 @@ $('loop').addEventListener('change', e => { L.loop = e.target.checked; });
 
 /* ---------- fan chat UI (the Firebase module below fills it in) ---------- */
 const chatUI = {
-  send:null, share:null, drop:null, list:null, lives:null, livesErr:false, uid:null, hours:LIVE_HOURS,
+  send:null, share:null, drop:null, screen:null, list:null, lives:null, screens:null, livesErr:false, uid:null,
+  hours:LIVE_HOURS, screenCfg:SCREEN,
   state: FIREBASE_CONFIG ? 'chat.connecting' : 'chat.soon',
-  off(k){ this.state = k; this.send = this.share = this.drop = null; drawChat(); drawLives(); },
-  ready(send, share, drop){ Object.assign(this, {send, share, drop}); this.state = null; drawChat(); drawLives(); },
+  off(k){ this.state = k; this.send = this.share = this.drop = this.screen = null; drawChat(); drawLives(); },
+  ready(send, share, drop, screen){ Object.assign(this, {send, share, drop, screen}); this.state = null; drawChat(); drawLives(); },
   render(list, uid){ this.list = list; this.uid = uid; drawChat(); },
   renderLives(list, uid, err){ this.lives = list; this.uid = uid; this.livesErr = !!err; drawLives(); },
+  renderScreens(list){ this.screens = list; drawLives(); },
 };
 window.chatUI = chatUI;
 window.FIREBASE_CONFIG = FIREBASE_CONFIG;
@@ -1637,21 +1685,37 @@ function embedOf(url){
   if (h === 'bilibili.com' && (id = (u.pathname.match(/\/video\/(BV\w{10})/) || [])[1])) return 'https://player.bilibili.com/player.html?bvid=' + id + '&autoplay=0';
   return '';
 }
+// screen shares in progress (the sharer's page checks in every minute), then shared links
+function fanLives(){
+  const now = Date.now();
+  const screens = (chatUI.screens || []).filter(x => x.on && x.at > now - 3 * 60e3).map(x => ({...x, id:'scr-' + x.uid, screen:true}));
+  return screens.concat((chatUI.lives || []).filter(x => x.at > now - LIVE_HOURS * 3600e3 && hostOf(x.url)));
+}
+const H = {stream:null, viewers:0, busy:false, leave:null};   // my own screen share, and the one I'm watching
 function drawLives(){
-  const live = L.src === 'live', box = $('fan-player');
-  const list = (chatUI.lives || []).filter(x => x.at > Date.now() - LIVE_HOURS * 3600e3 && hostOf(x.url));
-  const on = live ? list.find(x => x.id === L.watch) : null;
-  const src = on ? embedOf(on.url) : '';
-  // keep the iframe while the same live is on, so list updates don't restart it
-  if (box.dataset.src !== src) {
-    box.dataset.src = src;
-    box.innerHTML = src ? `<iframe src="${esc(src)}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>` : '';
+  const live = L.src === 'live', box = $('fan-player'), list = fanLives();
+  const on = live && !H.stream ? list.find(x => x.id === L.watch) : null;
+  const key = !live ? '' : H.stream ? 'me' : on ? (on.screen ? on.id + ':' + on.sid : embedOf(on.url)) : '';
+  // keep the player while the same live is on, so list updates don't restart it
+  if (box.dataset.src !== key) {
+    if (H.leave) { H.leave(); H.leave = null; }
+    box.dataset.src = key;
+    box.innerHTML = key === 'me' ? '<video muted autoplay playsinline></video>'
+      : on && on.screen ? '<video autoplay playsinline controls></video><p class="scr-msg"></p>'
+      : key ? `<iframe src="${esc(key)}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>` : '';
+    if (key === 'me') box.firstChild.srcObject = H.stream;
+    else if (on && on.screen) watchScreen(on, box);
   }
-  box.hidden = !src;
+  box.hidden = !key;
+  drawHost();
   if (!live) return;
   $('share-form').hidden = !chatUI.share;
   const k = chatUI.state === 'chat.error' || chatUI.livesErr ? 'lives.error' : chatUI.state ? 'lives.off' : list.length ? '' : 'lives.empty';
   $('fanlives').innerHTML = k ? `<li class="fl-empty">${t(k)}</li>` : list.map(x => {
+    if (x.screen) return `<li class="fl${on && on.id === x.id ? ' on' : ''}"><span class="ico">${ICON.screen}</span>
+      <span class="fx"><b>${esc(x.title || '')}</b><small>${t('scr.kind')} · ${esc(x.name || '')}</small></span>
+      ${x.uid === chatUI.uid ? `<span class="pill-st ok">${t('scr.you')}</span>`
+        : `<button type="button" class="ctl go" data-watch="${x.id}" data-n="${esc(x.name || '')}">${t('lives.watch')}</button>`}</li>`;
     const p = hostOf(x.url), embed = embedOf(x.url);
     return `<li class="fl${on && on.id === x.id ? ' on' : ''}"><span class="ico">${ICON[p.k]}</span>
       <span class="fx"><b>${esc(x.title || '')}</b><small>${p.n} · ${esc(x.name || '')} · ${when(x.at)}</small></span>
@@ -1660,6 +1724,59 @@ function drawLives(){
       ${x.uid === chatUI.uid ? `<button type="button" class="ctl" data-drop="${esc(x.id)}">${t('lives.drop')}</button>` : ''}</li>`;
   }).join('');
 }
+function watchScreen(x, box){
+  const video = box.querySelector('video'), msg = box.querySelector('.scr-msg');
+  const say = (k, ...a) => { msg.textContent = k ? t(k, ...a) : ''; };
+  if (!chatUI.screen) return;
+  say('scr.joining');
+  const timer = setTimeout(() => say('scr.fail'), 25000);
+  const leave = chatUI.screen.watch(x.uid, x.sid, stream => {
+    video.srcObject = stream;
+    // sound needs a tap on some phones: start muted there and let the controls unmute
+    video.play().catch(() => { video.muted = true; video.play().catch(() => {}); });
+  }, state => {
+    if (state === 'connected') { clearTimeout(timer); say(''); }
+    else if (state === 'full') { clearTimeout(timer); say('scr.full', SCREEN.max); }
+    else if (state === 'failed') { clearTimeout(timer); say('scr.fail'); }
+  });
+  H.leave = () => { clearTimeout(timer); leave(); };
+}
+function drawHost(){
+  const s = chatUI.screen, box = $('host-box');
+  box.hidden = !s || L.src !== 'live';
+  if (box.hidden) return;
+  const can = !!(navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia);
+  $('host-note').innerHTML = !can ? t('scr.device') : !s.host ? t('scr.ask', esc(s.uid))
+    : H.stream ? t('scr.on', H.viewers, SCREEN.max) : t('scr.how', SCREEN.max);
+  $('host-row').hidden = !can || !s.host;
+  $('host-what').hidden = !!H.stream;
+  $('host-go').textContent = t(H.stream ? 'scr.stop' : 'scr.start');
+  $('host-go').disabled = H.busy;
+  if (s.host && can && !box.dataset.opened) { box.open = true; box.dataset.opened = '1'; }
+}
+$('host-go').addEventListener('click', async () => {
+  const st = $('host-status'), s = chatUI.screen;
+  st.textContent = '';
+  if (!s) return;
+  if (H.stream) { s.stop(); return; }
+  const name = $('chat-name').value.trim(), what = $('host-what').value.trim();
+  if (!what) { st.textContent = t('lives.needWhat'); $('host-what').focus(); return; }
+  if (!name) { st.textContent = $('chat-status').textContent = t('chat.needName'); $('chat-name').focus(); return; }
+  try { localStorage.setItem('anqi-chat-name', name); } catch(_) {}
+  H.busy = true; drawHost();
+  try {
+    H.stream = await s.start(name.slice(0, 24), what.slice(0, 80),
+      n => { H.viewers = n; drawHost(); },
+      () => { H.stream = null; H.viewers = 0; drawLives(); });
+  } catch (err) {
+    console.error(err);
+    // closing the picker is not an error
+    if (!err || err.name !== 'NotAllowedError') st.textContent = t('scr.error');
+  } finally { H.busy = false; drawLives(); }
+});
+// drop screens whose sharer went quiet and links older than LIVE_HOURS
+setInterval(() => { if (L.src === 'live') drawLives(); }, 60e3);
+
 // on a computer, Douyin, Weibo and TikTok open in a small window beside the chat; on phones the link opens the app
 const popup = matchMedia('(min-width: 900px) and (pointer: fine)');
 $('live-box').addEventListener('click', e => {
@@ -1739,22 +1856,24 @@ if (cfg) {
     const app = initializeApp(cfg);
     const db = fs.getFirestore(app);
     const {user} = await signInAnonymously(getAuth(app));
+    const withAt = d => { const m = d.data({serverTimestamps:'estimate'}); return {...m, at: m.at ? m.at.toMillis() : Date.now()}; };
     const msgs = fs.collection(db, 'rooms', 'main', 'messages');
     fs.onSnapshot(fs.query(msgs, fs.orderBy('at', 'desc'), fs.limit(100)), snap => {
-      ui.render(snap.docs.map(d => {
-        const m = d.data({serverTimestamps:'estimate'});
-        return {...m, at: m.at ? m.at.toMillis() : Date.now()};
-      }).reverse(), user.uid);
+      ui.render(snap.docs.map(withAt).reverse(), user.uid);
     }, err => { console.error(err); ui.off('chat.error'); });
-    // fan lives shared in the last few hours
-    const lives = fs.collection(db, 'rooms', 'main', 'lives');
+    // fan lives and screen shares from the last few hours
     const since = fs.Timestamp.fromMillis(Date.now() - ui.hours * 3600e3);
+    const lives = fs.collection(db, 'rooms', 'main', 'lives');
     fs.onSnapshot(fs.query(lives, fs.where('at', '>', since), fs.orderBy('at', 'desc'), fs.limit(30)), snap => {
-      ui.renderLives(snap.docs.map(d => {
-        const m = d.data({serverTimestamps:'estimate'});
-        return {...m, id: d.id, at: m.at ? m.at.toMillis() : Date.now()};
-      }), user.uid);
+      ui.renderLives(snap.docs.map(d => ({...withAt(d), id: d.id})), user.uid);
     }, err => { console.error(err); ui.renderLives([], user.uid, true); });
+    const screens = fs.collection(db, 'rooms', 'main', 'screens');
+    fs.onSnapshot(fs.query(screens, fs.where('at', '>', since)), snap => {
+      ui.renderScreens(snap.docs.map(withAt));
+    }, err => console.error(err));
+    // people listed in /hosts (added by the site manager) may share their screen
+    const host = await fs.getDoc(fs.doc(db, 'hosts', user.uid)).then(d => d.exists(), () => false);
+
     ui.ready(async (name, text, song) => {
       // one message per 3 s per visitor: the rules compare this timestamp with the previous one
       const batch = fs.writeBatch(db);
@@ -1769,11 +1888,111 @@ if (cfg) {
       batch.set(fs.doc(db, 'sharers', user.uid), {at: fs.serverTimestamp()});
       batch.set(fs.doc(lives), {name, title, url, uid: user.uid, at: fs.serverTimestamp()});
       await batch.commit();
-    }, id => fs.deleteDoc(fs.doc(lives, id)));
+    }, id => fs.deleteDoc(fs.doc(lives, id)), screenShare(fs, db, screens, user.uid, host));
   } catch (err) {
     console.error(err);
     ui.off('chat.error');
   }
+}
+
+/* Screen sharing. The sharer's browser sends the shared tab straight to each viewer over WebRTC.
+   Firestore only carries the connection details: a viewer asks in screens/{sharer}/peers/{viewer},
+   the sharer writes an offer there and the viewer writes back an answer. */
+function screenShare(fs, db, screens, uid, host){
+  const conf = ui.screenCfg, ice = {iceServers: conf.ice};
+  // send the connection details in one go once the network addresses are gathered
+  const gathered = pc => new Promise(done => {
+    if (pc.iceGatheringState === 'complete') return done();
+    const timer = setTimeout(done, 3000);
+    pc.addEventListener('icegatheringstatechange', () => { if (pc.iceGatheringState === 'complete') { clearTimeout(timer); done(); } });
+  });
+  let end = null;
+  return {
+    host, uid,
+    async start(name, title, onViewers, onEnd){
+      const stream = await navigator.mediaDevices.getDisplayMedia({
+        video: {frameRate: {ideal: 24, max: 30}, width: {ideal: 1280}, height: {ideal: 720}},
+        audio: true, selfBrowserSurface: 'exclude', systemAudio: 'include',
+      });
+      const video = stream.getVideoTracks()[0];
+      if (video) video.contentHint = 'motion';
+      const sid = Math.random().toString(36).slice(2, 12);
+      const me = fs.doc(screens, uid), peers = fs.collection(me, 'peers'), pcs = new Map();
+      const count = () => onViewers([...pcs.values()].filter(pc => pc.connectionState === 'connected').length);
+      const drop = id => { const pc = pcs.get(id); if (pc) { pc.close(); pcs.delete(id); count(); } };
+      try { await fs.setDoc(me, {name, title, uid, sid, on: true, at: fs.serverTimestamp()}); }
+      catch (err) { stream.getTracks().forEach(t => t.stop()); throw err; }
+      const stopPeers = fs.onSnapshot(peers, snap => snap.docChanges().forEach(async ch => {
+        const id = ch.doc.id, d = ch.doc.data();
+        if (ch.type === 'removed') return drop(id);
+        if (d.sid !== sid) return;
+        try {
+          if (!d.offer && !d.full) {
+            // a viewer asks to watch (again)
+            drop(id);
+            if (pcs.size >= conf.max) return await fs.updateDoc(ch.doc.ref, {full: true});
+            const pc = new RTCPeerConnection(ice);
+            pcs.set(id, pc);
+            stream.getTracks().forEach(t => pc.addTrack(t, stream));
+            pc.onconnectionstatechange = () => { if (pc.connectionState === 'failed') drop(id); else count(); };
+            await pc.setLocalDescription(await pc.createOffer());
+            await gathered(pc);
+            if (pcs.get(id) === pc) await fs.updateDoc(ch.doc.ref, {offer: pc.localDescription.sdp});
+          } else if (d.answer && pcs.get(id) && pcs.get(id).signalingState === 'have-local-offer') {
+            const pc = pcs.get(id);
+            await pc.setRemoteDescription({type: 'answer', sdp: d.answer});
+            // cap each viewer's video so the sharer's upload holds up
+            pc.getSenders().forEach(sn => {
+              if (!sn.track || sn.track.kind !== 'video') return;
+              const p = sn.getParameters();
+              if (p.encodings && p.encodings[0]) { p.encodings[0].maxBitrate = conf.bitrate; sn.setParameters(p).catch(() => {}); }
+            });
+          }
+        } catch (err) { console.error(err); drop(id); }
+      }), err => console.error(err));
+      // check in every minute so a closed tab drops off everyone's list
+      const beat = setInterval(() => fs.updateDoc(me, {at: fs.serverTimestamp()}).catch(() => {}), 60e3);
+      end = () => {
+        end = null;
+        clearInterval(beat); stopPeers();
+        removeEventListener('pagehide', stop);
+        pcs.forEach((pc, id) => { pc.close(); fs.deleteDoc(fs.doc(peers, id)).catch(() => {}); });
+        pcs.clear();
+        stream.getTracks().forEach(t => t.stop());
+        fs.deleteDoc(me).catch(() => {});
+        onEnd();
+      };
+      const stop = () => { if (end) end(); };
+      if (video) video.addEventListener('ended', stop);   // "Stop sharing" in the browser bar
+      addEventListener('pagehide', stop);
+      return stream;
+    },
+    stop(){ if (end) end(); },
+    watch(sharer, sid, onStream, onState){
+      const ref = fs.doc(screens, sharer, 'peers', uid);
+      let pc = null, quit = false, stopDoc = () => {};
+      const fail = err => { console.error(err); if (!quit) onState('failed'); };
+      fs.setDoc(ref, {sid, at: fs.serverTimestamp()}).then(() => {
+        if (quit) return;
+        stopDoc = fs.onSnapshot(ref, async snap => {
+          const d = snap.data();
+          if (quit || !d || d.sid !== sid) return;
+          if (d.full) return onState('full');
+          if (!d.offer || pc) return;
+          try {
+            pc = new RTCPeerConnection(ice);
+            pc.ontrack = e => onStream(e.streams[0]);
+            pc.onconnectionstatechange = () => onState(pc.connectionState);
+            await pc.setRemoteDescription({type: 'offer', sdp: d.offer});
+            await pc.setLocalDescription(await pc.createAnswer());
+            await gathered(pc);
+            if (!quit) await fs.updateDoc(ref, {answer: pc.localDescription.sdp});
+          } catch (err) { fail(err); }
+        }, fail);
+      }, fail);
+      return () => { quit = true; stopDoc(); if (pc) pc.close(); fs.deleteDoc(ref).catch(() => {}); };
+    },
+  };
 }
 </script>
 </body>

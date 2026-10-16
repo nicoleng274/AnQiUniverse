@@ -64,6 +64,63 @@ service cloud.firestore {
       allow update: if false;
     }
 
+    // People allowed to share their screen. The site manager adds a document here in the console,
+    // named with the code the person sees on the Live tab. A visitor can only check their own.
+    match /hosts/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow write: if false;
+    }
+
+    // Screen shares: one document per sharer, refreshed every minute while sharing.
+    match /rooms/{room}/screens/{host} {
+      allow read: if true;
+      allow create, update: if request.auth != null
+        && request.auth.uid == host
+        && exists(/databases/$(database)/documents/hosts/$(request.auth.uid))
+        && request.resource.data.keys().hasOnly(['name', 'title', 'uid', 'sid', 'on', 'at'])
+        && request.resource.data.keys().hasAll(['name', 'title', 'uid', 'sid', 'on', 'at'])
+        && request.resource.data.uid == host
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.name.size() <= 24
+        && request.resource.data.title is string
+        && request.resource.data.title.size() > 0
+        && request.resource.data.title.size() <= 80
+        && request.resource.data.sid is string
+        && request.resource.data.sid.size() <= 40
+        && request.resource.data.on is bool
+        && request.resource.data.at == request.time;
+      allow delete: if request.auth != null && request.auth.uid == host;
+
+      // Connection details between the sharer and one viewer. The viewer asks (sid, at) and
+      // writes the answer; the sharer writes the offer, or full when there's no room left.
+      match /peers/{viewer} {
+        function asks() {
+          return request.resource.data.keys().hasOnly(['sid', 'at'])
+            && request.resource.data.keys().hasAll(['sid', 'at'])
+            && request.resource.data.sid is string
+            && request.resource.data.sid.size() <= 40
+            && request.resource.data.at == request.time;
+        }
+        allow read: if request.auth != null
+          && (request.auth.uid == viewer || request.auth.uid == host);
+        allow create: if request.auth != null && request.auth.uid == viewer && asks();
+        allow update: if request.auth != null && (
+          (request.auth.uid == viewer
+            && (asks()
+                || (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['answer'])
+                    && request.resource.data.answer is string
+                    && request.resource.data.answer.size() <= 20000)))
+          || (request.auth.uid == host
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['offer', 'full'])
+            && (!('offer' in request.resource.data)
+                || (request.resource.data.offer is string && request.resource.data.offer.size() <= 20000))
+            && (!('full' in request.resource.data) || request.resource.data.full is bool)));
+        allow delete: if request.auth != null
+          && (request.auth.uid == viewer || request.auth.uid == host);
+      }
+    }
+
     // last share time per visitor, used for the one-minute limit above
     match /sharers/{uid} {
       allow read: if false;

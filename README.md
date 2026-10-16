@@ -36,6 +36,14 @@ Link chia sẻ: https://nicoleng274.github.io/AnQiUniverse/#live
 - Mỗi người chia sẻ tối đa 1 live mỗi phút. Người chia sẻ tự gỡ được live của mình. Muốn xoá link xấu: Firestore → `rooms/main/lives` → xoá document đó.
 - Biệt danh lấy từ ô biệt danh của khung chat. Phần này chỉ chạy khi khung chat đã bật (xem dưới).
 
+**Chia sẻ màn hình.** Khi live không nhúng được (Douyin, Weibo, TikTok), người được cho phép mở live ở một tab khác rồi chia sẻ màn hình tab đó lên trang. Mọi người bấm **▶ Xem ở đây** trong danh sách Live của fan để xem, khung chat ở bên cạnh.
+
+- Người chia sẻ cần dùng máy tính, Chrome hoặc Edge. Khi chọn tab, bật **Chia sẻ âm thanh của thẻ** (Share tab audio) thì người xem mới nghe được tiếng. Người xem dùng điện thoại hay máy tính đều được.
+- Hình và tiếng đi thẳng từ trình duyệt người chia sẻ tới từng người xem (WebRTC), không qua máy chủ nào, nên **tối đa 8 người xem cùng lúc** (đổi ở `SCREEN.max` trong `index.html`). Mạng upload của người chia sẻ cần khoảng 1,5 Mbps cho mỗi người xem. Muốn nhiều người xem hơn thì phát lại lên YouTube hoặc Bilibili (ví dụ bằng OBS) rồi dán link vào danh sách Live của fan.
+- Một số mạng (mạng công ty, vài mạng di động) chặn kết nối trực tiếp. Nếu có người xem không vào được, thêm một máy chủ TURN vào `SCREEN.ice`.
+- Xem qua màn hình chia sẻ không được tính vào lượt xem của buổi live gốc. Nên hỏi người đang live trước khi chia sẻ lại buổi live của họ.
+- **Cho phép ai được chia sẻ:** người đó mở tab Live, mục **🖥 Chia sẻ màn hình** sẽ hiện một mã. Vào Firestore → **Start collection** `hosts` (lần đầu) → **Add document**, *Document ID* là mã đó, thêm một trường bất kỳ (ví dụ `name`: tên người đó) → Save. Người đó tải lại trang là thấy nút **Chia sẻ màn hình**. Muốn thu hồi thì xoá document đó. Mã gắn với trình duyệt: đổi máy, đổi trình duyệt hoặc xoá dữ liệu trang thì mã đổi, cần thêm lại.
+
 **Kênh của 安崎.** Nút mở thẳng Douyin và trang Weibo của 安崎. Nút Douyin hiện mở trang tìm kiếm 安崎 trên Douyin. Khi có link trang cá nhân (`https://www.douyin.com/user/…`) hoặc phòng live (`https://live.douyin.com/…`), dán vào `u` của dòng `douyin` trong `LIVE` ở `index.html`.
 
 Khi ở tab Live, nhạc đang phát sẽ dừng. Tin nhắn gửi từ tab này có nhãn `🔴 LIVE · Douyin` (hoặc nền tảng vừa mở) để mọi người biết đang nói về buổi live.
@@ -50,7 +58,7 @@ Trang sẽ chạy ở `https://nicoleng274.github.io/AnQiUniverse/`.
 1. Vào [console.firebase.google.com](https://console.firebase.google.com), tạo project mới (có thể tắt Google Analytics).
 2. **Build → Authentication → Get started → Sign-in method → Anonymous → Enable.**
 3. **Build → Firestore Database → Create database**, chọn vị trí `asia-southeast1 (Singapore)`, chế độ *production*.
-4. Trong Firestore, mở tab **Rules**, dán toàn bộ nội dung file [`firestore.rules`](firestore.rules) rồi bấm **Publish**. Mỗi lần file này thay đổi (ví dụ khi thêm phần live của fan) thì dán và Publish lại.
+4. Trong Firestore, mở tab **Rules**, dán toàn bộ nội dung file [`firestore.rules`](firestore.rules) rồi bấm **Publish**. Mỗi lần file này thay đổi (ví dụ khi thêm phần live của fan, chia sẻ màn hình) thì dán và Publish lại.
 5. **Project settings → Your apps → Web (`</>`)**, đăng ký app, copy đoạn `firebaseConfig`.
 6. Dán vào `const FIREBASE_CONFIG = …` trong `index.html` (hoặc gửi cho người quản lý trang).
 
