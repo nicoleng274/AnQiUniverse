@@ -255,6 +255,21 @@ a.ico:hover,a.ico:focus-visible{color:var(--ice);border-color:var(--ice);box-sha
 .lcard p{flex:1;margin:0;color:var(--mist);font-size:13.5px}
 .lgo{align-self:flex-start;padding:9px 16px;border-radius:999px;background:var(--flare);color:var(--void);font:600 13.5px/1 var(--f-body);text-decoration:none}
 .lgo:hover,.lgo:focus-visible{box-shadow:0 0 18px -4px var(--flare);outline:none}
+#live-box .mini{margin:8px 0 -6px}
+.fanlives{margin:0;padding:0;list-style:none;border:1px solid var(--line);border-radius:12px}
+.fl{display:flex;flex-wrap:wrap;align-items:center;gap:10px 12px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.fl:last-child{border-bottom:0}
+.fl.on{background:rgba(255,197,138,.08)}
+.fl .ico{width:36px;height:36px}
+.fl .ico svg{width:16px;height:16px}
+.fx{flex:1 1 180px;min-width:0}
+.fx b{display:block;font:600 14px/1.35 var(--f-cjk);overflow-wrap:anywhere}
+.fx small{display:block;font:400 11.5px/1.4 var(--f-mono);color:var(--dust);overflow-wrap:anywhere}
+.fl .ctl{text-decoration:none;font-size:12.5px;padding:7px 12px}
+.fl .ctl.go{border-color:rgba(255,197,138,.55);color:var(--flare)}
+.fl-empty{padding:16px;color:var(--dust);font-size:13.5px}
+#share-form{display:flex;flex-direction:column;gap:8px}
+#share-status{min-height:1.2em;margin:0;color:var(--flare);font-size:12px}
 
 .chat{position:sticky;top:90px;display:flex;flex-direction:column;height:min(680px,calc(100vh - 120px));overflow:hidden;border:1px solid var(--line-2);border-radius:16px;background:rgba(13,16,34,.88)}
 @media (max-width:900px){.chat{position:static;height:520px}}
@@ -271,9 +286,9 @@ a.ico:hover,a.ico:focus-visible{color:var(--ice);border-color:var(--ice);box-sha
 .msg p{margin:2px 0 0;color:var(--star);font-size:14px;overflow-wrap:anywhere}
 .chat-empty,.chat-off{margin:auto;padding:24px;color:var(--dust);text-align:center}
 #chat-form{display:flex;flex-direction:column;gap:8px;padding:12px;border-top:1px solid var(--line)}
-#chat-form input{box-sizing:border-box;width:100%;min-width:0;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.04);color:var(--star);font:400 14px var(--f-body)}
-#chat-form input::placeholder{color:var(--dust)}
-#chat-form input:focus{outline:none;border-color:var(--ice)}
+#chat-form input,#share-form input{box-sizing:border-box;width:100%;min-width:0;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.04);color:var(--star);font:400 14px var(--f-body)}
+#chat-form input::placeholder,#share-form input::placeholder{color:var(--dust)}
+#chat-form input:focus,#share-form input:focus{outline:none;border-color:var(--ice)}
 .chat-row{display:flex;gap:8px}
 .send{flex:none;padding:10px 16px;border:0;border-radius:10px;background:var(--ice);color:var(--ink-on-ice);font:600 14px/1 var(--f-body);cursor:pointer}
 .send:disabled{opacity:.6;cursor:default}
@@ -397,7 +412,21 @@ footer a{color:var(--mist);text-underline-offset:3px}
             <button type="button" data-src="live" aria-pressed="false" data-i="src.live"></button>
           </div>
           <p class="hint" id="listen-hint"></p>
-          <div class="lives" id="lives" hidden></div>
+          <div class="music" id="live-box" hidden>
+            <div class="embed-yt" id="fan-player" hidden></div>
+            <h3 class="mini" data-i="lives.title"></h3>
+            <ol class="fanlives" id="fanlives"></ol>
+            <form id="share-form" hidden>
+              <input id="share-url" maxlength="600" autocomplete="off" inputmode="url" data-ph="lives.url" data-al="lives.url">
+              <div class="chat-row">
+                <input id="share-what" maxlength="80" autocomplete="off" data-ph="lives.what" data-al="lives.what">
+                <button type="submit" class="send" id="share-send" data-i="lives.share"></button>
+              </div>
+              <p id="share-status" role="status"></p>
+            </form>
+            <h3 class="mini" data-i="lives.official"></h3>
+            <div class="lives" id="lives"></div>
+          </div>
           <div class="music" id="music-box">
             <div class="np">
               <img id="np-img" alt="">
@@ -572,6 +601,17 @@ const LIVE = [
   {k:'douyin', n:'Douyin', z:'抖音', h:'安崎',           u:'https://www.douyin.com/search/%E5%AE%89%E5%B4%8E?type=user'},
   {k:'weibo',  n:'Weibo',  z:'微博', h:'UID 5718737640', u:'https://weibo.com/u/5718737640'},
 ];
+
+/* Fan lives: links fans share from events. Keep these hosts in step with the url rule in firestore.rules.
+   YouTube and Bilibili have official players that play on this page; the others open in their app or a small window. */
+const LIVE_HOSTS = [
+  {k:'douyin',   n:'Douyin',   re:/(^|\.)(douyin|iesdouyin)\.com$/},
+  {k:'douyin',   n:'TikTok',   re:/(^|\.)tiktok\.com$/},
+  {k:'weibo',    n:'Weibo',    re:/(^|\.)weibo\.(com|cn)$/},
+  {k:'bilibili', n:'Bilibili', re:/(^|\.)bilibili\.com$|^b23\.tv$/},
+  {k:'youtube',  n:'YouTube',  re:/(^|\.)youtube\.com$|^youtu\.be$/},
+];
+const LIVE_HOURS = 12;   // a shared live drops off the list after this many hours
 
 const FACTS = [
   {k:{en:'Real name', zh:'本名', vi:'Tên thật'},
@@ -974,20 +1014,38 @@ Object.assign(T.vi, {
 
 /* words for the live tab (Douyin, Weibo) */
 Object.assign(T.en, {
-  'src.live':'Live · Douyin, Weibo','live.open':'Open the live ↗',
-  'live.hint':'Douyin and Weibo don’t let other sites embed their livestreams, so the live opens in their app or website. Keep this page open beside it, or on another device, and chat with fans here. Watching on the official platform also counts you in the live room’s audience.',
+  'src.live':'Live · watch together','live.open':'Open the live ↗',
+  'live.hint':'Fans at an event can share their live here. YouTube and Bilibili lives play right on this page. Douyin, Weibo and TikTok don’t let any other site embed their lives, even for viewers who are logged in, so those open in their app, or on a computer in a small window beside this page, where your own login works. Chat with everyone here while you watch.',
+  'lives.title':'Fan lives','lives.official':'安崎’s own channels',
+  'lives.url':'Paste a live link or the app’s share text','lives.what':'Which event? e.g. fansign in Shanghai','lives.share':'Share',
+  'lives.watch':'▶ Watch here','lives.open':'Open ↗','lives.drop':'Remove',
+  'lives.empty':'No fan lives right now. Live at an event? Share your link below so other fans can watch.',
+  'lives.off':'Sharing fan lives opens together with the fan chat.','lives.error':'Fan lives can’t load right now. Reload the page to try again.',
+  'lives.bad':'Paste a link from Douyin, Weibo, Bilibili, YouTube or TikTok.','lives.needWhat':'Say which event it is.','lives.slow':'You can share one live a minute.',
   'live.douyin':'Opens Douyin. When 安崎 is live, her profile picture has a red 直播中 ring: tap it to join. You can usually watch without logging in; comments and gifts in the Douyin live need a Douyin account.',
   'live.weibo':'Opens her Weibo page. When she’s live, a 直播 badge shows on her profile picture or newest post: tap it to watch.',
 });
 Object.assign(T.zh, {
-  'src.live':'直播 · 抖音、微博','live.open':'进入直播 ↗',
-  'live.hint':'抖音和微博不允许其他网站嵌入直播，所以直播会在官方 App 或网页中打开。把本页开在旁边或另一台设备上，就能在这里和粉丝一起聊天。在官方平台观看也会计入直播间人数。',
+  'src.live':'直播 · 一起看','live.open':'进入直播 ↗',
+  'live.hint':'在活动现场直播的粉丝可以把直播分享到这里。YouTube 和 B 站直播可以直接在本站观看。抖音、微博和 TikTok 不允许其他网站嵌入直播，登录了也一样，所以会在官方 App 中打开；用电脑时会在本页旁边弹出小窗口，用你自己的账号登录即可。边看边在这里和大家聊天吧。',
+  'lives.title':'粉丝直播','lives.official':'安崎本人账号',
+  'lives.url':'粘贴直播链接，或 App 里的整段分享文字','lives.what':'什么活动？例如：上海签售','lives.share':'分享',
+  'lives.watch':'▶ 在本站看','lives.open':'打开 ↗','lives.drop':'删除',
+  'lives.empty':'现在没有粉丝直播。你在活动现场直播吗？在下面分享链接，让其他粉丝一起看。',
+  'lives.off':'粉丝直播分享会和粉丝聊天室一起开放。','lives.error':'粉丝直播暂时无法加载，请刷新页面重试。',
+  'lives.bad':'请粘贴抖音、微博、B 站、YouTube 或 TikTok 的链接。','lives.needWhat':'请写上是什么活动。','lives.slow':'每分钟只能分享一个直播。',
   'live.douyin':'打开抖音。安崎开播时，头像外会有红色“直播中”圈，点击即可进入直播间。一般不登录也能观看，评论和送礼需要抖音账号。',
   'live.weibo':'打开她的微博主页。开播时，头像或最新微博上会出现“直播”标记，点击即可观看。',
 });
 Object.assign(T.vi, {
-  'src.live':'Live · Douyin, Weibo','live.open':'Vào xem live ↗',
-  'live.hint':'Douyin và Weibo không cho trang khác nhúng livestream, nên buổi live sẽ mở trong app hoặc web chính thức. Để trang này bên cạnh (hoặc mở trên máy khác) để chat cùng fan ở đây. Xem trên nền tảng chính thức thì bạn cũng được tính vào số người xem của phòng live.',
+  'src.live':'Live · xem cùng nhau','live.open':'Vào xem live ↗',
+  'live.hint':'Fan đang live ở sự kiện có thể chia sẻ link live lên đây. Live YouTube và Bilibili xem được ngay trên trang. Douyin, Weibo và TikTok không cho trang nào khác nhúng live, kể cả khi người xem đã đăng nhập, nên sẽ mở trong app, hoặc trên máy tính thì mở một cửa sổ nhỏ cạnh trang này, dùng tài khoản của bạn như bình thường. Vừa xem vừa chat cùng mọi người ở đây nhé.',
+  'lives.title':'Live của fan','lives.official':'Kênh của 安崎',
+  'lives.url':'Dán link live hoặc đoạn chia sẻ từ app','lives.what':'Sự kiện gì? VD: fansign Thượng Hải','lives.share':'Chia sẻ',
+  'lives.watch':'▶ Xem ở đây','lives.open':'Mở ↗','lives.drop':'Gỡ',
+  'lives.empty':'Chưa có fan nào đang live. Bạn đang live ở sự kiện? Chia sẻ link ở dưới để các fan khác cùng xem.',
+  'lives.off':'Phần chia sẻ live của fan sẽ mở cùng lúc với khung chat.','lives.error':'Chưa tải được danh sách live của fan. Tải lại trang để thử lại.',
+  'lives.bad':'Dán link từ Douyin, Weibo, Bilibili, YouTube hoặc TikTok.','lives.needWhat':'Ghi tên sự kiện nhé.','lives.slow':'Mỗi phút chỉ chia sẻ được một live.',
   'live.douyin':'Mở Douyin. Khi 安崎 đang live, ảnh đại diện có vòng đỏ 直播中, bấm vào là vào phòng live. Thường không cần đăng nhập vẫn xem được; bình luận hay tặng quà trong live Douyin thì cần tài khoản Douyin.',
   'live.weibo':'Mở trang Weibo của 安崎. Khi đang live, ảnh đại diện hoặc bài đăng mới nhất có nhãn 直播, bấm vào để xem.',
 });
@@ -1327,7 +1385,7 @@ const LISTS = {
   },
 };
 const LIST_LABEL = {album:'list.album', songs:'list.songs', live:'list.live', mv:'list.mv'};
-const L = {init:false, src:'yt', list:{yt:'album', sp:'album'}, idx:{yt:0, sp:0}, loop:true, started:false, playing:false, mode:'idle', spState:'', ytState:'', loadedAt:0, ended:'', want:false, liveOn:''};
+const L = {init:false, src:'yt', list:{yt:'album', sp:'album'}, idx:{yt:0, sp:0}, loop:true, started:false, playing:false, mode:'idle', spState:'', ytState:'', loadedAt:0, ended:'', want:false, liveOn:'', watch:''};
 let spCtl = null, ytPlayer = null, ytReady = false;
 
 // the live tab has no player and no list
@@ -1435,6 +1493,7 @@ function pauseCurrent(){
 function setSrc(src){
   if (src === L.src) return;
   pauseCurrent();
+  if (src !== 'live') L.watch = '';
   L.src = src;
   if (src === 'sp') ensureSpotify(); else if (src === 'yt') ensureYT();
   drawListen();
@@ -1477,13 +1536,14 @@ function drawListen(){
   document.querySelectorAll('#src-seg [data-src]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.src === L.src)));
   const live = L.src === 'live';
   $('music-box').hidden = live;
-  $('lives').hidden = !live;
+  $('live-box').hidden = !live;
+  drawLives();
   if (live) {
     $('listen-hint').innerHTML = t('live.hint');
     $('lives').innerHTML = LIVE.map(c => `<div class="lcard">
       <div class="lcard-h"><span class="ico">${ICON[c.k]}</span><span><b>${c.n} · ${c.z}</b><small>${esc(c.h)}</small></span></div>
       <p>${t('live.' + c.k)}</p>
-      <a class="lgo" href="${c.u}" target="_blank" rel="noopener" data-live="${c.n}">${t('live.open')}</a></div>`).join('');
+      <a class="lgo" href="${c.u}" target="_blank" rel="noopener" data-pop="${c.n}">${t('live.open')}</a></div>`).join('');
     return;
   }
   $('list-seg').innerHTML = Object.keys(LISTS[L.src]).map(k =>
@@ -1501,7 +1561,6 @@ function initListen(){
   L.src === 'yt' ? ensureYT() : ensureSpotify();
 }
 $('src-seg').addEventListener('click', e => { const b = e.target.closest('[data-src]'); if (b) setSrc(b.dataset.src); });
-$('lives').addEventListener('click', e => { const a = e.target.closest('[data-live]'); if (a) L.liveOn = a.dataset.live; });
 $('list-seg').addEventListener('click', e => { const b = e.target.closest('[data-list]'); if (b) setList(b.dataset.list); });
 $('queue').addEventListener('click', e => { const b = e.target.closest('[data-q]'); if (b) playAt(+b.dataset.q); });
 $('prev').addEventListener('click', () => playAt(Math.max(0, curIdx() - 1)));
@@ -1510,10 +1569,12 @@ $('loop').addEventListener('change', e => { L.loop = e.target.checked; });
 
 /* ---------- fan chat UI (the Firebase module below fills it in) ---------- */
 const chatUI = {
-  send:null, list:null, uid:null, state: FIREBASE_CONFIG ? 'chat.connecting' : 'chat.soon',
-  off(k){ this.state = k; this.send = null; drawChat(); },
-  ready(fn){ this.send = fn; this.state = null; drawChat(); },
+  send:null, share:null, drop:null, list:null, lives:null, livesErr:false, uid:null, hours:LIVE_HOURS,
+  state: FIREBASE_CONFIG ? 'chat.connecting' : 'chat.soon',
+  off(k){ this.state = k; this.send = this.share = this.drop = null; drawChat(); drawLives(); },
+  ready(send, share, drop){ Object.assign(this, {send, share, drop}); this.state = null; drawChat(); drawLives(); },
   render(list, uid){ this.list = list; this.uid = uid; drawChat(); },
+  renderLives(list, uid, err){ this.lives = list; this.uid = uid; this.livesErr = !!err; drawLives(); },
 };
 window.chatUI = chatUI;
 window.FIREBASE_CONFIG = FIREBASE_CONFIG;
@@ -1554,6 +1615,81 @@ $('chat-form').addEventListener('submit', async e => {
   try { await chatUI.send(name.slice(0, 24), text.slice(0, 300), song); $('chat-text').value = ''; }
   catch (err) { st.textContent = t(err && err.code === 'permission-denied' ? 'chat.slow' : 'chat.fail'); }
   finally { btn.disabled = false; $('chat-text').focus(); }
+});
+
+/* ---------- fan lives: links fans share from events (the Firebase module below fills them in) ---------- */
+const hostOf = url => { try { const h = new URL(url).hostname; return LIVE_HOSTS.find(p => p.re.test(h)) || null; } catch(_) { return null; } };
+// the first link in what was pasted (apps share "text + link + text"), only from the platforms above
+function liveUrl(text){
+  const m = String(text).match(/https?:\/\/[^\s"'<>，。！？、】）]+/);
+  if (!m) return '';
+  let u; try { u = new URL(m[0].replace(/^http:/i, 'https:')); } catch(_) { return ''; }
+  return !u.username && !u.password && !u.port && u.href.length <= 300 && hostOf(u.href) ? u.href : '';
+}
+// only official embeddable players: YouTube and Bilibili
+function embedOf(url){
+  let u; try { u = new URL(url); } catch(_) { return ''; }
+  const h = u.hostname.replace(/^(www|m)\./, '');
+  let id = h === 'youtu.be' ? u.pathname.slice(1)
+    : /(^|\.)youtube\.com$/.test(h) ? u.searchParams.get('v') || (u.pathname.match(/^\/(?:live|shorts|embed)\/([\w-]{11})/) || [])[1] : '';
+  if (/^[\w-]{11}$/.test(id || '')) return 'https://www.youtube.com/embed/' + id + '?autoplay=1&playsinline=1';
+  if (h === 'live.bilibili.com' && (id = (u.pathname.match(/^\/(?:h5\/)?(\d+)/) || [])[1])) return 'https://www.bilibili.com/blackboard/live/live-activity-player.html?cid=' + id + '&quality=0';
+  if (h === 'bilibili.com' && (id = (u.pathname.match(/\/video\/(BV\w{10})/) || [])[1])) return 'https://player.bilibili.com/player.html?bvid=' + id + '&autoplay=0';
+  return '';
+}
+function drawLives(){
+  const live = L.src === 'live', box = $('fan-player');
+  const list = (chatUI.lives || []).filter(x => x.at > Date.now() - LIVE_HOURS * 3600e3 && hostOf(x.url));
+  const on = live ? list.find(x => x.id === L.watch) : null;
+  const src = on ? embedOf(on.url) : '';
+  // keep the iframe while the same live is on, so list updates don't restart it
+  if (box.dataset.src !== src) {
+    box.dataset.src = src;
+    box.innerHTML = src ? `<iframe src="${esc(src)}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>` : '';
+  }
+  box.hidden = !src;
+  if (!live) return;
+  $('share-form').hidden = !chatUI.share;
+  const k = chatUI.state === 'chat.error' || chatUI.livesErr ? 'lives.error' : chatUI.state ? 'lives.off' : list.length ? '' : 'lives.empty';
+  $('fanlives').innerHTML = k ? `<li class="fl-empty">${t(k)}</li>` : list.map(x => {
+    const p = hostOf(x.url), embed = embedOf(x.url);
+    return `<li class="fl${on && on.id === x.id ? ' on' : ''}"><span class="ico">${ICON[p.k]}</span>
+      <span class="fx"><b>${esc(x.title || '')}</b><small>${p.n} · ${esc(x.name || '')} · ${when(x.at)}</small></span>
+      ${embed ? `<button type="button" class="ctl go" data-watch="${esc(x.id)}" data-n="${p.n}">${t('lives.watch')}</button>` : ''}
+      <a class="ctl${embed ? '' : ' go'}" href="${esc(x.url)}" target="_blank" rel="noopener" data-pop="${p.n}">${t('lives.open')}</a>
+      ${x.uid === chatUI.uid ? `<button type="button" class="ctl" data-drop="${esc(x.id)}">${t('lives.drop')}</button>` : ''}</li>`;
+  }).join('');
+}
+// on a computer, Douyin, Weibo and TikTok open in a small window beside the chat; on phones the link opens the app
+const popup = matchMedia('(min-width: 900px) and (pointer: fine)');
+$('live-box').addEventListener('click', e => {
+  const w = e.target.closest('[data-watch]'), d = e.target.closest('[data-drop]'), a = e.target.closest('[data-pop]');
+  if (w) {
+    L.watch = w.dataset.watch; L.liveOn = w.dataset.n;
+    drawLives();
+    $('fan-player').scrollIntoView({block:'nearest', behavior:'smooth'});
+  } else if (d) {
+    if (chatUI.drop) chatUI.drop(d.dataset.drop).catch(err => console.error(err));
+  } else if (a) {
+    L.liveOn = a.dataset.pop;
+    if (popup.matches) { e.preventDefault(); window.open(a.href, 'anqi-live', 'popup,noopener,width=460,height=820'); }
+  }
+});
+$('share-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const st = $('share-status'), name = $('chat-name').value.trim(), what = $('share-what').value.trim();
+  const url = liveUrl($('share-url').value);
+  st.textContent = '';
+  if (!url) { st.textContent = t('lives.bad'); $('share-url').focus(); return; }
+  if (!what) { st.textContent = t('lives.needWhat'); $('share-what').focus(); return; }
+  // the nickname comes from the chat box, so say it there too
+  if (!name) { st.textContent = $('chat-status').textContent = t('chat.needName'); $('chat-name').focus(); return; }
+  if (!chatUI.share) return;
+  try { localStorage.setItem('anqi-chat-name', name); } catch(_) {}
+  const btn = $('share-send'); btn.disabled = true;
+  try { await chatUI.share(name.slice(0, 24), what.slice(0, 80), url); $('share-url').value = ''; $('share-what').value = ''; }
+  catch (err) { st.textContent = t(err && err.code === 'permission-denied' ? 'lives.slow' : 'chat.fail'); }
+  finally { btn.disabled = false; }
 });
 
 render();
@@ -1610,6 +1746,15 @@ if (cfg) {
         return {...m, at: m.at ? m.at.toMillis() : Date.now()};
       }).reverse(), user.uid);
     }, err => { console.error(err); ui.off('chat.error'); });
+    // fan lives shared in the last few hours
+    const lives = fs.collection(db, 'rooms', 'main', 'lives');
+    const since = fs.Timestamp.fromMillis(Date.now() - ui.hours * 3600e3);
+    fs.onSnapshot(fs.query(lives, fs.where('at', '>', since), fs.orderBy('at', 'desc'), fs.limit(30)), snap => {
+      ui.renderLives(snap.docs.map(d => {
+        const m = d.data({serverTimestamps:'estimate'});
+        return {...m, id: d.id, at: m.at ? m.at.toMillis() : Date.now()};
+      }), user.uid);
+    }, err => { console.error(err); ui.renderLives([], user.uid, true); });
     ui.ready(async (name, text, song) => {
       // one message per 3 s per visitor: the rules compare this timestamp with the previous one
       const batch = fs.writeBatch(db);
@@ -1618,7 +1763,13 @@ if (cfg) {
       if (song) m.song = song;
       batch.set(fs.doc(msgs), m);
       await batch.commit();
-    });
+    }, async (name, title, url) => {
+      // one shared live per minute per visitor, checked the same way
+      const batch = fs.writeBatch(db);
+      batch.set(fs.doc(db, 'sharers', user.uid), {at: fs.serverTimestamp()});
+      batch.set(fs.doc(lives), {name, title, url, uid: user.uid, at: fs.serverTimestamp()});
+      await batch.commit();
+    }, id => fs.deleteDoc(fs.doc(lives, id)));
   } catch (err) {
     console.error(err);
     ui.off('chat.error');

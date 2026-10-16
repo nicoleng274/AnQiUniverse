@@ -24,17 +24,21 @@ Link nghe nhạc để chia sẻ: https://nicoleng274.github.io/AnQiUniverse/#li
 - **YouTube:** tính lượt xem khi người xem tự bấm phát.
 - Trình phát chỉ chạy khi trang được mở qua web (GitHub Pages). Bản xem trước trên claude.ai không nhúng được trình phát.
 
-### Tab Live: xem livestream Douyin, Weibo và chat cùng fan
+### Tab Live: xem live cùng nhau và chat
 
 Link chia sẻ: https://nicoleng274.github.io/AnQiUniverse/#live
 
-Douyin và Weibo không cho trang khác nhúng livestream (không có trình phát nhúng chính thức, trang live chặn iframe, link luồng video có chữ ký và hết hạn nhanh), và phần bình luận trong live chỉ dùng được trong app của họ. Vì vậy tab **Live** trong phòng nghe nhạc:
+**Live của fan.** Fan đang live ở sự kiện (fansign, concert, sân bay…) dán link live vào tab này, kèm tên sự kiện. Mọi người thấy danh sách live trong 12 giờ gần nhất:
 
-- có nút mở thẳng Douyin và trang Weibo của 安崎 (trong app nếu điện thoại có cài, không thì mở web). Xem trên nền tảng chính thức nên vẫn được tính vào số người xem của phòng live;
-- tạm dừng nhạc đang phát, để khung chat bên cạnh cho fan nói chuyện trong lúc xem;
-- tin nhắn gửi từ tab này có nhãn `🔴 LIVE · Douyin` hoặc `🔴 LIVE · Weibo` (theo nút vừa bấm), để mọi người biết đang nói về buổi live.
+- **YouTube, Bilibili** (link `live.bilibili.com/<số phòng>` hoặc video `BV…`): bấm **▶ Xem ở đây** là xem ngay trên trang, khung chat ở bên cạnh.
+- **Douyin, Weibo, TikTok**: các nền tảng này không cho trang nào khác nhúng live, kể cả khi người xem đã đăng nhập (họ chặn bằng header của chính họ, trang web không gỡ được). Nút **Mở ↗** mở live trong app trên điện thoại, còn trên máy tính thì mở một cửa sổ nhỏ cạnh trang, dùng tài khoản của người xem như bình thường.
+- Dán được nguyên đoạn chia sẻ từ app (ví dụ `7.66 复制打开抖音，看看… https://v.douyin.com/…/`), trang tự lấy link. Chỉ nhận link từ Douyin, TikTok, Weibo, Bilibili (cả `b23.tv`), YouTube. Link rút gọn kiểu `t.cn` không được nhận.
+- Mỗi người chia sẻ tối đa 1 live mỗi phút. Người chia sẻ tự gỡ được live của mình. Muốn xoá link xấu: Firestore → `rooms/main/lives` → xoá document đó.
+- Biệt danh lấy từ ô biệt danh của khung chat. Phần này chỉ chạy khi khung chat đã bật (xem dưới).
 
-Nút Douyin hiện mở trang tìm kiếm 安崎 trên Douyin. Khi có link trang cá nhân (`https://www.douyin.com/user/…`) hoặc phòng live (`https://live.douyin.com/…`), dán vào `u` của dòng `douyin` trong `LIVE` ở `index.html` để nút mở thẳng.
+**Kênh của 安崎.** Nút mở thẳng Douyin và trang Weibo của 安崎. Nút Douyin hiện mở trang tìm kiếm 安崎 trên Douyin. Khi có link trang cá nhân (`https://www.douyin.com/user/…`) hoặc phòng live (`https://live.douyin.com/…`), dán vào `u` của dòng `douyin` trong `LIVE` ở `index.html`.
+
+Khi ở tab Live, nhạc đang phát sẽ dừng. Tin nhắn gửi từ tab này có nhãn `🔴 LIVE · Douyin` (hoặc nền tảng vừa mở) để mọi người biết đang nói về buổi live.
 
 ### Bật GitHub Pages
 
@@ -46,7 +50,7 @@ Trang sẽ chạy ở `https://nicoleng274.github.io/AnQiUniverse/`.
 1. Vào [console.firebase.google.com](https://console.firebase.google.com), tạo project mới (có thể tắt Google Analytics).
 2. **Build → Authentication → Get started → Sign-in method → Anonymous → Enable.**
 3. **Build → Firestore Database → Create database**, chọn vị trí `asia-southeast1 (Singapore)`, chế độ *production*.
-4. Trong Firestore, mở tab **Rules**, dán toàn bộ nội dung file [`firestore.rules`](firestore.rules) rồi bấm **Publish**.
+4. Trong Firestore, mở tab **Rules**, dán toàn bộ nội dung file [`firestore.rules`](firestore.rules) rồi bấm **Publish**. Mỗi lần file này thay đổi (ví dụ khi thêm phần live của fan) thì dán và Publish lại.
 5. **Project settings → Your apps → Web (`</>`)**, đăng ký app, copy đoạn `firebaseConfig`.
 6. Dán vào `const FIREBASE_CONFIG = …` trong `index.html` (hoặc gửi cho người quản lý trang).
 
@@ -66,7 +70,8 @@ Dữ liệu nằm ở đầu thẻ `<script>` trong `index.html`:
 - `SHOWS`: sân khấu live theo chương trình.
 - `MVS`: video trên kênh YouTube.
 - `CHANNELS`: các kênh chính thức.
-- `LIVE`: nút mở livestream Douyin, Weibo ở tab Live.
+- `LIVE`: nút mở livestream Douyin, Weibo của 安崎 ở tab Live.
+- `LIVE_HOSTS`: các nền tảng fan được chia sẻ link live. Thêm nền tảng thì sửa cả regex `url` trong `firestore.rules`.
 
 ## Nguồn
 
