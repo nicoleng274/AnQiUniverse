@@ -52,9 +52,11 @@ Mã gắn với trình duyệt: đổi máy, đổi trình duyệt hoặc xoá d
 
 **Vietsub tự động.** Tích ô **Vietsub tự động (tiếng Trung → tiếng Việt)** trước hoặc trong lúc chia sẻ màn hình. Người xem thấy phụ đề tiếng Việt trên video (nút CC để ẩn, xem toàn màn hình vẫn có).
 
-- Chạy hoàn toàn trong Chrome của người chia sẻ, miễn phí, không cần tài khoản hay khoá API: Chrome nghe âm thanh tab đang chia sẻ để nhận dạng tiếng Trung (Web Speech API, Chrome 135 trở lên), rồi dịch sang tiếng Việt bằng bộ dịch có sẵn của Chrome (Translator API, Chrome 138 trở lên, máy tính). Lần đầu Chrome tải bộ dịch Trung–Việt về máy, trang hiện phần trăm.
-- Cần **Google Chrome 138 trở lên trên máy tính**. Edge và trình duyệt khác chưa chắc có đủ hai tính năng này.
-- Đây là dịch máy: chậm khoảng 1–3 giây, sai tên riêng và từ lóng, nói nhanh hay nhiều người nói cùng lúc thì kém, lúc hát gần như không dùng được. Phần nhận dạng giọng nói của Chrome gửi âm thanh tới máy chủ Google.
+- Chạy hoàn toàn trong trình duyệt của người chia sẻ, miễn phí, không cần tài khoản hay khoá API: trình duyệt nghe âm thanh tab đang chia sẻ để nhận dạng tiếng Trung (Web Speech API), rồi dịch sang tiếng Việt bằng bộ dịch có sẵn (Translator API). Lần đầu trình duyệt tải bộ dịch Trung–Việt về máy, trang hiện phần trăm.
+- Cần **Chrome 138 trở lên hoặc Microsoft Edge 148 trở lên, trên máy tính**. Kiểm tra phiên bản: Chrome vào `chrome://settings/help`, Edge vào `edge://settings/help`. Thiếu tính năng nào thì trang tự báo và khoá ô vietsub.
+- Chrome gửi âm thanh tới máy chủ Google để nhận dạng, Edge gửi tới Microsoft (Azure). Bộ dịch chạy ngay trên máy.
+- Đây là dịch máy: chậm khoảng 1–3 giây, sai tên riêng và từ lóng, nói nhanh hay nhiều người nói cùng lúc thì kém, lúc hát gần như không dùng được.
+- Nên thử trước một buổi live: mở một video tiếng Trung bất kỳ trong tab khác, chia sẻ tab đó với ô vietsub được tích, xem phụ đề hiện trên khung xem trước của chính mình.
 - Người xem vào sau vẫn nhận phụ đề ngay câu đang chạy.
 
 **Kênh của 安崎.** Nút mở thẳng Douyin và trang Weibo của 安崎. Nút Douyin hiện mở trang tìm kiếm 安崎 trên Douyin. Khi có link trang cá nhân (`https://www.douyin.com/user/…`) hoặc phòng live (`https://live.douyin.com/…`), dán vào `u` của dòng `douyin` trong `LIVE` ở `index.html`.
